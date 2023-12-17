@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const home = (req, res) => {
   try {
+
     const userName=req.session.user
     res.render("home",{userName});
   } catch (err) {
@@ -35,6 +36,7 @@ const register = async (req, res) => {
           Name: req.body.regname,
           Email: req.body.regemail,
           Password: Password,
+         
         });
         const check = await user.save();
         if (check) {
@@ -59,15 +61,25 @@ const submitlogin = async (req, res) => {
         );
 
         if (passwordMatch) {
+          if(check.Status=="active"){
           req.session.user = check.Name;
+          req.session.email=check.Email
           res.redirect("/");
+          }else{
+            const errormsg = "You are blocked by admin";
+            req.flash("err", errormsg);
+            res.redirect('/login')
+          }
         } else {
           const errormsg = "User not found please register first";
           req.flash("err", errormsg);
           res.redirect("/login");
         }
       } else {
-        res.send("user not found"); // Handle the case where the user with the specified email is not found
+
+        const errormsg = "User not found please register first";
+        req.flash("err", errormsg);
+        res.redirect('/login') // Handle the case where the user with the specified email is not found
       }
     
   } catch (err) {
@@ -79,6 +91,7 @@ const submitlogin = async (req, res) => {
 
 const logout=(req,res)=>{
   req.session.user=null
+  req.session.email=null
   res.redirect('/')
 }
 

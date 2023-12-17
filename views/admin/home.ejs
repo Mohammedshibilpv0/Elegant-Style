@@ -1,0 +1,371 @@
+<%- include("../partials/user/adminheader.ejs")%>
+
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin6">
+            <nav class="navbar top-navbar navbar-expand-lg">
+                <div class="navbar-header" data-logobg="skin6">
+                    <!-- This is for the sidebar toggle which is visible on mobile only -->
+                    <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
+                            class="ti-menu ti-close"></i></a>
+                    <!-- ============================================================== -->
+                    <!-- Logo -->
+                    <!-- ============================================================== -->
+                    <div class="navbar-brand">
+                        <!-- Logo icon -->
+                        <a href="home.ejs">
+                            <img src="/admin/assets/images/freedashDark.svg" alt="" class="img-fluid">
+                        </a>
+                    </div>
+                    <!-- ============================================================== -->
+                    <!-- End Logo -->
+                    <!-- ============================================================== -->
+                    <!-- ============================================================== -->
+                    <!-- Toggle which is visible on mobile only -->
+                    <!-- ============================================================== -->
+                    <a class="topbartoggler d-block d-lg-none waves-effect waves-light" href="javascript:void(0)"
+                        data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                            class="ti-more"></i></a>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+             
+                    <ul class="navbar-nav float-end">
+                        <!-- ============================================================== -->
+                        <!-- Search -->
+                        <!-- ============================================================== -->
+                        <!-- <li class="nav-item d-none d-md-block">
+                            <a class="nav-link" href="javascript:void(0)">
+                                <form>
+                                    <div class="customize-input">
+                                        <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                            type="search" placeholder="Search" aria-label="Search">
+                                        <i class="form-control-icon" data-feather="search"></i>
+                                    </div>
+                                </form>
+                            </a>
+                        </li> -->
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <img src="/admin/assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle"
+                                    width="40">
+                                <span class="ms-2 d-none d-lg-inline-block"><span>Hello,</span> <span
+                                        class="text-dark">Jason Doe</span> <i data-feather="chevron-down"
+                                        class="svg-icon"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
+                                <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
+                                        class="svg-icon me-2 ms-1"></i>
+                                    My Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/admin/logout"><i data-feather="power"
+                                        class="svg-icon me-2 ms-1"></i>
+                                    Logout</a>
+                                <div class="dropdown-divider"></div>
+                                
+                            </div>
+                        </li>
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar" data-sidebarbg="skin6">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/dashboard"
+                                aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span
+                                    class="hide-menu">Dashboard</span></a></li>
+                        <li class="list-divider"></li>
+                        <li class="nav-small-cap"><span class="hide-menu">Users</span></li>
+
+                        <li class="sidebar-item"> <a class="sidebar-link" href="/admin/allusers"
+                                aria-expanded="false"><i class="fa-regular fa-user"></i><span
+                                    class="hide-menu">All Users
+                                </span></a>
+                        </li>
+
+                        <li class="list-divider"></li>
+
+
+                        <li class="nav-small-cap"><span class="hide-menu">Products</span></li>
+
+                        <li class="sidebar-item"> <a class="sidebar-link" href="/admin/products"
+                            aria-expanded="false"><i class="fa-regular fa-user"></i><span
+                                class="hide-menu">All Product  </span></a>
+                    </li>
+
+                    <li class="sidebar-item"> <a class="sidebar-link" href="/admin/addproducts"
+                        aria-expanded="false"><i class="fa-solid fa-plus"></i><span
+                            class="hide-menu">Add Products</span></a>
+                     </li>
+
+                     <li class="sidebar-item"> <a class="sidebar-link" href="/admin/category"
+                        aria-expanded="false"><i class="fa-solid fa-list"></i><span
+                            class="hide-menu">category</span></a>
+                     </li>
+
+
+                        <li class="list-divider"></li>
+                        <li class="nav-small-cap"><span class="hide-menu">Orders</span></li>
+
+                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/allorders"
+                                aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
+                                    class="hide-menu">All Orders
+                                </span></a>
+                        </li>
+                   
+
+                        
+                        <li class="list-divider"></li>
+                        <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
+                        
+                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/logout"
+                                aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span
+                                    class="hide-menu">Logout</span></a></li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+
+            <div class="page-breadcrumb">
+                <div class="row">
+                    <div class="col-7 align-self-center">
+                        <h3 class="page-title text-truncate text-dark font-weight-medium mb-1">Good Morning Jason!</h3>
+                        <div class="d-flex align-items-center">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 p-0">
+                                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <!-- *************************************************************** -->
+                <!-- Start First Cards -->
+                <!-- *************************************************************** -->
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card border-end">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="d-inline-flex align-items-center">
+                                            <h2 class="text-dark mb-1 font-weight-medium">236</h2>
+
+                                        </div>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Users
+                                        </h6>
+                                    </div>
+                                    <div class="ms-auto mt-md-3 mt-lg-0">
+                                        <span class="opacity-7 text-muted"><i data-feather="user-plus"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card border-end ">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><sup
+                                                class="set-doller">$</sup>18,306</h2>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Earning
+                                        </h6>
+                                    </div>
+                                    <div class="ms-auto mt-md-3 mt-lg-0">
+                                        <span class="opacity-7 text-muted"><i data-feather="dollar-sign"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card border-end ">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><sup
+                                                class="set-doller ms-1">$</sup>6,306</h2>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Last Month
+                                        </h6>
+                                    </div>
+                                    <div class="ms-auto mt-md-3 mt-lg-0">
+                                        <span class="opacity-7 text-muted"><i data-feather="dollar-sign"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="card ">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <h2 class="text-dark mb-1 font-weight-medium">864</h2>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Orders</h6>
+                                    </div>
+                                    <div class="ms-auto mt-md-3 mt-lg-0">
+                                        <span class="opacity-7 text-muted"><i data-feather="globe"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- *************************************************************** -->
+                <!-- End First Cards -->
+                <!-- *************************************************************** -->
+                <!-- *************************************************************** -->
+                <!-- Start Sales Charts Section -->
+                <!-- *************************************************************** -->
+                <div class="row">
+                    <div class="col-lg-4 col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Total Sales</h4>
+                                <div id="campaign-v2" class="mt-2" style="height:283px; width:100%;"></div>
+                                <ul class="list-style-none mb-0">
+                                    <li>
+                                        <i class="fas fa-circle text-primary font-10 me-2"></i>
+                                        <span class="text-muted">Direct Sales</span>
+                                        <span class="text-dark float-end font-weight-medium">$2346</span>
+                                    </li>
+                                    <li class="mt-3">
+                                        <i class="fas fa-circle text-danger font-10 me-2"></i>
+                                        <span class="text-muted">Referral Sales</span>
+                                        <span class="text-dark float-end font-weight-medium">$2108</span>
+                                    </li>
+                                    <li class="mt-3">
+                                        <i class="fas fa-circle text-cyan font-10 me-2"></i>
+                                        <span class="text-muted">Affiliate Sales</span>
+                                        <span class="text-dark float-end font-weight-medium">$1204</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Net Income</h4>
+                                <div class="net-income mt-4 position-relative" style="height:294px;"></div>
+                                <ul class="list-inline text-center mt-5 mb-2">
+                                    <li class="list-inline-item text-muted fst-italic">Sales for this month</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <section class="intro">
+                <div class="gradient-custom-1 h-100">
+                  <div class="mask d-flex align-items-center h-100">
+                    <div class="container">
+                      <div class="row justify-content-center">
+                        <div class="col-12">
+                          <div class="table-responsive bg-white">
+                            <table class="table mb-0">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Product</th>
+                                  <th scope="col">User</th>
+                                  <th scope="col">Email</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Tiger Nixon</th>
+                                  <td>System Architect</td>
+                                  <td>tnixon12@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Sonya Frost</th>
+                                  <td>Software Engineer</td>
+                                  <td>sfrost34@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Jena Gaines</th>
+                                  <td>Office Manager</td>
+                                  <td>jgaines75@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Quinn Flynn</th>
+                                  <td>Support Lead</td>
+                                  <td>qflyn09@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Charde Marshall</th>
+                                  <td>Regional Director</td>
+                                  <td>cmarshall28@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Haley Kennedy</th>
+                                  <td>Senior Marketing Designer</td>
+                                  <td>hkennedy63@example.com</td>
+                                </tr>
+                                <tr>
+                                  <th scope="row" style="color: #666666;">Tatyana Fitzpatrick</th>
+                                  <td>Regional Director</td>
+                                  <td>tfitzpatrick00@example.com</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+        </div>
+    </div>
+
+
+
+    <%- include("../partials/user/adminfooter.ejs")%>

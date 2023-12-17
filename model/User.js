@@ -4,16 +4,26 @@ const mongoose=require('mongoose')
 const userData= new mongoose.Schema({
 
     Name:{
-        type:"String",
+        type:String,
         required:true
     },
     Email:{
-        type:"String",
-        required:true
+        type:String,
+        required:true,
+        unique: true
     },
     Password:{
-        type:"String",
+        type:String,
         required:true
+    },
+    JoinDate:{
+            type:Date,
+            default:Date.now
+    },
+    Status:{
+        type:String,
+        enum: ["active", "blocked"],
+        default: "active",
     }
    
 })

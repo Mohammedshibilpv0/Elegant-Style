@@ -7,7 +7,7 @@ const middleware=require("../middleware/User")
 
 
 
-router.get('/',userController.home)
+router.get('/',middleware.isBlock,userController.home)
 router.get('/login',middleware.islogin,userController.login)
 router.post('/register',middleware.islogin,userController.register)
 router.post('/loginsubmit',middleware.islogin,userController.submitlogin)
