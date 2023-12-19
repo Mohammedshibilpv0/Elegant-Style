@@ -25,7 +25,7 @@ const ProductSchema= new mongoose.Schema({
         enum:["active","blocked"],
         default:"active"
     },
-    Stock:{
+    Quantity:{
         type:Number,
         min:0,
         required:true

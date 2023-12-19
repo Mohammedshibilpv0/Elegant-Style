@@ -1,0 +1,310 @@
+<%-include('../partials/user/adminheader.ejs')%>
+
+<style>
+    #image-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+  
+    .img-thumbnail {
+      max-width: 200px;
+      max-height: 200px;
+      margin-bottom: 5px;
+    }
+  </style>
+  
+
+
+<div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+<!-- ============================================================== -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<header class="topbar" data-navbarbg="skin6">
+    <nav class="navbar top-navbar navbar-expand-lg">
+        <div class="navbar-header" data-logobg="skin6">
+            <!-- This is for the sidebar toggle which is visible on mobile only -->
+            <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
+                    class="ti-menu ti-close"></i></a>
+            <!-- ============================================================== -->
+            <!-- Logo -->
+            <!-- ============================================================== -->
+            <div class="navbar-brand">
+                <!-- Logo icon -->
+                <a href="home.ejs">
+                    <img src="/admin/assets/images/freedashDark.svg" alt="" class="img-fluid">
+                </a>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Logo -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Toggle which is visible on mobile only -->
+            <!-- ============================================================== -->
+            <a class="topbartoggler d-block d-lg-none waves-effect waves-light" href="javascript:void(0)"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                    class="ti-more"></i></a>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-collapse collapse" id="navbarSupportedContent">
+     
+            <ul class="navbar-nav float-end">
+                <!-- ============================================================== -->
+                <!-- Search -->
+                <!-- ============================================================== -->
+                <!-- <li class="nav-item d-none d-md-block">
+                    <a class="nav-link" href="javascript:void(0)">
+                        <form>
+                            <div class="customize-input">
+                                <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                    type="search" placeholder="Search" aria-label="Search">
+                                <i class="form-control-icon" data-feather="search"></i>
+                            </div>
+                        </form>
+                    </a>
+                </li> -->
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <img src="/admin/assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle"
+                            width="40">
+                        <span class="ms-2 d-none d-lg-inline-block"><span>Hello,</span> <span
+                                class="text-dark"><%=admin%></span> <i data-feather="chevron-down"
+                                class="svg-icon"></i></span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
+                        <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
+                                class="svg-icon me-2 ms-1"></i>
+                            My Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/admin/logout"><i data-feather="power"
+                                class="svg-icon me-2 ms-1"></i>
+                            Logout</a>
+                        <div class="dropdown-divider"></div>
+                        
+                    </div>
+                </li>
+                <!-- ============================================================== -->
+                <!-- User profile and search -->
+                <!-- ============================================================== -->
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- ============================================================== -->
+<!-- End Topbar header -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Left Sidebar - style you can find in sidebar.scss  -->
+<!-- ============================================================== -->
+<aside class="left-sidebar" data-sidebarbg="skin6">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar" data-sidebarbg="skin6">
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/"
+                        aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span
+                            class="hide-menu">Dashboard</span></a></li>
+                <li class="list-divider"></li>
+                <li class="nav-small-cap"><span class="hide-menu">Users</span></li>
+
+                <li class="sidebar-item"> <a class="sidebar-link" href="/admin/allusers"
+                        aria-expanded="false"><i class="fa-regular fa-user"></i><span
+                            class="hide-menu">All Users
+                        </span></a>
+                </li>
+
+                <li class="list-divider"></li>
+
+
+                <li class="nav-small-cap"><span class="hide-menu">Products</span></li>
+
+                <li class="sidebar-item"> <a class="sidebar-link" href="/admin/products"
+                    aria-expanded="false"><i class="fa-regular fa-user"></i><span
+                        class="hide-menu">All Product  </span></a>
+            </li>
+
+            <li class="sidebar-item"> <a class="sidebar-link" href="/admin/addproducts"
+                aria-expanded="false"><i class="fa-solid fa-plus"></i><span
+                    class="hide-menu">Add Products</span></a>
+             </li>
+
+             <li class="sidebar-item"> <a class="sidebar-link" href="/admin/category"
+                aria-expanded="false"><i class="fa-solid fa-list"></i><span
+                    class="hide-menu">category</span></a>
+             </li>
+
+
+                <li class="list-divider"></li>
+                <li class="nav-small-cap"><span class="hide-menu">Orders</span></li>
+
+                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/allorders"
+                        aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
+                            class="hide-menu">All Orders
+                        </span></a>
+                </li>
+           
+
+                
+                <li class="list-divider"></li>
+                <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
+                
+                <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/logout"
+                        aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span
+                            class="hide-menu">Logout</span></a></li>
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>
+<!-- ============================================================== -->
+<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+<!-- ============================================================== -->
+<!-- ============================================================== -->
+<!-- Page wrapper  -->
+<!-- ============================================================== -->
+<div class="page-wrapper bg-dark" style="min-height: 775px;">
+    <div class="container mt-5">
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="card">
+            <div class="card-body">
+              <form class="forms-sample" method="POST" action="/admin/products/upload" enctype="multipart/form-data">
+              
+                <!-- Your existing form fields... -->
+                <div class="form-group row">
+                  <label for="productName" class="col-sm-3 col-form-label">Product Name</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="productName" name="name" placeholder="Product Name" required>
+                    <small id="nameError" class="text-danger"></small>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <label for="productPrice" class="col-sm-3 col-form-label">Product Price</label>
+                  <div class="col-sm-9">
+                    <input type="number" class="form-control" id="productPrice" name="price" placeholder="Product Price" required>
+                    <small id="priceError" class="text-danger"></small>
+                  </div>
+                </div>
+
+               
+
+            <div class="form-group row">
+                <label for="productDescription" class="col-sm-3 col-form-label">Product Description</label>
+                <div class="col-sm-9">
+                    <textarea class="form-control" id="productDescription" name="description" placeholder="Product Description" required></textarea>
+                    <small id="descriptionError" class="text-danger"></small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="productCategory" class="col-sm-3 col-form-label">Category</label>
+                <div class="col-sm-9">
+                    <select class="form-control" id="productCategory" name="category" required>
+                        <% category.forEach(category => { %>
+                            <option value="<%= category._id %>"><%= category.Name %></option>
+                        <% }); %>
+                    </select>
+                    <small id="categoryError" class="text-danger"></small>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="productQuantity" class="col-sm-3 col-form-label">Quantity</label>
+                <div class="col-sm-9">
+                    <input type="number" class="form-control" id="productQuantity" name="quantity" placeholder="Quantity" required>
+                    <small id="quantityError" class="text-danger"></small>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="productDate" class="col-sm-3 col-form-label">Date</label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" id="productDate" name="date" placeholder="Date" required>
+                    <small id="dateError" class="text-danger"></small>
+                </div>
+            </div>
+
+
+                <div class="form-group row">
+                    <label for="productDate" class="col-sm-3 col-form-label">Images(upto-4)</label>
+                    <input type="file" class="form-control" id="productimages" name="images" multiple >
+                    <small id="imagesError" class="text-danger"></small>
+  
+                      <!-- Image preview container -->
+                      <div id="image-preview-container" class="mt-3"></div>
+                    </div>
+                  </div>
+  
+                <button type="submit" class="btn btn-primary mr-2"">Submit</button>
+                <button class="btn btn-dark">Cancel</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <!-- Include jQuery -->
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+<!-- Your existing form code -->
+
+<script>
+  $(document).ready(function() {
+    // Function to handle image preview
+    function handleImageChanges() {
+      var previewContainer = $('#image-preview-container');
+      var files = $('#productimages')[0].files;
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          var img = $('<img>').attr('src', e.target.result).addClass('img-thumbnail');
+          previewContainer.append(img);
+        };
+
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Attach the handleImageChanges function to the change event of the file input
+    $('#productimages').on('change', handleImageChanges);
+
+    // Add your form validation logic here
+    function validateForm() {
+      // Example validation: Ensure that at least one image is selected
+      var files = $('#productimages')[0].files;
+      if (files.length === 0) {
+        $('#imagesError').text('Please select at least one image.');
+        return false;
+      } else {
+        $('#imagesError').text('');
+        return true;
+      }
+    }
+
+    // Attach the validateForm function to the form's submit event
+    $('.forms-sample').on('submit', function() {
+      return validateForm();
+    });
+  });
+</script>
+
+
+
+
+<%-include('../partials/user/adminfooter.ejs')%>
