@@ -26,6 +26,8 @@ adminRoute.get('/listcategory/:id',middleware.verify,adminController.listCategor
 adminRoute.get('/addproducts',productsController.addProducts)
 adminRoute.post('/products/upload',productsController.uploadProducts)
 adminRoute.get('/products',productsController.allProducts)
+adminRoute.get('/editproduct/:id',productsController.editProduct)
+adminRoute.post('/submitedit/:id',productsController.submitedit)
 
 
 

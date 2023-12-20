@@ -191,9 +191,9 @@
                                     <% if (data.Status=="blocked") { %>
                                     <a href="/admin/unblockuser/<%= data._id %>" id="button1" class="table-link btn btn-primary mb-1" style="width: 100%;">Unblock</a>
                                     <% } else { %>
-                                    <a href="/admin/blockuser/<%= data._id %>" id="button2" onclick="return confirm('Are you want to block <%=data.Name%> ?')" class="table-link btn btn-danger mb-1 " style="width: 100%;" >
-                                      Block
-                                    </a>
+                                      <a href="/admin/blockuser/<%= data._id %>" id="button2" onclick="showConfirmation('<%= data._id %>', '<%= data.Name %>')" class="table-link btn btn-danger mb-1" style="width: 100%;">
+                                        Block
+                                      </a>
                                     <% } %>
                                   </td>
                                 </tr>
@@ -214,28 +214,8 @@
                 </div>
               </div>
         </div>
+      
 
-        <script>
-            // Get references to the buttons
-            const button1 = document.getElementById('button1');
-            const button2 = document.getElementById('button2');
-
-            // Function to enable button 1 and disable button 2
-            function enableButton1() {
-              button1.removeAttribute('disabled');
-              button2.setAttribute('disabled', 'true');
-            }
-
-            // Function to enable button 2 and disable button 1
-            function enableButton2() {
-              button2.removeAttribute('disabled');
-              button1.setAttribute('disabled', 'true');
-            }
-
-            // Add click event listeners to the buttons
-            button1.addEventListener('click', enableButton2);
-            button2.addEventListener('click', enableButton1);
-          </script>
-
+        
 
         <%- include("../partials/user/adminfooter.ejs")%>

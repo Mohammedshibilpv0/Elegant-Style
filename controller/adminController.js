@@ -98,6 +98,7 @@ const blockUser = async (req, res) => {
 
 
 
+
  const category= async (req,res)=>{
   try{
     const admin=req.session.admin

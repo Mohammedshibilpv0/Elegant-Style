@@ -1,63 +1,66 @@
-
 <%- include("../partials/user/adminheader.ejs")%>
 
-<style>
-       .circular-image {
-      width: 50px; /* Adjust the size of the circle */
-      height: 50px; /* Adjust the size of the circle */
-      border-radius: 50%; /* Make the image circular */
-      overflow: hidden; /* Hide the corners that extend beyond the circle */
-    }
-
-    .circular-image img {
-      width: 100%; /* Make the image fill the circular container */
-      height: auto; /* Maintain the aspect ratio */
-    }
-</style>
-
-
-
-    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <header class="topbar" data-navbarbg="skin6">
+    <nav class="navbar top-navbar navbar-expand-lg">
+      <div class="navbar-header" data-logobg="skin6">
+        <!-- This is for the sidebar toggle which is visible on mobile only -->
+        <a
+          class="nav-toggler waves-effect waves-light d-block d-lg-none"
+          href="javascript:void(0)"
+          ><i class="ti-menu ti-close"></i
+        ></a>
         <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- Logo -->
         <!-- ============================================================== -->
-        <header class="topbar" data-navbarbg="skin6">
-            <nav class="navbar top-navbar navbar-expand-lg">
-                <div class="navbar-header" data-logobg="skin6">
-                    <!-- This is for the sidebar toggle which is visible on mobile only -->
-                    <a class="nav-toggler waves-effect waves-light d-block d-lg-none" href="javascript:void(0)"><i
-                            class="ti-menu ti-close"></i></a>
-                    <!-- ============================================================== -->
-                    <!-- Logo -->
-                    <!-- ============================================================== -->
-                    <div class="navbar-brand">
-                        <!-- Logo icon -->
-                        <a href="home.ejs">
-                            <img src="/admin/assets/images/freedashDark.svg" alt="" class="img-fluid">
-                        </a>
-                    </div>
-                    <!-- ============================================================== -->
-                    <!-- End Logo -->
-                    <!-- ============================================================== -->
-                    <!-- ============================================================== -->
-                    <!-- Toggle which is visible on mobile only -->
-                    <!-- ============================================================== -->
-                    <a class="topbartoggler d-block d-lg-none waves-effect waves-light" href="javascript:void(0)"
-                        data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
-                            class="ti-more"></i></a>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End Logo -->
-                <!-- ============================================================== -->
-                <div class="navbar-collapse collapse" id="navbarSupportedContent">
-             
-                    <ul class="navbar-nav float-end">
-                        <!-- ============================================================== -->
-                        <!-- Search -->
-                        <!-- ============================================================== -->
-                        <!-- <li class="nav-item d-none d-md-block">
+        <div class="navbar-brand">
+          <!-- Logo icon -->
+          <a href="home.ejs">
+            <img
+              src="/admin/assets/images/freedashDark.svg"
+              alt=""
+              class="img-fluid"
+            />
+          </a>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Toggle which is visible on mobile only -->
+        <!-- ============================================================== -->
+        <a
+          class="topbartoggler d-block d-lg-none waves-effect waves-light"
+          href="javascript:void(0)"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          ><i class="ti-more"></i
+        ></a>
+      </div>
+      <!-- ============================================================== -->
+      <!-- End Logo -->
+      <!-- ============================================================== -->
+      <div class="navbar-collapse collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav float-end">
+          <!-- ============================================================== -->
+          <!-- Search -->
+          <!-- ============================================================== -->
+          <!-- <li class="nav-item d-none d-md-block">
                             <a class="nav-link" href="javascript:void(0)">
                                 <form>
                                     <div class="customize-input">
@@ -69,173 +72,262 @@
                             </a>
                         </li> -->
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <img src="/admin/assets/images/users/profile-pic.jpg" alt="user" class="rounded-circle"
-                                    width="40">
-                                <span class="ms-2 d-none d-lg-inline-block"><span>Hello,</span> <span
-                                        class="text-dark"><%=admin%></span> <i data-feather="chevron-down"
-                                        class="svg-icon"></i></span>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
-                                <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
-                                        class="svg-icon me-2 ms-1"></i>
-                                    My Profile</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/admin/logout"><i data-feather="power"
-                                        class="svg-icon me-2 ms-1"></i>
-                                    Logout</a>
-                                <div class="dropdown-divider"></div>
-                                
-                            </div>
-                        </li>
-                        <!-- ============================================================== -->
-                        <!-- User profile and search -->
-                        <!-- ============================================================== -->
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <aside class="left-sidebar" data-sidebarbg="skin6">
-            <!-- Sidebar scroll-->
-            <div class="scroll-sidebar" data-sidebarbg="skin6">
-                <!-- Sidebar navigation-->
-                <nav class="sidebar-nav">
-                    <ul id="sidebarnav">
-                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/"
-                                aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span
-                                    class="hide-menu">Dashboard</span></a></li>
-                        <li class="list-divider"></li>
-                        <li class="nav-small-cap"><span class="hide-menu">Users</span></li>
-
-                        <li class="sidebar-item"> <a class="sidebar-link" href="/admin/allusers"
-                                aria-expanded="false"><i class="fa-regular fa-user"></i><span
-                                    class="hide-menu">All Users
-                                </span></a>
-                        </li>
-
-                        <li class="list-divider"></li>
-
-
-                        <li class="nav-small-cap"><span class="hide-menu">Products</span></li>
-
-                        <li class="sidebar-item"> <a class="sidebar-link" href="/admin/products"
-                            aria-expanded="false"><i class="fa-regular fa-user"></i><span
-                                class="hide-menu">All Product  </span></a>
-                    </li>
-
-                    <li class="sidebar-item"> <a class="sidebar-link" href="/admin/addproducts"
-                        aria-expanded="false"><i class="fa-solid fa-plus"></i><span
-                            class="hide-menu">Add Products</span></a>
-                     </li>
-
-                     <li class="sidebar-item"> <a class="sidebar-link" href="/admin/category"
-                        aria-expanded="false"><i class="fa-solid fa-list"></i><span
-                            class="hide-menu">category</span></a>
-                     </li>
-
-
-                        <li class="list-divider"></li>
-                        <li class="nav-small-cap"><span class="hide-menu">Orders</span></li>
-
-                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/allorders"
-                                aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
-                                    class="hide-menu">All Orders
-                                </span></a>
-                        </li>
-                   
-
-                        
-                        <li class="list-divider"></li>
-                        <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
-                        
-                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/logout"
-                                aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span
-                                    class="hide-menu">Logout</span></a></li>
-                    </ul>
-                </nav>
-                <!-- End Sidebar navigation -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="javascript:void(0)"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="ms-2 d-none d-lg-inline-block"
+                ><span>Hello,</span> <span class="text-dark"><%=admin%></span>
+                <i data-feather="chevron-down" class="svg-icon"></i
+              ></span>
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY"
+            >
+              <a class="dropdown-item" href="javascript:void(0)"
+                ><i data-feather="user" class="svg-icon me-2 ms-1"></i> My
+                Profile</a
+              >
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/admin/logout"
+                ><i data-feather="power" class="svg-icon me-2 ms-1"></i>
+                Logout</a
+              >
+              <div class="dropdown-divider"></div>
             </div>
-            <!-- End Sidebar scroll-->
-        </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper bg-dark" style="min-height: 775px;">
+          </li>
+          <!-- ============================================================== -->
+          <!-- User profile and search -->
+          <!-- ============================================================== -->
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <aside class="left-sidebar" data-sidebarbg="skin6">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar" data-sidebarbg="skin6">
+      <!-- Sidebar navigation-->
+      <nav class="sidebar-nav">
+        <ul id="sidebarnav">
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/"
+              aria-expanded="false"
+              ><i data-feather="home" class="feather-icon"></i
+              ><span class="hide-menu">Dashboard</span></a
+            >
+          </li>
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Users</span></li>
 
-            <div class="container mt-5">
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/allusers" aria-expanded="false"
+              ><i class="fa-regular fa-user"></i
+              ><span class="hide-menu">All Users </span></a
+            >
+          </li>
 
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="main-box clearfix">
-                      <div class="table-responsive">
-                        <table class="table user-list" id="userTable">
-                          <thead>
-                            <tr>
+          <li class="list-divider"></li>
 
-                              <th><span class="ms-1">Name</span></th>
-                              <th><span class="ms-1">Description</span></th>
-                              <th><span class="ms-1">Price</span></th>
-                              <th><span class="ms-5">Stock</span></th>
-                              
-                              <th><span class="ms-1">Images</span></th>
-                              <th><span class="ms-1">Status</span></th>
-                            
-                              
-                            </tr>
-                          </thead>
-                          <tbody>
-                          <tr>
-                          
-                              <% allProducts.forEach(product => { %>
-                                <tr>
-                                  <td>
-                                    <p class="user-link mt-4"><%= product.Name %></p>
-                                  </td>
-                                  <td>
-                                    <p class="user-link mt-4"><%= product.Description%></p>
-                                  </td>
-                                  <td>
-                                    <p class="user-link mt-4"><%= product.Price %></p>
-                                  </td>
-                                  <td>
-                                    <p class="user-link mt-4 text-center "><%= product.Quantity %></p>
-                                  </td>
+          <li class="nav-small-cap"><span class="hide-menu">Products</span></li>
 
-                                     <td>
-                                        <img class="circular-image" src="/uploads/<%= product.Images %>" alt="<%= product.Name %> Image">
-                                  </td>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/products" aria-expanded="false"
+              ><i class="fa-regular fa-user"></i
+              ><span class="hide-menu">All Product </span></a
+            >
+          </li>
 
-                                  <td style="width: 20%">
-                                    <% if (product.Status=="blocked") { %>
-                                    <a href="/admin/unblockuser/<%= product._id %>" id="button1" class="table-link btn btn-primary mb-1" style="width: 100%;">Unblock</a>
-                                    <% } else { %>
-                                    <a href="/admin/blockuser/<%= product._id %>" id="button2" onclick="return confirm('Are you want to block <%=product.Name%> ?')" class="table-link btn btn-danger mb-1 " style="width: 100%;" >
-                                      Block
-                                    </a>
-                                    <% } %>
-                                  </td>
-                                </tr>
-                              <% }) %>
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/admin/addproducts"
+              aria-expanded="false"
+              ><i class="fa-solid fa-plus"></i
+              ><span class="hide-menu">Add Products</span></a
+            >
+          </li>
 
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/category" aria-expanded="false"
+              ><i class="fa-solid fa-list"></i
+              ><span class="hide-menu">category</span></a
+            >
+          </li>
 
-                          </tbody>
-                        </table>
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Orders</span></li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/allorders"
+              aria-expanded="false"
+              ><i class="fa-solid fa-cart-shopping"></i
+              ><span class="hide-menu">All Orders </span></a
+            >
+          </li>
+
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/logout"
+              aria-expanded="false"
+              ><i data-feather="log-out" class="feather-icon"></i
+              ><span class="hide-menu">Logout</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+      <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+  </aside>
+  <!-- ============================================================== -->
+  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Page wrapper  -->
+  <!-- ============================================================== -->
+  <div class="page-wrapper bg-dark" style="min-height: 775px">
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="main-box clearfix">
+            <div class="table-responsive">
+              <table class="table user-list" id="userTable">
+                <thead>
+                  <tr>
+                    <th><span class="ms-1">Name</span></th>
+                    <th><span class="ms-1">Description</span></th>
+                    <th><span class="ms-1">Price</span></th>
+                    <th><span class="ms-5">Stock</span></th>
+
+                    <th><span class="ms-1">Images</span></th>
+                    <th><span class="ms-1">Edit</span></th>
+                    <th><span class="ms-1">Status</span></th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <% allProducts.forEach(product => { %>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <p class="user-link mt-4"><%= product.Name %></p>
+                    </td>
+                    <td>
+                      <p class="user-link mt-4"><%= product.Description%></p>
+                    </td>
+                    <td>
+                      <p class="user-link mt-4"><%= product.Price %></p>
+                    </td>
+                    <td>
+                      <p class="user-link mt-4 text-center">
+                        <%= product.Quantity %>
+                      </p>
+                    </td>
+
+                    <td>
+                      <% for (let i = 0; i < product.Images.length; i++) { %>
+                      <img
+                        class="circular-image"
+                        src="/uploads/<%= product.Images[i] %>"
+                        alt="<%= product.Name %> Image"
+                        onclick="openPopup('/uploads/<%= product.Images[i] %>')"
+                      />
+                      <% } %>
+                    </td>
+                    <!-- Popup HTML -->
+                    <div id="imagePopup" class="image-popup">
+                      <div class="popup-content">
+                        <span class="close-popup" onclick="closePopup()"
+                          >&times;</span
+                        >
+                        <img id="popupImage" />
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-        </div>
+                            <td>
+                              <a  href="/admin/editproduct/<%= product._id %>"id="button1"
+                                class="table-link btn btn-primary mb-1"style="width: 100%" >Edit</a >  
+                            </td>
 
- <%- include("../partials/user/adminfooter.ejs")%>
+                    <td style="width: 20%">
+                      <% if (product.Status=="blocked") { %>
+                      <a
+                        href="/admin/unblockuser/<%= product._id %>"
+                        id="button1"
+                        class="table-link btn btn-primary mb-1"
+                        style="width: 100%"
+                        >Unblock</a >  
+
+                      <% } else { %>
+                      <a
+                        href="/admin/blockuser/<%= product._id %>"
+                        id="button2"
+                        onclick="return confirm('Are you want to block <%=product.Name%> ?')"
+                        class="table-link btn btn-danger mb-1"
+                        style="width: 100%"
+                      >
+                        Block
+                      </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+  <script>
+    // Add these functions to your JavaScript file or within a script tag at the end of your HTML document
+
+    function openPopup(imageSrc) {
+      // Set the source of the popup image
+      document.getElementById("popupImage").src = imageSrc;
+
+      // Show the popup
+      document.getElementById("imagePopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      // Hide the popup
+      document.getElementById("imagePopup").style.display = "none";
+    }
+  </script>
+
+
+
+
+
+  <link rel="stylesheet" href="/admin/css/allproducts.css">
+  <%- include("../partials/user/adminfooter.ejs")%>
+</div>
