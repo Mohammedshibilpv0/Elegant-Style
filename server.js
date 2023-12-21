@@ -42,7 +42,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/ElegantStyle').then(()=>{
 app.use(express.static(path.join(__dirname,'public')))
 app.use('/',userRoute)
 app.use('/admin',adminRoute)
-
+app.use('*',(req,res)=>{
+    res.render('404')
+})
 
 
 

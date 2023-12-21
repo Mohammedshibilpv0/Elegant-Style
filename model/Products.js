@@ -16,6 +16,11 @@ const ProductSchema= new mongoose.Schema({
         required:true,
 
     },
+    OfferPrice:{
+        type:Number,
+        min:0,
+        required:true
+    },
     Category:{
         type:mongoose.Schema.ObjectId,
         ref:"Categories"

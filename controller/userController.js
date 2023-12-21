@@ -1,10 +1,12 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
+const Products=require('../model/Products')
 
-const home = (req, res) => {
+const home = async (req, res) => {
   try {
+    const Product= await Products.find()
     const userName = req.session.user;
-    res.render("home", { userName });
+    res.render("home", { userName,Product });
   } catch (err) {
     console.log(err);
   }

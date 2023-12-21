@@ -68,6 +68,7 @@ const uploadProducts = async (req, res) => {                  //submitting addpr
           Description: req.body.description,
           Category: req.body.category,
           Date: req.body.date,
+          OfferPrice:req.body.offerprice,
           // Use req.files to get the uploaded file information
           Images: req.files.map(file => file.filename),
         });
@@ -121,6 +122,7 @@ const submitedit= async (req,res)=>{
     Description: req.body.description,
     Quantity: req.body.quantity,
     Price: req.body.price,
+    OfferPrice:req.body.offerprice
   };
   console.log(updatedData);
   Object.keys(updatedData).forEach(

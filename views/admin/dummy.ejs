@@ -189,7 +189,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
     <div class="form-group row">
         <label for="productName" class="col-sm-3 col-form-label" >Product Name</label>
         <div class="col-sm-9">
-          <input type="text" class="form-control" id="productName" name="name" placeholder="Product Name" value="<%=products.Name%>" required>
+          <input type="text" class="form-control" id="productName" name="name"  placeholder="Product Name" value="<%=products.Name%>" required>
           <small id="nameError" class="text-danger"></small>
         </div>
       </div>
@@ -197,11 +197,18 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
       <div class="form-group row">
         <label for="productPrice" class="col-sm-3 col-form-label">Product Price</label>
         <div class="col-sm-9">
-          <input type="number" class="form-control" id="productPrice" value="<%=products.Price%>" name="price" placeholder="Product Price" required>
+          <input type="number" class="form-control" id="productPrice" value="<%=products.Price%>" min="1" name="price" placeholder="Product Price" required>
           <small id="priceError" class="text-danger"></small>
         </div>
       </div>
 
+      <div class="form-group row">
+        <label for="productPrice" class="col-sm-3 col-form-label">Offer Price</label>
+        <div class="col-sm-9">
+          <input type="number" class="form-control" id="productPrice" value="<%=products.OfferPrice%>" min="1" name="offerprice" placeholder="Product Price" required>
+          <small id="priceError" class="text-danger"></small>
+        </div>
+      </div>
      
 
   <div class="form-group row">
@@ -227,7 +234,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
   <div class="form-group row">
       <label for="productQuantity" class="col-sm-3 col-form-label">Quantity</label>
       <div class="col-sm-9">
-          <input type="number" class="form-control" id="productQuantity" name="quantity" placeholder="Quantity" required>
+          <input type="number" class="form-control" id="productQuantity" name="quantity" min="1" placeholder="Quantity" required>
           <small id="quantityError" class="text-danger"></small>
       </div>
   </div>
