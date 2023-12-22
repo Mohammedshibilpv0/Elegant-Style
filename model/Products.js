@@ -21,9 +21,9 @@ const ProductSchema= new mongoose.Schema({
         min:0,
         required:true
     },
-    Category:{
-        type:mongoose.Schema.ObjectId,
-        ref:"Categories"
+    Category: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Categories', // Make sure it matches the model name for the Category
     },
     Status:{
         type:String,

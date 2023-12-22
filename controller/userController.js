@@ -1,14 +1,17 @@
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const Products=require('../model/Products')
+const Category=require('../model/category')
 
 const home = async (req, res) => {
   try {
-    const Product= await Products.find()
+    const Product = await Products.find().populate('Category').exec();
     const userName = req.session.user;
-    res.render("home", { userName,Product });
+    res.render("home", { userName, Product });
   } catch (err) {
     console.log(err);
+    // Handle the error appropriately, perhaps by rendering an error page
+    res.status(500).send('Internal Server Error');
   }
 };
 
