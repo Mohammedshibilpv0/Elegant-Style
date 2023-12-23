@@ -99,31 +99,46 @@ const editProduct = async (req, res) => {
 };
 
 const submitedit = async (req, res) => {
-  const productId = req.params.id;
-  const updatedData = {
-    Name: req.body.name,
-    Description: req.body.description,
-    Quantity: req.body.quantity,
-    Price: req.body.price,
-    OfferPrice: req.body.offerprice,
-  };
-  console.log(updatedData);
-  Object.keys(updatedData).forEach(
-    (key) => updatedData[key] == "" && delete updatedData[key]
-  );
-  // Find and update the product
-  // const product = await Product.findByIdAndUpdate(productId, updatedData);
-  const product = await Products.updateOne({ _id: productId }, updatedData);
-  if (product) {
-    // Redirect to the product list page
-    res.redirect("/admin/products");
+  try{
+
+    const productId = req.params.id;
+    const updatedData = {
+      Name: req.body.name,
+      Description: req.body.description,
+      Quantity: req.body.quantity,
+      Price: req.body.price,
+      OfferPrice: req.body.offerprice,
+    };
+    console.log(updatedData);
+    Object.keys(updatedData).forEach(
+      (key) => updatedData[key] == "" && delete updatedData[key]
+    );
+    // Find and update the product
+    // const product = await Product.findByIdAndUpdate(productId, updatedData);
+    const product = await Products.updateOne({ _id: productId }, updatedData);
+    if (product) {
+      // Redirect to the product list page
+      res.redirect("/admin/products");
+    }
+  }catch(err){
+    console.log(err);
   }
 };
 
 const singleProduct = async (req, res) => {
-  const product_id = req.params.id;
-  const products = await Products.findOne({ _id: product_id });
-  res.render("eachproducts", { products });
+  try{
+
+    const product_id = req.params.id;
+    const products = await Products.findOne({ _id: product_id }).populate('Category').exec();
+    const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
+    res.render("eachproducts", {products,recommend});
+  }catch(err){
+    console.log(err);
+  }
+
+
+
+  
 };
 
 module.exports = {

@@ -17,7 +17,17 @@ router.get('/logout',userController.logout)
 //products setting
 router.get('/singleproduct/:id',productsController.singleProduct)
 
+// Assuming you're using Express
+router.post('/updateStatus', (req, res) => {
+   const updatedStatus = Math.random();
+   
+   // Perform the status update logic here
 
+   // Send the updated status back to the client
+   res.json({ newStatus: updatedStatus });
+});
+
+ 
 
 
 

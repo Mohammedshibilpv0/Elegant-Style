@@ -188,17 +188,19 @@
                         <th scope="row"><%= index +1 %> </th>
                         <td><%=category.Name%></td>
                         <td><%=category.Description%></td>
-                        <td><%=category.Status%></td>
+                        <td id="status_<%= category._id %>"><%= category.Status %></td>
+
 
                        
-                          <td>
-                            <%if(category.Status=="active"){%>
-                            <a href="/admin/Unlistcategory/<%=category.id%>"" class="btn btn-primary mb-2 " style="width: 100%;" >Unlist</a>
-                            <%}else{%>
+                          <td >
+                           
+                            <% if (category.Status === "active") { %>
+                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','unlist')">Unlist</button>
+                            <% } else { %>
+                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','list')">List</button>
+                            <% } %>
+                            
 
-                            <a href="/admin/listcategory/<%=category.id%>" class="btn btn-primary mb-2" style="width: 100%;"  >list</a>
-
-                            <%}%>
                         </td>
                     
                       </tr>
@@ -227,5 +229,46 @@
 
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<script>
+    function changeStatus(categoryId,Action) {
+       // Send an Ajax request to update the status
+       fetch(`/admin/${Action}category/${categoryId}`, {
+          method: 'POST',
+          headers: {
+             'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ categoryId }),
+       })
+          .then(response => response.json())
+          .then(data => {
+             // Update the status in the table without reloading the page
+             const statusElement = document.getElementById(`status_${categoryId}`);
+             const buttonElement = document.getElementById(`button_${categoryId}`);
+
+        if (statusElement && buttonElement) {
+            statusElement.textContent = data.status;
+
+            // Update button text based on the received status
+            if (data.status === "active") {
+                buttonElement.textContent = "Unlist";
+                buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'unlist')`);
+            } else {
+                buttonElement.textContent = "List";
+                buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'list')`);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+    
+ </script>
+ 
+
+
+
 
 <%- include("../partials/user/adminfooter.ejs")%>

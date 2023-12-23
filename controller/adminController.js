@@ -68,10 +68,10 @@ const unblockUser = async (req, res) => {
         { _id: user_id },
         { Status: "active" }
       );
-      res.redirect("/admin/allusers");
-    } else {
-      res.redirect("/admin/allusers");
-    }
+      const userstatus=await Users.findOne({_id:user_id})
+      const status=userstatus.Status
+      res.json({status:status})
+      }
   } catch (err) {
     console.log(err);
   }
@@ -87,10 +87,11 @@ const blockUser = async (req, res) => {
         { _id: user_id },
         { Status: "blocked" }
       );
-      res.redirect("/admin/allusers");
-    } else {
-      res.redirect("/admin/allusers");
+      const userstatus=await Users.findOne({_id:user_id})
+      const status=userstatus.Status
+      res.json({status:status})
     }
+    
   } catch (err) {
     console.log(err);
   }
@@ -150,20 +151,31 @@ const blockUser = async (req, res) => {
 
 
    const unlistCategory= async (req,res)=>{
+    try{
+      
       const category_id=req.params.id
       const check= await Category.findOne({_id:category_id})                              //for unlist the category
       if(check.Status=="active"){
-       await Category.updateOne({_id:category_id},{Status:"blocked"})
-        res.redirect('/admin/category')
+       const category= await Category.updateOne({_id:category_id},{Status:"blocked"})
+       const check= await Category.findOne({_id:category_id})
+       const status=check.Status
+   
+        res.json({status:status})
       }
+    }catch(err){
+      console.log(err);
+    }
    }
 
    const listCategory= async (req,res)=>{
-      const category_id=req.params.id                                                       //list the category
+      const category_id=req.params.id
+                                                  //list the category
       const check= await Category.findOne({_id:category_id})
       if(check.Status=="blocked"){
-        await Category.updateOne({_id:category_id},{Status:"active"})
-        res.redirect('/admin/category')
+       const category = await Category.updateOne({_id:category_id},{Status:"active"})
+       const check= await Category.findOne({_id:category_id})
+       const status=check.Status
+        res.json({status:status})
       }
    }
 

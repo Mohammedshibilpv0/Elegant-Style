@@ -137,7 +137,7 @@
                                         <div class="product-cat">
  
                                         </div><!-- End .product-cat -->
-                                        <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="product.html" ><%=product.Name%></a></h3><!-- End .product-title -->
+                                        <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="/singleproduct/<%=product._id%>" ><%=product.Name%></a></h3><!-- End .product-title -->
                                         <p style="margin-bottom:  8px; margin-left: 16px;"> <%= product.Category ? product.Category.Name : 'No Category' %></p>
                                         <div class="product-price " style="margin-left: 16px; ;">
                                             $<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">$<%= product.Price %></s>  

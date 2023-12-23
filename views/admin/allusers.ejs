@@ -185,16 +185,14 @@
                                     <p class="user-link mt-4"><%= data.Email %></p>
                                   </td>
                                   <td>
-                                    <p class="user-link mt-4"><%= data.Status %></p>
+                                    <p class="user-link mt-4" id="status_<%= data._id %>" ><%= data.Status %></p>
                                   </td>
                                   <td style="width: 20%">
                                     <% if (data.Status=="blocked") { %>
-                                    <a href="/admin/unblockuser/<%= data._id %>" id="button1" class="table-link btn btn-primary mb-1" style="width: 100%;">Unblock</a>
-                                    <% } else { %>
-                                      <a href="/admin/blockuser/<%= data._id %>" id="button2" onclick="showConfirmation('<%= data._id %>', '<%= data.Name %>')" class="table-link btn btn-danger mb-1" style="width: 100%;">
-                                        Block
-                                      </a>
-                                    <% } %>
+                                      <button id="button_<%= data._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="usermange('<%= data._id %>','unblock')">Unblock</button>
+                                      <% } else { %>
+                                          <button id="button_<%= data._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="usermange('<%= data._id %>','block')">block</button>
+                                      <% } %>
                                   </td>
                                 </tr>
                               <% }) %>
@@ -214,8 +212,40 @@
                 </div>
               </div>
         </div>
-      
 
-        
+
+
+        <script>
+
+          function usermange(userid,action){
+            fetch(`/admin/${action}user/${userid}`,{
+              method:'POST',
+              headers: {
+             'Content-Type': 'application/json',
+          },
+            body: JSON.stringify({ userid }),
+            }).then(response => response.json())
+          .then(data => {
+             // Update the status in the table without reloading the page
+             const statusElement = document.getElementById(`status_${userid}`);
+             const buttonElement = document.getElementById(`button_${userid}`);
+
+        if (statusElement && buttonElement) {
+            statusElement.textContent = data.status;
+
+            // Update button text based on the received status
+            if (data.status === "active") {
+                buttonElement.textContent = "block";
+                buttonElement.setAttribute("onclick", `usermange('${userid}', 'block')`);
+            } else {
+                buttonElement.textContent = "unblock";
+                buttonElement.setAttribute("onclick", `usermange('${userid}', 'unblock')`);
+            }
+        }
+            }).catch(error => console.error('Error:', error));
+}
+          
+
+        </script>
 
         <%- include("../partials/user/adminfooter.ejs")%>
