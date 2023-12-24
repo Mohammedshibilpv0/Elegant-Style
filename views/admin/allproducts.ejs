@@ -209,7 +209,7 @@
         <div class="col-lg-12">
           <div class="main-box clearfix">
             <div class="table-responsive">
-              <table class="table user-list" id="userTable">
+              <table class="table user-list" id="userTable" style="color: white;">
                 <thead>
                   <tr>
                     <th><span class="ms-1">Name</span></th>
@@ -220,6 +220,7 @@
                     <th><span class="ms-1">Images</span></th>
                     <th><span class="ms-1">Edit</span></th>
                     <th><span class="ms-1">Status</span></th>
+                    <th><span class="ms-1">Delete</span></th>
 
                   </tr>
                 </thead>
@@ -236,7 +237,7 @@
                       <p class="user-link mt-4"><%= product.Description%></p>
                     </td>
                     <td>
-                      <p class="user-link mt-4"><%= product.Price %></p>
+                      <p class="user-link mt-4"><%= product.OfferPrice %></p>
                     </td>
                     <td>
                       <p class="user-link mt-4 text-center">
@@ -265,29 +266,21 @@
                     </div>
                             <td>
                               <a  href="/admin/editproduct/<%= product._id %>"id="button1"
-                                class="table-link btn btn-primary mb-1"style="width: 100%" >Edit</a >  
+                                class="table-link btn btn-primary mt-2"style="width: 100%" >Edit</a >  
                             </td>
 
+                            <td>
+                              <p class="user-link mt-3" id="status_<%=product._id%>"><%= product.Status %></p>
+                            </td>
                     <td style="width: 20%">
-                      <% if (product.Status=="blocked") { %>
-                      <a
-                        href="/admin/unblockuser/<%= product._id %>"
-                        id="button1"
-                        class="table-link btn btn-primary mb-1"
-                        style="width: 100%"
-                        >Unblock</a >  
 
-                      <% } else { %>
-                      <a
-                        href="/admin/blockuser/<%= product._id %>"
-                        id="button2"
-                        onclick="return confirm('Are you want to block <%=product.Name%> ?')"
-                        class="table-link btn btn-danger mb-1"
-                        style="width: 100%"
-                      >
-                        Block
-                      </a>
-                      <% } %>
+                      <% if (product.Status=="blocked") { %>
+                        <button id="button_<%= product._id %>" class="btn btn-primary mt-2" style="width: 100%;" onclick="listproduct('<%= product._id %>','list')">List</button>
+                    <% } else { %>
+                        <button id="button_<%= product._id %>" class="btn btn-primary mt-2" style="width: 100%;" onclick="listproduct('<%= product._id %>','unlist')">Unlist</button>
+                    <% } %>
+                    
+
                     </td>
                   </tr>
                   <% }) %>
@@ -300,8 +293,9 @@
     </div>
   </div>
 
-
-
+ 
+  <link rel="stylesheet" href="/admin/css/allproducts.css">
+</div>
 
 
 
@@ -322,12 +316,36 @@
       // Hide the popup
       document.getElementById("imagePopup").style.display = "none";
     }
+    function listproduct(proid, action) {
+
+    fetch(`/admin/${action}product/${proid}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ proid }),
+    }).then(response => response.json())
+    .then(data => {
+        // Update the status in the table without reloading the page
+        const statusElement = document.getElementById(`status_${proid}`);
+        const buttonElement = document.getElementById(`button_${proid}`);
+
+        if (statusElement && buttonElement) {
+            statusElement.textContent = data.status;
+
+            // Update button text and click event based on the received status
+            if (data.status === "active") {
+                buttonElement.textContent = "unlist";
+                buttonElement.setAttribute("onclick", `listproduct('${proid}', 'unlist')`);
+            } else {
+                buttonElement.textContent = "list";
+                buttonElement.setAttribute("onclick", `listproduct('${proid}', 'list')`);
+            }
+        }
+    }).catch(error => console.error('Error:', error));
+}
+
+
   </script>
 
-
-
-
-
-  <link rel="stylesheet" href="/admin/css/allproducts.css">
-  <%- include("../partials/user/adminfooter.ejs")%>
-</div>
+<%- include("../partials/user/adminfooter.ejs")%>

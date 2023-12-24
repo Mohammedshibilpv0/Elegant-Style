@@ -162,7 +162,7 @@
                   <div class="col-lg-12">
                     <div class="main-box clearfix">
                       <div class="table-responsive">
-                        <table class="table user-list" id="userTable">
+                        <table class="table user-list" id="userTable" style="color: white;">
                           <thead>
                             <tr>
 
@@ -218,6 +218,7 @@
         <script>
 
           function usermange(userid,action){
+            
             fetch(`/admin/${action}user/${userid}`,{
               method:'POST',
               headers: {

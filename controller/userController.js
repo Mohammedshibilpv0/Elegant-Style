@@ -7,6 +7,7 @@ const home = async (req, res) => {
   try {
     const Product = await Products.find().populate('Category').exec();
     const userName = req.session.user;
+
     res.render("home", { userName, Product });
   } catch (err) {
     console.log(err);

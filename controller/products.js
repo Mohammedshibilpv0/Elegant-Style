@@ -136,10 +136,32 @@ const singleProduct = async (req, res) => {
     console.log(err);
   }
 
-
-
   
 };
+
+const unlistProduct=async (req,res)=>{
+  try{
+    const product= await Products.findByIdAndUpdate({_id:req.params.id},{Status:"blocked"})
+    const updated= await Products.findOne({_id:req.params.id})
+    const status=updated.Status
+    res.json({status:status})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const listProduct= async (req,res)=>{
+  try{
+    const product= await Products.findByIdAndUpdate({_id:req.params.id},{Status:"active"})
+    const updated= await Products.findOne({_id:req.params.id})
+    const status=updated.Status
+    res.json({status:status})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
 
 module.exports = {
   addProducts,
@@ -148,4 +170,6 @@ module.exports = {
   editProduct,
   submitedit,
   singleProduct,
+  unlistProduct,
+  listProduct,
 };

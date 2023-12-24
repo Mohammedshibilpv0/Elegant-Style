@@ -3,7 +3,7 @@ const adminRoute=express()
 const adminController=require('../controller/adminController')
 const middleware=require('../middleware/admin')
 const productsController=require('../controller/products')
-const Category=require('../model/category')
+const products=require('../model/Products')
 const multer=require('multer')
 const path=require('path')
 
@@ -29,7 +29,8 @@ adminRoute.get('/products',productsController.allProducts)
 adminRoute.get('/editproduct/:id',productsController.editProduct)
 adminRoute.post('/submitedit/:id',productsController.submitedit)
 
-
+adminRoute.post('/unlistproduct/:id',productsController.unlistProduct)
+adminRoute.post('/listproduct/:id',productsController.listProduct)
 
 
 module.exports=adminRoute
