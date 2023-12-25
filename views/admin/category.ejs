@@ -178,6 +178,7 @@
                         <th scope="col">Category Name</th>
                         <th scope="col">Description</th>
                         <th scope="col">Action</th>
+                        <th scope="col">Edit</th>
                          <th scope="col">Status</th>
                       </tr>
                     </thead>
@@ -189,7 +190,7 @@
                         <td><%=category.Name%></td>
                         <td><%=category.Description%></td>
                         <td id="status_<%= category._id %>"><%= category.Status %></td>
-
+                        <td> <a href="/admin/editcategory/<%=category._id%>" class="btn btn-danger">  edit</a>  </td>
 
                        
                           <td >

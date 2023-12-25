@@ -5,9 +5,9 @@ const Category=require('../model/category')
 
 const home = async (req, res) => {
   try {
-    const Product = await Products.find().populate('Category').exec();
+    const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
     const userName = req.session.user;
-
+    const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
     res.render("home", { userName, Product });
   } catch (err) {
     console.log(err);

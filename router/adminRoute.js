@@ -21,7 +21,8 @@ adminRoute.get('/addcategory',middleware.verify,adminController.addCategory)
 adminRoute.post('/addcategory',middleware.verify,adminController.submitCategory)
 adminRoute.post('/unlistcategory/:id',middleware.verify,adminController.unlistCategory)
 adminRoute.post('/listcategory/:id',middleware.verify,adminController.listCategory)
-
+adminRoute.get('/editcategory/:id',adminController.editcategory)
+adminRoute.post('/editcategorypost/:id',adminController.submiteditcategory)
 //product controller
 adminRoute.get('/addproducts',productsController.addProducts)
 adminRoute.post('/products/upload',productsController.uploadProducts)

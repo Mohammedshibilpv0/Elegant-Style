@@ -168,6 +168,8 @@ const blockUser = async (req, res) => {
    }
 
    const listCategory= async (req,res)=>{
+    try{
+
       const category_id=req.params.id
                                                   //list the category
       const check= await Category.findOne({_id:category_id})
@@ -177,8 +179,46 @@ const blockUser = async (req, res) => {
        const status=check.Status
         res.json({status:status})
       }
+    }catch(err){
+      console.log(err);
+    }
    }
 
+
+   const editcategory= async (req,res)=>{
+    try{
+      const admin=req.session.admin
+      const category_id=req.params.id
+      const editcategory= await Category.findOne({_id:category_id})
+      res.render('editcategory',{editcategory,admin})
+
+
+    }catch(err){
+      console.log(err);
+    }
+   }
+
+
+   const submiteditcategory= async(req,res)=>{
+    try{
+      const category_id= req.params.id
+     const updatecategory= await Category.findOne({_id:category_id})
+    
+      if(updatecategory){
+      await Category.findByIdAndUpdate({_id:category_id},{
+        Name:req.body.categoryname,
+        Description:req.body.categorydesc
+      })
+     }else{
+      res.redirect('/admin/category')
+     }
+    
+   
+     res.redirect('/admin/category')
+    }catch(err){
+      console.log(err);
+    }
+   }
 
 module.exports = {
   home,
@@ -192,5 +232,7 @@ module.exports = {
   addCategory,
   submitCategory,
   unlistCategory,
-  listCategory
+  listCategory,
+  editcategory,
+  submiteditcategory
 };
