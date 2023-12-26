@@ -1,13 +1,24 @@
-const mongoose=require('mongoose')
-const Schema=mongoose.Schema
+const mongoose = require('mongoose');
 
-const verifySchema=new Schema({
-    userId:String,
-    otp:String,
-    createdAt:Date,
-    expiresAt:Date
-})
+const userOtpVerificationSchema = mongoose.Schema({
+    email: {
+        type: String,
+    },
+    otp: {
+        type: String,
+    },
+    createdAt: {
+        type: Date,
+        
+            default: Date.now,
+    
+    },
 
-const otpVerify=mongoose.model("UserOtpVerification",verifySchema)
 
-module.exports=otpVerify
+});
+
+userOtpVerificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 });
+
+const UserOtpVerification = mongoose.model('userOtpVerification', userOtpVerificationSchema);
+
+module.exports = UserOtpVerification;

@@ -21,7 +21,9 @@ router.get('/singleproduct/:id',productsController.singleProduct)
 
 
 
+router.get('/otp',userController.loadOtp);
 
+router.post('/otp',userController.verifyOtp);
 
 
 

@@ -24,8 +24,13 @@ const userData= new mongoose.Schema({
         type:String,
         enum: ["active", "blocked"],
         default: "active",
-    }
-   
+    },
+    Verified:{
+        type: Boolean,
+        default: false
+
+    },
+
 })
 
 const User=mongoose.model("User",userData)
