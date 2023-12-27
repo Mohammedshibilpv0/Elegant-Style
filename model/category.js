@@ -4,7 +4,7 @@ const category= new mongoose.Schema({
 
     Name:{
         type:String,
-        unique:true, //for ensure that unique name in category
+        unique:true,      //for ensure that unique name in category
         required:true
     },
     Description:{

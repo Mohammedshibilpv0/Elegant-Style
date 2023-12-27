@@ -52,7 +52,8 @@ const logout = (req, res) => {
 const allUsers = async (req, res) => {
   try {
     const admin=req.session.admin
-    const userData = await Users.find();
+    const userData = await Users.find({Verified:true});
+    console.log(userData);
     res.render("allusers", { userData,admin });
   } catch (err) {
     console.log(err);

@@ -21,22 +21,38 @@ const login = (req, res) => {
   try {
 
     const errmsg = req.flash("err");
-    res.render("login", { errmsg });
+    const succmsg = req.flash("succ");
+    res.render("login", { errmsg,succmsg });
 
   } catch (err) {
     console.log(err);
   }
 };
 
+const signup = (req, res) => {
+  try {
+
+    const errmsg = req.flash("err");
+    const succmsg = req.flash("succ");
+    res.render("register", { errmsg,succmsg });
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
 const register = async (req, res) => {
 
   try {
     const emailCheck = await User.findOne({ Email: req.body.email });
     if (emailCheck) {
+    
       const errmsg = "Email already exist";
       req.flash("err", errmsg);
       res.redirect("/login");
-    } else {
+ 
+  } else {
       const Password = await bcrypt.hash(req.body.password, 10);
       const user = new User({
         Name: req.body.name,
@@ -157,22 +173,25 @@ const verifyOtp = async (req, res) => {
           if (user.Verified==true) {
               if (user.Status!=="blocked") {
 
-
+                req.flash('succ', 'successfully register please login');
                   res.redirect('/login');
               } else {
+
                   console.log("user blocked from this site");
 
 
-                  req.flash('error', 'you are blocked from this contact with admin');
+                  req.flash('err', 'you are blocked from this contact with admin');
                   res.redirect('/login')
 
               }
 
+          }else{
+            
           }
-      } else {
-          console.log("whyyy")
-
-          req.flash('error', 'otp is incorrect you have to verifey again login to get otp');
+         } else {
+          
+          await User.deleteOne({Email:email})
+          req.flash('err', 'otp is incorrect you have to verifey again login to get otp');
           res.redirect('/login')
 
       }
@@ -229,12 +248,12 @@ const submitlogin = async (req, res) => {
           res.redirect("/login");
         }
       } else {
-        const errormsg = "User not found please register first";
+        const errormsg = "User not found";
         req.flash("err", errormsg);
         res.redirect("/login");
       }
     } else {
-      const errormsg = "User not found please register first";
+      const errormsg = "User not found";
       req.flash("err", errormsg);
       res.redirect("/login"); // Handle the case where the user with the specified email is not found
     }
@@ -263,4 +282,5 @@ module.exports = {
   loadOtp,
   submitlogin,
   logout,
+  signup,
 };

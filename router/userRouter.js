@@ -10,6 +10,7 @@ const productsController=require('../controller/products')
 
 router.get('/',middleware.isBlock,userController.home)
 router.get('/login',middleware.islogin,userController.login)
+router.get('/signup',middleware.islogin,userController.signup)
 router.post('/register',middleware.islogin,userController.register)
 router.post('/loginsubmit',middleware.islogin,userController.submitlogin)
 

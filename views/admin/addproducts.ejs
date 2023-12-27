@@ -271,51 +271,44 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
 
 
 <!-- Your existing form code -->
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-  $(document).ready(function() {
-    // Function to handle image preview
-    function handleImageChanges() {
-      var previewContainer = $('#image-preview-container');
-      var files = $('#productimages')[0].files;
+  document.addEventListener("DOMContentLoaded", function () {
+    const maxImageCount = 4; // Adjust the maximum image count as needed
+    const previewContainer = document.getElementById("image-preview-container");
 
-      for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var reader = new FileReader();
+    document
+      .getElementById("productimages")
+      .addEventListener("change", function (e) {
+        const selectedFiles = e.target.files;
+        if (selectedFiles.length > maxImageCount) {
+          alert(`Maximum ${maxImageCount} images allowed.`);
+          e.target.value = ""; // Clear the file input
+        } else {
+          updateImagePreviews(selectedFiles);
+        }
+      });
 
-        reader.onload = function (e) {
-          var img = $('<img>').attr('src', e.target.result).addClass('img-thumbnail');
-          previewContainer.append(img);
-        };
+    function updateImagePreviews(files) {
+      previewContainer.innerHTML = ""; // Clear the existing previews
 
-        reader.readAsDataURL(file);
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        const previewImage = document.createElement("img");
+        previewImage.className = "preview-image";
+
+        reader.onload = (function (img) {
+          return function (e) {
+            img.src = e.target.result;
+          };
+        })(previewImage);
+
+        reader.readAsDataURL(files[i]);
+        previewContainer.appendChild(previewImage);
       }
     }
-
-    // Attach the handleImageChanges function to the change event of the file input
-    $('#productimages').on('change', handleImageChanges);
-
-    // Add your form validation logic here
-    function validateForm() {
-      // Example validation: Ensure that at least one image is selected
-      var files = $('#productimages')[0].files;
-      if (files.length === 0) {
-        $('#imagesError').text('Please select at least one image.');
-        return false;
-      } else {
-        $('#imagesError').text('');
-        return true;
-      }
-    }
-
-    // Attach the validateForm function to the form's submit event
-    $('.forms-sample').on('submit', function() {
-      return validateForm();
-    });
   });
 </script>
-
-
 
 
 <%-include('../partials/user/adminfooter.ejs')%>

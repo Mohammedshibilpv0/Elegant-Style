@@ -4,78 +4,55 @@
 
 
         <main class="main">
-            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('assets/images/backgrounds/login-bg.jpg')">
+            <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('user/assets/images/backgrounds/login-bg.jpg')">
             	<div class="container">
             		<div class="form-box">
             			<div class="form-tab">
 	            			<ul class="nav nav-pills nav-fill" role="tablist">
+							    
 							    <li class="nav-item">
-							        <a class="nav-link" id="signin-tab-2" data-toggle="tab" href="#signin-2" role="tab" aria-controls="signin-2" aria-selected="false">Sign In</a>
-							    </li>
-							    <li class="nav-item">
-							        <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
+							        <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Login</a>
 							    </li>
 							</ul>
 							<div class="tab-content">
 							    <div class="tab-pane fade" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
-							    	<form action="/loginsubmit" method="post">
-
+							    
+							    </div><!-- .End .tab-pane -->
+							    <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
+									<form action="/loginsubmit" method="post">
+										<% if (locals.errmsg) { %>
+                                            <p style="color: red;"><%= errmsg%></p>
+                                          <% }%>
+                                          <% if (locals.succmsg) { %>
+                                            <p class="text-success" ><%= succmsg%></p>
+                                          <% }%>
 							    		<div class="form-group">
-							    			<label for="singin-email-2">Username or email address *</label>
+							    			<label for="singin-email-2"> email address *</label>
 							    			<input type="text" class="form-control" id="singin-email-2" name="logemail" required>
+											<span id="emailError" style="color: red;"></span>
 							    		</div><!-- End .form-group -->
 
 							    		<div class="form-group">
 							    			<label for="singin-password-2">Password *</label>
 							    			<input type="password" class="form-control" id="singin-password-2" name="logpassword" required>
-							    		</div><!-- End .form-group -->
+											<span id="show" style="color: red;"></span>
+											
+							    		</div>
+										<div class="form-check mb-4">
+											<input class="form-check-input" type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()" style="margin-top: 7px;">
+											<label class="form-check-label" for="showPasswordCheckbox" style="margin-left: 5px;">Show Password</label>
+										  </div><!-- End .form-group -->
 
 							    		<div class="form-footer">
-							    			<button type="submit" class="btn btn-outline-primary-2">
+							    			<button type="submit" class="btn btn-outline-primary-2" >
 			                					<span>LOG IN</span>
 			            						<i class="icon-long-arrow-right"></i>
 			                				</button>
-
-											<a href="#" class="forgot-link">Forgot Your Password?</a>
+											<a href="/signup" class="forgot-link">Don't have an account?</a>
+											<!-- <a href="#" class="forgot-link">Forgot Your Password?</a> -->
 							    		</div><!-- End .form-footer -->
 							    	</form>
 
-							    </div><!-- .End .tab-pane -->
-							    <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-							    	<form action="/register" method="post">
-
-										<% if (locals.errmsg) { %>
-											<p style="color: red;"><%= errmsg%></p>
-										  <% }%>
-
-                                        <div class="form-group">
-							    			<label for="register-email-2">Name</label>
-							    			<input type="text" class="form-control" id="register-email-2" name="name" required>
-							    		</div>
-							    		<div class="form-group">
-							    			<label for="register-email-2">Your email address *</label>
-							    			<input type="email" class="form-control" id="register-email-2" name="email" required>
-							    		</div><!-- End .form-group -->
-                                      
-ef
-							    		<div class="form-group">
-							    			<label for="register-password-2">Password *</label>
-							    			<input type="password" class="form-control" id="register-password-2" name="password" required>
-							    		</div><!-- End .form-group -->
-                                       
-
-							    		<div class="form-footer">
-							    			<button type="submit" class="btn btn-outline-primary-2">
-			                					<span>SIGN UP</span>
-			            						<i class="icon-long-arrow-right"></i>
-			                				</button>
-
-			                				<div class="custom-control custom-checkbox">
-												<input type="checkbox" class="custom-control-input" id="register-policy-2" required>
-												<label class="custom-control-label" for="register-policy-2">I agree to the <a >privacy policy</a> *</label>
-											</div><!-- End .custom-checkbox -->
-							    		</div><!-- End .form-footer -->
-							    	</form>
 
 							    </div><!-- .End .tab-pane -->
 							</div><!-- End .tab-content -->
@@ -86,4 +63,81 @@ ef
         </main><!-- End .main -->
 
 
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+			  var form = document.querySelector("form");
+		  
+			  form.addEventListener("submit", function(event) {
+				var emailInput = document.getElementById('singin-email-2');
+				var passwordInput = document.getElementById('singin-password-2');
+				let  display=document.getElementById('show')
+				// Reset previous error styles
+				resetValidationStyles();
+		  
+		  
+				
+		  
+				// Validate email
+				if (emailInput.value.trim() === "") {
+				  event.preventDefault();
+				  displayError(emailInput);
+				} else if (!isValidEmail(emailInput.value.trim())) {
+				  event.preventDefault();
+				  displayError(emailInput);
+				}
+		  
+				// Validate password
+				if (passwordInput.value.trim() === "") {
+				  event.preventDefault();
+				  displayError(passwordInput);
+				} else if (passwordInput.value.trim().length < 6) {
+				  event.preventDefault();
+				  displayError(display.innerHTML="Password must be at least 6 characters long.");
+				}
+			  });
+		  
+			  function displayError(input, message) {
+				input.classList.add("is-invalid");
+				if (message) {
+				  var errorMessage = document.createElement("p");
+				  errorMessage.className = "text-danger error-message";
+				  errorMessage.textContent = message;
+				  input.parentNode.appendChild(errorMessage);
+				}
+			  }
+		  
+			  function resetValidationStyles() {
+				document.querySelectorAll(".is-invalid").forEach(function(element) {
+				  element.classList.remove("is-invalid");
+				});
+				document.querySelectorAll(".error-message").forEach(function(element) {
+				  element.remove();
+				});
+			  }
+		  
+			  function isValidEmail(email) {
+				// You can use a more sophisticated email validation regex here
+				var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				return emailRegex.test(email);
+			  }
+			});
+		  
+		  
+			function togglePasswordVisibility() {
+			  const passwordInput = document.getElementById('singin-password-2');
+			  const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+		  
+			  if (showPasswordCheckbox.checked) {
+				passwordInput.type = 'text';
+			  } else {
+				passwordInput.type = 'password';
+			  }
+			}
+		  </script>
+		
+
 <%-include("../partials/user/footer.ejs")%>
+<%-include("../partials/user/footbar.ejs")%>
+
+
+

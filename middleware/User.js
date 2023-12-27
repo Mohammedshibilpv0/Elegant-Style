@@ -14,7 +14,7 @@ const islogin=(req,res,next)=>{
 
 const isBlock= async (req,res,next)=>{
   const check= await Users.findOne({Email:req.session.email})
-  console.log(check);
+
        if(req.session.user&&check.Status=="blocked"){
         req.session.user=null,
         req.session.Email=null
