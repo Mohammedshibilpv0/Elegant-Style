@@ -300,6 +300,8 @@
 
 
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
   <script>
     // Add these functions to your JavaScript file or within a script tag at the end of your HTML document
@@ -317,32 +319,46 @@
       document.getElementById("imagePopup").style.display = "none";
     }
     function listproduct(proid, action) {
+    // Show a confirmation dialog
+    
+    Swal.fire({
+        title: 'Confirmation',
+        text: `Are you sure you want to ${action === 'list' ? 'list' : 'unlist'} this product?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // User clicked "Yes," proceed with the API call
+            fetch(`/admin/${action}product/${proid}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ proid }),
+            }).then(response => response.json())
+                .then(data => {
+                    // Update the status in the table without reloading the page
+                    const statusElement = document.getElementById(`status_${proid}`);
+                    const buttonElement = document.getElementById(`button_${proid}`);
 
-    fetch(`/admin/${action}product/${proid}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ proid }),
-    }).then(response => response.json())
-    .then(data => {
-        // Update the status in the table without reloading the page
-        const statusElement = document.getElementById(`status_${proid}`);
-        const buttonElement = document.getElementById(`button_${proid}`);
+                    if (statusElement && buttonElement) {
+                        statusElement.textContent = data.status;
 
-        if (statusElement && buttonElement) {
-            statusElement.textContent = data.status;
-
-            // Update button text and click event based on the received status
-            if (data.status === "active") {
-                buttonElement.textContent = "unlist";
-                buttonElement.setAttribute("onclick", `listproduct('${proid}', 'unlist')`);
-            } else {
-                buttonElement.textContent = "list";
-                buttonElement.setAttribute("onclick", `listproduct('${proid}', 'list')`);
-            }
+                        // Update button text and click event based on the received status
+                        if (data.status === "active") {
+                            buttonElement.textContent = "unlist";
+                            buttonElement.setAttribute("onclick", `listproduct('${proid}', 'unlist')`);
+                        } else {
+                            buttonElement.textContent = "list";
+                            buttonElement.setAttribute("onclick", `listproduct('${proid}', 'list')`);
+                        }
+                    }
+                }).catch(error => console.error('Error:', error));
         }
-    }).catch(error => console.error('Error:', error));
+        // If the user clicked "No" or closed the dialog, do nothing
+    });
 }
 
 

@@ -1,6 +1,34 @@
 <%-include("../partials/user/header.ejs")%>
 <%-include("../partials/user/navbar.ejs")%>
 
+<style>
+    .product-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  
+    .col-6 {
+      flex: 0 0 50%; /* Two columns in a row for larger screens */
+      max-width: 25%;
+    }
+  
+    @media (max-width: 768px) {
+      .col-6 {
+        flex: 0 0 100%; /* One column in a row for smaller screens */
+        max-width: 100%;
+      }
+    }
+  </style>
+  
+  <div class="product-container">
+    <!-- Your product cards go here -->
+    <div class="col-6 col-md-4 col-lg-3">
+      <!-- Your product card content -->
+    </div>
+    <!-- Repeat for other product cards -->
+  </div>
+  
+
 <% if (userName) { %>
     <div class="page-wrapper">
 <div class="container">
@@ -54,7 +82,7 @@
                                     <div class="banner-content"> 
                                         <h4 class="banner-subtitle">Womens</h4><!-- End .banner-subtitle -->
                                         <h3 class="banner-title  text-dark">our Women's Collection—a curated selection designed <br>to empower and celebrate the modern woman.</h3><!-- End .banner-title -->
-                                        <a href="#" class="btn btn-primary btn-rounded"><span>Click Here</span><i class="icon-long-arrow-right"></i></a>
+                                        <!-- <a href="#" class="btn btn-primary btn-rounded"><span>Click Here</span><i class="icon-long-arrow-right"></i></a> -->
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-lg-8 -->
@@ -70,7 +98,7 @@
                                             <div class="banner-content">
                                                 <h4 class="banner-subtitle">Mens</h4><!-- End .banner-subtitle -->
                                                 <h3 class="banner-title text-dark"> our curated Men's Collection, <br> where sophistication meets comfort.</h3><!-- End .banner-title -->
-                                                <a href="#" class="banner-link text-dark">Click here</a>
+                                                <!-- <a href="#" class="banner-link text-dark">Click here</a> -->
                                             </div><!-- End .banner-content -->
                                         </div><!-- End .banner -->
                                     </div><!-- End .col-sm-6 col-lg-12 -->
@@ -84,7 +112,7 @@
                                             <div class="banner-content">
                                                 <h4 class="banner-subtitle text-light">Kids  </h4><!-- End .banner-subtitle -->
                                                 <h3 class="banner-title text-light">Delight in the magic of childhood  <br>with our enchanting Kids' Collection.</h3><!-- End .banner-title -->
-                                                <a href="#" class="banner-link">Click here</a>
+                                                <!-- <a href="#" class="banner-link">Click here</a> -->
                                             </div><!-- End .banner-content -->
                                         </div><!-- End .banner -->
                                     </div><!-- End .col-sm-6 col-lg-12 -->
@@ -109,12 +137,12 @@
                                 <%if(product.Status=="active"){%>   
 
 
-                            <div class="col-6 col-md-4 col-lg-3 mt-4 mb-4" style="height: 450px;">
+                            <div class="col-6 col-md-4 col-lg-3 mt-5  " >
 
-                                <div class="product product-4" style="height: 450px;">
+                                <div class="product product-4"  ">
                                     <figure class="product-media">
                                         <a href="/singleproduct/<%=product._id%>">
-                                            <div style="height: 280px;">
+                                            <div style="height: 220px;">
 
                                                 <img src="/uploads/<%= product.Images[0] %>" alt="Product image" class="product-image">
                                             </div>
@@ -144,7 +172,7 @@
                                             $<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">$<%= product.Price %></s>  
                                           </div>
                                         <!-- End .product-price -->
-                                        <p style="margin-left: 16px;">only <span class="text-danger" >5</span> left</p>
+                                        <p style="margin-left: 16px;">only <span class="text-danger" ><%=product.Quantity%></span> left</p>
                                       
 
                                     </div><!-- End .product-body -->
@@ -171,47 +199,8 @@
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
-
-    <div class="mobile-menu-container mobile-menu-light">
-        <div class="mobile-menu-wrapper">
-            <span class="mobile-menu-close"><i class="icon-close"></i></span>
-
-            <form action="#" method="get" class="mobile-search">
-                <label for="mobile-search" class="sr-only">Search</label>
-                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
-                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-            </form>
-            
-            <nav class="mobile-nav">
-                <ul class="mobile-menu">
-                    <li class="active">
-                        <a href="/">Home</a>
-
-                    </li>
-                    <li>
-                        <a href="/allshop">Shop</a>
-                       
-                    </li>
-                    <li>
-                        <a href="/" class="sf-with-ul">Product</a>
-                       
-                    </li>
-                 
-                    <li>
-                        <a href="blog.html">Blog</a>
-
-                    </li>
-                    <li>
-                        <a href="elements-list.html">Elements</a>
-    
-                    </li>
-                </ul>
-            </nav><!-- End .mobile-nav -->
-
-
-        </div><!-- End .mobile-menu-wrapper -->
-    </div><!-- End .mobile-menu-container -->
-
+   
+<%-include('../partials/user/mobilenav.ejs')%>
   
     <%-include("../partials/user/footer.ejs")%>
+    <%-include('../partials/user/footbar.ejs')%>

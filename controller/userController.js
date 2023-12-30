@@ -4,12 +4,19 @@ const Products=require('../model/Products')
 const Category=require('../model/category')
 const userOtpVerification=require('../model/otpVerify')
 const nodemailer=require('nodemailer')
+const Cart=require('../model/cartSchema')
+
+
+
+
 const home = async (req, res) => {
   try {
     const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
+    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length||0
+    console.log(count);
     const userName = req.session.user;
     const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
-    res.render("home", { userName, Product });
+    res.render("home", { userName, Product,count });
   } catch (err) {
     console.log(err);
     // Handle the error appropriately, perhaps by rendering an error page
@@ -80,8 +87,8 @@ const sendOTPverificationEmail = async ({Email} , res) => {
           port: 465,
           secure: true,
           auth: {
-              user: 'navyatjacob@gmail.com',
-              pass: 'ikhr splm kruz dhwo'
+              user: 'mazziotechlounger@gmail.com',
+              pass: 'lrdy kzvc krph itja'
           }
       });
 
@@ -91,8 +98,8 @@ const sendOTPverificationEmail = async ({Email} , res) => {
 
       // mail options
       const mailOptions = {
-        from: 'navyatjacob@gmail.com',
-        to: Email,                        // Make sure 'email' is a valid recipient email address
+        from: 'mazziotechlounger@gmail.com',
+        to: Email,                        /// Make sure 'email' is a valid recipient email address
         subject: "Verify Your email",
         html: `Your OTP is: ${otp}`
     };
@@ -230,6 +237,7 @@ const resendOtp = async (req, res) => {
 const submitlogin = async (req, res) => {
   try {
     const check = await User.findOne({ Email: req.body.logemail });
+    
 
     if (check) {
       const passwordMatch = await bcrypt.compare(
@@ -240,6 +248,7 @@ const submitlogin = async (req, res) => {
       if (passwordMatch) {
         if (check.Status == "active") {
           req.session.user = check.Name;
+          req.session.user_id=check._id
           req.session.email = check.Email;
           res.redirect("/");
         } else {
@@ -263,6 +272,21 @@ const submitlogin = async (req, res) => {
   }
 };
 
+const allproducts= async (req,res)=>{
+  try{
+
+    const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
+    const product = productsdetail.filter(product => product.Category.Status !== "blocked");
+    res.render('allproducts',{product})
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
+
+
 const logout = (req, res) => {
   try {
     req.session.user = null;
@@ -281,6 +305,7 @@ module.exports = {
   verifyOtp,
   loadOtp,
   submitlogin,
-  logout,
   signup,
+  allproducts,
+  logout,
 };

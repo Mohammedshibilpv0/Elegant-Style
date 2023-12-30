@@ -4,6 +4,8 @@ const multer = require("multer");
 const path = require("path");
 const express = require("express");
 const app = express();
+const fs = require('fs');
+
 
 //multer setup
 const storage = multer.diskStorage({
@@ -17,7 +19,7 @@ const storage = multer.diskStorage({
 
 // Create the Multer instance with the storage configuration
 const upload = multer({ storage: storage }).array("images", 4);
-
+const upload1 = multer({ storage: storage }).array("images", 1);
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -100,6 +102,12 @@ const editProduct = async (req, res) => {
 
 const submitedit = async (req, res) => {
   try{
+    upload(req, res, async function (err) {
+      if (err) {
+        const errorMsg = "Image more than 4 is not allowed";
+        req.flash("err", errorMsg);
+        res.redirect("/admin/addproducts");
+      } else {
 
     const productId = req.params.id;
     const updatedData = {
@@ -109,7 +117,7 @@ const submitedit = async (req, res) => {
       Price: req.body.price,
       OfferPrice: req.body.offerprice,
     };
-    console.log(updatedData);
+    
     Object.keys(updatedData).forEach(
       (key) => updatedData[key] == "" && delete updatedData[key]
     );
@@ -120,23 +128,24 @@ const submitedit = async (req, res) => {
       // Redirect to the product list page
       res.redirect("/admin/products");
     }
+    }
+  })
   }catch(err){
     console.log(err);
   }
-};
+}
 
 const singleProduct = async (req, res) => {
   try{
-
+    const user_id=req.session.user_id
     const product_id = req.params.id;
     const products = await Products.findOne({ _id: product_id }).populate('Category').exec();
     const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
-    res.render("eachproducts", {products,recommend});
+    res.render("eachproducts", {products,recommend,user_id});
   }catch(err){
     console.log(err);
   }
 
-  
 };
 
 const unlistProduct=async (req,res)=>{
@@ -163,6 +172,54 @@ const listProduct= async (req,res)=>{
 
 
 
+
+const imagedelete = async (req, res) => {
+  try {
+
+  const imgid = req.params.imgid;
+  const index = req.params.index;
+  const productid = req.params.proid;
+  const imagePath = path.join('public', 'uploads', imgid);
+
+
+    // Fetch the product document
+    const product = await Products.findOne({ _id: productid });
+
+    if (!product) {
+      console.error('Product not found:', productid);
+      return res.status(404).send('Product not found');
+    }
+
+    // Check if there is only one image remaining
+    if (product.Images.length <= 1) {
+      console.error('Cannot delete the last image.');
+      return res.status(400).send('Cannot delete the last image.');
+    }
+
+    // Delete the image file asynchronously
+    await fs.promises.unlink(imagePath);
+
+    // Remove the image reference from the database
+    product.Images.splice(index, 1);
+
+    // Save the updated product document
+    await product.save();
+
+    res.status(200).send('Image deleted successfully');
+  } catch (err) {
+    console.error('Error deleting image:', err);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+
+
+
+
+
+
+
 module.exports = {
   addProducts,
   uploadProducts,
@@ -172,4 +229,7 @@ module.exports = {
   singleProduct,
   unlistProduct,
   listProduct,
+  imagedelete,
+
 };
+

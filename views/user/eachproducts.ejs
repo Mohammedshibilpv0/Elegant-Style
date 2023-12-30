@@ -1,8 +1,5 @@
 <%-include('../partials/user/header.ejs')%>
-   <%-include('../partials/user/productsnavbar.ejs')%>
-
-                  
-
+<%-include('../partials/user/navbar.ejs')%>
 
 
 
@@ -59,10 +56,21 @@
                                     <!-- End .details-filter-row -->
 
                             
+                                    <div class="product-cat">
+                                        <span>Category:</span>
+                                        <a href="#"><%=products.Category.Name%></a>,
+                                        <p><a href="#"><%=products.Category.Description%></a>,</p>
+                                    </div>
                                     
+                                    <div class="details-filter-row details-row-size mt-5">
+                                        <label for="qty">Qty:</label>
+                                        <div class="product-details-quantity">
+                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                        </div><!-- End .product-details-quantity -->
+                                    </div>
 
-                                    <div class="product-details-action">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                    <div class="product-details-action mt-5">
+                                        <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=user_id%>')"><span>add to cart</span></a>
 
                                         <div class="details-action-wrapper">
                                             <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
@@ -71,11 +79,7 @@
                                     </div><!-- End .product-details-action -->
 
                                     <div class="product-details-footer">
-                                        <div class="product-cat">
-                                            <span>Category:</span>
-                                            <a href="#"><%=products.Category.Name%></a>,
-                                            
-                                        </div><!-- End .product-cat -->
+                                        <!-- End .product-cat -->
 
                                        
                                     </div><!-- End .product-details-footer -->
@@ -99,14 +103,7 @@
                             <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
                                 <div class="product-desc-content">
                                     <h3>Product Information</h3>
-                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
-                                    <ul>
-                                        <li>Nunc nec porttitor turpis. In eu risus enim. In vitae mollis elit. </li>
-                                        <li>Vivamus finibus vel mauris ut vehicula.</li>
-                                        <li>Nullam a magna porttitor, dictum risus nec, faucibus sapien.</li>
-                                    </ul>
-
-                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. Suspendisse urna viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis. Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus. </p>
+                                    <%=products.Description%>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
                             
@@ -178,7 +175,7 @@
                                 </div><!-- End .product-price -->
                                 <div class="ratings-container">
                                     <div class="ratings">
-                                        <div class="ratings-val" style="width: 20%;"></div><!-- End .ratings-val -->
+                                        <div class="ratings-val" style="width: 80%;"></div><!-- End .ratings-val -->
                                     </div><!-- End .ratings -->
                                     <span class="ratings-text">( 2 Reviews )</span>
                                 </div><!-- End .rating-container -->
@@ -249,30 +246,41 @@
             </nav><!-- End .mobile-nav -->
 
           
-        </div><!-- End .mobile-menu-wrapper -->
-    </div><!-- End .mobile-menu-container -->
+        </div>
+    </div>
 
 
-   
 
-    <!-- Plugins JS File -->
+
+
+
+    <script>
+         function addtoCart(proid,userid){
+
+            const quantity = document.getElementById('qty').value;
+           
     
-    <script src="/user/assets/js/jquery.min.js"></script>
-    <script src="/user/assets/js/bootstrap.bundle.min.js"></script>
-    <script src="/user/assets/js/jquery.hoverIntent.min.js"></script>
-    <script src="/user/assets/js/jquery.waypoints.min.js"></script>
-    <script src="/user/assets/js/superfish.min.js"></script>
-    <script src="/user/assets/js/owl.carousel.min.js"></script>
-    <script src="/user/assets/js/bootstrap-input-spinner.js"></script>
-   
-   
-    <script src="/user/assets/js/jquery.magnific-popup.min.js"></script>
-    <!-- Main JS File -->
-    <script src="/user/assets/js/main.js"></script>
-</body>
+    // Make an AJAX request to the backend (replace 'your_backend_endpoint' with the actual endpoint)
+    fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            quantity: quantity,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the response from the backend
+        console.log('Response from backend:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 
-
-<!-- molla/product.html  22 Nov 2019 09:55:05 GMT -->
-</html>
-
+         }
+    </script>
+<%-include('../partials/user/mobilenav.ejs')%>
+  
 <%-include("../partials/user/footer.ejs")%>

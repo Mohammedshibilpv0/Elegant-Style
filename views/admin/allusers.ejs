@@ -215,37 +215,52 @@
 
 
 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script>
 
-          function usermange(userid,action){
-            
-            fetch(`/admin/${action}user/${userid}`,{
-              method:'POST',
-              headers: {
-             'Content-Type': 'application/json',
-          },
-            body: JSON.stringify({ userid }),
+function usermange(userid, action) {
+    // Show a confirmation dialog
+    Swal.fire({
+        title: 'Confirmation',
+        text: `Are you sure you want to ${action === 'block' ? 'block' : 'unblock'} this user?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Proceed with the API call
+            fetch(`/admin/${action}user/${userid}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userid }),
             }).then(response => response.json())
-          .then(data => {
-             // Update the status in the table without reloading the page
-             const statusElement = document.getElementById(`status_${userid}`);
-             const buttonElement = document.getElementById(`button_${userid}`);
+                .then(data => {
+                    // Update the status in the table without reloading the page
+                    const statusElement = document.getElementById(`status_${userid}`);
+                    const buttonElement = document.getElementById(`button_${userid}`);
 
-        if (statusElement && buttonElement) {
-            statusElement.textContent = data.status;
+                    if (statusElement && buttonElement) {
+                        statusElement.textContent = data.status;
 
-            // Update button text based on the received status
-            if (data.status === "active") {
-                buttonElement.textContent = "block";
-                buttonElement.setAttribute("onclick", `usermange('${userid}', 'block')`);
-            } else {
-                buttonElement.textContent = "unblock";
-                buttonElement.setAttribute("onclick", `usermange('${userid}', 'unblock')`);
-            }
+                        // Update button text based on the received status
+                        if (data.status === "active") {
+                            buttonElement.textContent = "block";
+                            buttonElement.setAttribute("onclick", `usermange('${userid}', 'block')`);
+                        } else {
+                            buttonElement.textContent = "unblock";
+                            buttonElement.setAttribute("onclick", `usermange('${userid}', 'unblock')`);
+                        }
+                    }
+                }).catch(error => console.error('Error:', error));
         }
-            }).catch(error => console.error('Error:', error));
+        // If the user clicked "No" or closed the dialog, do nothing
+    });
 }
-          
+
 
         </script>
 

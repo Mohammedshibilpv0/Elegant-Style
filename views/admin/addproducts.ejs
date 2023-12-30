@@ -244,7 +244,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
 
                 <div class="form-group row">
                     <label for="productDate" class="col-sm-3 col-form-label">Images(upto-4)</label>
-                    <input type="file" class="form-control" id="productimages" name="images" multiple="multiple" >
+                    <input type="file" class="form-control" id="productimages" name="images" multiple="multiple" required >
                     <small id="imagesError" class="text-danger"></small>
   
                       <!-- Image preview container -->
@@ -269,45 +269,52 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- Your existing form code -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const maxImageCount = 4; // Adjust the maximum image count as needed
-    const previewContainer = document.getElementById("image-preview-container");
+  const maxImageCount = 4; // Adjust the maximum image count as needed
+  const previewContainer = document.getElementById("image-preview-container");
 
-    document
-      .getElementById("productimages")
-      .addEventListener("change", function (e) {
-        const selectedFiles = e.target.files;
-        if (selectedFiles.length > maxImageCount) {
-          alert(`Maximum ${maxImageCount} images allowed.`);
-          e.target.value = ""; // Clear the file input
-        } else {
-          updateImagePreviews(selectedFiles);
-        }
-      });
+  document
+    .getElementById("productimages")
+    .addEventListener("change", function (e) {
+      const selectedFiles = e.target.files;
+      if (selectedFiles.length > maxImageCount) {
+        // Replace the alert with SweetAlert for a more user-friendly notification
+        swal({
+          title: "Oops!",
+          text: `Maximum ${maxImageCount} images allowed.`,
+          icon: "error",
+        });
 
-    function updateImagePreviews(files) {
-      previewContainer.innerHTML = ""; // Clear the existing previews
-
-      for (let i = 0; i < files.length; i++) {
-        const reader = new FileReader();
-        const previewImage = document.createElement("img");
-        previewImage.className = "preview-image";
-
-        reader.onload = (function (img) {
-          return function (e) {
-            img.src = e.target.result;
-          };
-        })(previewImage);
-
-        reader.readAsDataURL(files[i]);
-        previewContainer.appendChild(previewImage);
+        e.target.value = ""; // Clear the file input
+      } else {
+        updateImagePreviews(selectedFiles);
       }
+    });
+
+  function updateImagePreviews(files) {
+    previewContainer.innerHTML = ""; // Clear the existing previews
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      const previewImage = document.createElement("img");
+      previewImage.className = "preview-image";
+
+      reader.onload = (function (img) {
+        return function (e) {
+          img.src = e.target.result;
+        };
+      })(previewImage);
+
+      reader.readAsDataURL(files[i]);
+      previewContainer.appendChild(previewImage);
     }
-  });
+  }
+});
+
 </script>
 
 
