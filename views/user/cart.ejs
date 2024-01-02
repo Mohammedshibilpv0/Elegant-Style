@@ -16,48 +16,56 @@
 	                		<div class="col-lg-9">
 	                			<table class="table table-cart table-mobile">
 									<thead>
-										<tr>
-											<th>Product</th>
-											<th>Price</th>
-											<th>Quantity</th>
-											<th>Total</th>
-											<th></th>
-										</tr>
+									  <tr>
+										<th>Product</th>
+										<th>Price</th>
+										<th>Quantity</th>
+										<th>Total</th>
+										<th></th>
+									  </tr>
 									</thead>
-
+								  
 									<tbody>
-										<tr>
+										<% if (cartData) { %>
+											<% cartData.products.forEach(product => { %>
+										  <tr data-product-id="<%= product.productId._id %>">
 											<td class="product-col">
-												<div class="product">
-													<figure class="product-media">
-														<a href="#">
-															<img src="/user/assets/images/products/table/product-1.jpg" alt="Product image">
-														</a>
-													</figure>
+											  <div class="product">
+												<figure class="product-media">
+												  <a href="/singleproduct/<%= product.productId._id %>">
+													<img src="/uploads/<%= product.productId.Images[0] %>" alt="">
+												  </a>
+												</figure>
 
-													<h3 class="product-title">
-														<a href="#">Beige knitted elastic runner shoes</a>
-													</h3><!-- End .product-title -->
-												</div><!-- End .product -->
+												<h3 class="product-title">
+												  <a href="#">  <%= product.productId.Name %> </a> 
+												</h3><!-- End .product-title -->
+											  </div><!-- End .product -->
 											</td>
-											<td class="price-col">$84.00</td>
+											<td class="price-col">$ <%= product.productPrice %></td>
 											<td class="quantity-col">
-                                                <div class="cart-product-quantity">
-                                                    <input type="number" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
-                                                </div><!-- End .cart-product-quantity -->
-                                            </td>
-											<td class="total-col">$84.00</td>
-											<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
-										</tr>
-										
-									</tbody>
-								</table><!-- End .table table-wishlist -->
+											  <!-- End .cart-product-quantity -->
+											  <div class="cart-product-quantity">
+												<input type="number" class="form-control" value="<%= product.quantity %>" min="1" max="<%= product.productId.Quantity %>" step="1" data-decimals="0" required id="<%= product.productId._id %>">
+											  </div>
+											</td>
+											<td class="total-col">$<%= product.totalPrice %></td>
+											<td class="remove-col">
+											  <button class="btn-remove" onclick="removeFromCart('<%= product.productId._id %>')"><i class="icon-close"></i></button>
+											</td>
+										  </tr>
+										  <% }); %>
+										  <% } else { %>
+											<p>No items in the cart.</p>
+										<% } %>
 
+									</tbody>
+								  </table><!-- End .table table-wishlist -->
 
 
 	                			<div class="cart-bottom" >
-			            			<div class="cart-discount" hidden>
-			            				<form action="#" >
+			            			<div class="cart-discount" hidden
+								< form action="#" >
 			            					<div class="input-group">
 				        						<input type="text" class="form-control" required placeholder="coupon code">
 				        						<div class="input-group-append">
@@ -139,10 +147,84 @@
         </main><!-- End .main -->
 
 
+x
 
-         
-  
-   
+		  <!-- ... (your existing HTML code) ... -->
+		  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		  <script>
+			document.addEventListener('DOMContentLoaded', function () {
+			  const quantityInputs = document.querySelectorAll('[id]');
+
+
+			  quantityInputs.forEach(function (quantityInput) {
+				quantityInput.addEventListener("input", function () {
+					const cartId= "<%=cartData._id%>"
+				  // Fetch to update the database
+				  fetch(`/updateQuantity`, {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({  cartId: cartId, productId: quantityInput.id, quantity: quantityInput.value}),
+				  })
+				  .then(response => response.json())
+				  .then(data => {
+					console.log('Server response:', data);
+					const totalCol = document.querySelector(`[id="${quantityInput.id}"]`).closest('tr').querySelector('.total-col');
+                    totalCol.innerHTML = `$${data.updatedTotalPrice}`;
+				  })
+				  .catch(error => {
+					console.error('Error:', error);
+				  });
+				});
+			  });
+			});
+
+			function removeFromCart(productId) {
+      // Display SweetAlert confirmation dialog
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to remove this product from the cart.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, remove it!',
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // If user clicks 'Yes', proceed to remove the product
+          const cartId = "<%=cartData._id%>";
+          fetch(`/removeFromCart`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cartId: cartId, productId: productId }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log('Product removed from the cart:', data);
+
+              // Check if the removal was successful
+              if (data.success) {
+                // Update the table by removing the corresponding row
+                const tableRow = document.querySelector(`tr[data-product-id="${productId}"]`);
+                if (tableRow) {
+                  tableRow.remove();
+                }
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        }
+      });
+    }
+
+		  </script>
+
+
+
+
 <%-include('../partials/user/mobilenav.ejs')%>
 <%-include('../partials/user/footbar.ejs')%>
 <%-include('../partials/user/footer.ejs')%>

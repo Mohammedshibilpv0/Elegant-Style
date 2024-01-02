@@ -30,6 +30,32 @@ const userData= new mongoose.Schema({
         default: false
 
     },
+    Addresses: [
+        {
+          location: {
+            type: String,
+          },
+          address: {
+            type: String,
+          },
+          city: {
+            type: String,
+          },
+          zip: {
+            type: String,
+          },
+          phone:
+          {
+            type: String,
+          },
+          email: {
+            type: String,
+          },
+          state: {
+            type: String,
+          },
+        },
+      ],
 
 })
 

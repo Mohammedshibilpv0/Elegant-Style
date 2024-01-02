@@ -23,14 +23,15 @@
             <div class="header-right">
                 <a href="wishlist.html" class="wishlist-link">
                     <i class="icon-heart-o"></i>
-                    <span class="wishlist-count">0</span>
+                    <span class="wishlist-count"> 0 </span>
                     <span class="wishlist-txt">My Wishlist</span>
                 </a>
 
                 <div class="dropdown cart-dropdown">
                     <a href="/usercart" class="dropdown-toggle" role="button"  aria-haspopup="true" aria-expanded="false" data-display="static">
                         <i class="icon-shopping-cart"></i>
-                        <span class="cart-count"> 0</span>
+                        <span class="cart-count">  <%if(locals.userName){%>  <%=count%>
+                            <%}else{%>  0  <%}%> </span>
                         <span class="cart-txt">$ 0</span>
                     </a>
 

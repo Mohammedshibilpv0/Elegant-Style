@@ -3,7 +3,13 @@ const Cart=require('../model/cartSchema')
 
 const cart= async (req,res)=>{
     try{
-        res.render('cart')
+        const user=req.session.user_id
+        const cartData = await Cart.findOne({ userid: user }).populate({
+            path: 'products.productId',
+            model: 'Products', // Make sure it matches the model name for the Product
+         });
+       
+        res.render('cart',{cartData})
     }catch(err){
         console.log(err);
     }
@@ -17,7 +23,7 @@ const checkout= (req,res)=>{
     }
 }
 
-const addtocart= async (req,res)=>{
+const addtocart = async (req, res) => {
     try {
         const product_id = req.params.productid;
         const user_id = req.params.userid;
@@ -29,17 +35,22 @@ const addtocart= async (req,res)=>{
         if (producttocart && user_id) {
             if (cart) {
                 // If cart exists, update or add a new item
-                const existingProductIndex = cart.products.findIndex(item => item.productId.toString() === product_id);
+                const existingProductIndex = cart.products.findIndex(
+                    (item) => item.productId.toString() === product_id
+                );
+
                 if (existingProductIndex !== -1) {
-                    // Product already exists in the cart, update the quantity
-                    cart.products[existingProductIndex].quantity += quantity;
+                    // Product already exists in the cart, update the quantity and total price
+                    const existingProduct = cart.products[existingProductIndex];
+                    existingProduct.quantity += quantity;
+                    existingProduct.totalPrice = existingProduct.quantity * existingProduct.productPrice;
                 } else {
                     // Add a new product to the cart
                     cart.products.push({
                         productId: product_id,
                         quantity: quantity,
                         productPrice: producttocart.OfferPrice,
-                        totalPrice: quantity * producttocart.OfferPrice
+                        totalPrice: quantity * producttocart.OfferPrice,
                     });
                 }
 
@@ -49,12 +60,14 @@ const addtocart= async (req,res)=>{
                 // If cart doesn't exist, create a new cart
                 const newCart = new Cart({
                     userid: user_id,
-                    products: [{
-                        productId: product_id,
-                        quantity: quantity,
-                        productPrice: producttocart.OfferPrice,
-                        totalPrice: quantity * producttocart.OfferPrice
-                    }]
+                    products: [
+                        {
+                            productId: product_id,
+                            quantity: quantity,
+                            productPrice: producttocart.OfferPrice,
+                            totalPrice: quantity * producttocart.OfferPrice,
+                        },
+                    ],
                 });
 
                 await newCart.save();
@@ -69,7 +82,10 @@ const addtocart= async (req,res)=>{
         console.error(err);
         res.status(500).json({ error: 'Internal server error.' });
     }
-}
+};
+
+
+
 
 
 

@@ -65,7 +65,7 @@
                                     <div class="details-filter-row details-row-size mt-5">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="<%=products.Quantity%>" step="1" data-decimals="0" required>
                                         </div><!-- End .product-details-quantity -->
                                     </div>
 
@@ -253,34 +253,49 @@
 
 
 
+<!-- Include SweetAlert library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-         function addtoCart(proid,userid){
-
+        function addtoCart(proid, userid) {
             const quantity = document.getElementById('qty').value;
-           
     
-    // Make an AJAX request to the backend (replace 'your_backend_endpoint' with the actual endpoint)
-    fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            quantity: quantity,
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response from the backend
-        console.log('Response from backend:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-         }
+            // Make an AJAX request to the backend
+            fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Handle the response from the backend
+                    console.log('Response from backend:', data);
+    
+                    // Display SweetAlert notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Product added to cart!',
+                        showConfirmButton: false,
+                        timer: 1500, // Display the notification for 1.5 seconds
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+    
+                    // Display SweetAlert error notification
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error adding to cart',
+                        text: 'An error occurred while adding the product to the cart.',
+                    });
+                });
+        }
     </script>
+    
 <%-include('../partials/user/mobilenav.ejs')%>
   
 <%-include("../partials/user/footer.ejs")%>

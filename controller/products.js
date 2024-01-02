@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
 
 // Create the Multer instance with the storage configuration
 const upload = multer({ storage: storage }).array("images", 4);
-const upload1 = multer({ storage: storage }).array("images", 1);
+
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 

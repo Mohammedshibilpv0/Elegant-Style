@@ -68,7 +68,7 @@
     
                                             <div class="product-action">
                                                 <hr>
-                                                <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
+                                                <a onclick="addtoCart('<%=product._id%>','<%=user%>')" class="btn-product btn-cart"><span>add to cart</span></a>
                                             </div><!-- End .product-action -->
                                         </figure><!-- End .product-media -->
     
@@ -225,7 +225,6 @@
             </div><!-- End .page-content -->
         </main><!-- End .main -->
 
-       
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
@@ -235,9 +234,51 @@
 
 
     <!-- Plugins JS File -->
-   
+
     <!-- Main JS File -->
     <script src="/user/assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        function addtoCart(proid, userid) {
+            const quantity = 1
+    
+            // Make an AJAX request to the backend
+            fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Handle the response from the backend
+                    console.log('Response from backend:', data);
+    
+                    // Display SweetAlert notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Product added to cart!',
+                        showConfirmButton: false,
+                        timer: 1500, // Display the notification for 1.5 seconds
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+    
+                    // Display SweetAlert error notification
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error adding to cart',
+                        text: 'An error occurred while adding the product to the cart.',
+                    });
+                });
+        }
+    </script>
 
 <%-include('../partials/user/mobilenav.ejs')%>
     <%-include('../partials/user/footer.ejs')%>

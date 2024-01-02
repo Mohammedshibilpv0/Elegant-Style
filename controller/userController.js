@@ -13,7 +13,6 @@ const home = async (req, res) => {
   try {
     const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length||0
-    console.log(count);
     const userName = req.session.user;
     const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
     res.render("home", { userName, Product,count });
@@ -277,7 +276,8 @@ const allproducts= async (req,res)=>{
 
     const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
     const product = productsdetail.filter(product => product.Category.Status !== "blocked");
-    res.render('allproducts',{product})
+    const user=req.session.user_id
+    res.render('allproducts',{product,user})
 
   }catch(err){
     console.log(err);
@@ -291,6 +291,7 @@ const logout = (req, res) => {
   try {
     req.session.user = null;
     req.session.email = null;
+    req.session.user_id=null;
     res.redirect("/");
   } catch (err) {
     console.log(err);
