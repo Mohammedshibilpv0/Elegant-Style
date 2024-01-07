@@ -26,7 +26,8 @@
 									</thead>
 								  
 									<tbody>
-										<% if (cartData) { %>
+										<% if(cartData){%>
+										<% if (cartData.products && cartData.products.length > 0) { %>
 											<% cartData.products.forEach(product => { %>
 										  <tr data-product-id="<%= product.productId._id %>">
 											<td class="product-col">
@@ -38,7 +39,7 @@
 												</figure>
 
 												<h3 class="product-title">
-												  <a href="#">  <%= product.productId.Name %> </a> 
+												  <a href="/singleproduct/<%= product.productId._id %>">  <%= product.productId.Name %> </a> 
 												</h3><!-- End .product-title -->
 											  </div><!-- End .product -->
 											</td>
@@ -50,18 +51,15 @@
 											  </div>
 											</td>
 											<td class="total-col">$<%= product.totalPrice %></td>
+											<input type="text" id="cartid" value="<%=cartData._id%>" hidden >
 											<td class="remove-col">
 											  <button class="btn-remove" onclick="removeFromCart('<%= product.productId._id %>')"><i class="icon-close"></i></button>
 											</td>
 										  </tr>
 										  <% }); %>
-										  <% } else { %>
-											<p>No items in the cart.</p>
-										<% } %>
-
+										  <%}%>
 									</tbody>
 								  </table><!-- End .table table-wishlist -->
-
 
 	                			<div class="cart-bottom" >
 			            			<div class="cart-discount" hidden
@@ -75,18 +73,20 @@
 			            				</form>
 			            			</div>
 
-			            			<a href="#" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
+			            			<a href="/usercart" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
 		            			</div><!-- End .cart-bottom -->
 	                		</div><!-- End .col-lg-9 -->
 	                		<aside class="col-lg-3">
 	                			<div class="summary summary-cart">
+
+							   <form action="/paymentmethod" method="POST">
 	                				<h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
 
 	                				<table class="table table-summary">
 	                					<tbody>
 	                						<tr class="summary-subtotal">
 	                							<td>Subtotal:</td>
-	                							<td>$160.00</td>
+	                							<td><%=totalPriceTotal%></td>
 	                						</tr><!-- End .summary-subtotal -->
 	                						<tr class="summary-shipping">
 	                							<td>Shipping:</td>
@@ -96,14 +96,14 @@
 	                						<tr class="summary-shipping-row">
 	                							<td>
 													<div class="custom-control custom-radio">
-														<input type="radio" id="free-shipping" name="shipping" class="custom-control-input">
+														<input type="radio" id="free-shipping" name="shipping" class="custom-control-input" required>
 														<label class="custom-control-label" for="free-shipping">Free Shipping</label>
 													</div><!-- End .custom-control -->
 	                							</td>
 	                							<td>$0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
-	                						<tr class="summary-shipping-row">
+	                						<tr class="summary-shipping-row" hidden>
 	                							<td>
 	                								<div class="custom-control custom-radio">
 														<input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
@@ -113,7 +113,7 @@
 	                							<td>$10.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
-	                						<tr class="summary-shipping-row">
+	                						<tr class="summary-shipping-row" hidden>
 	                							<td>
 	                								<div class="custom-control custom-radio">
 														<input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
@@ -123,33 +123,49 @@
 	                							<td>$20.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
-	                						<tr class="summary-shipping-estimate">
-	                							<td>Estimate for Your Country<br> <a href="dashboard.html">Change address</a></td>
-	                							<td>&nbsp;</td>
-	                						</tr><!-- End .summary-shipping-estimate -->
 
-	                						<tr class="summary-total">
+	                						<tr class="summary-total" >
 	                							<td>Total:</td>
-	                							<td>$160.00</td>
+	                							<td>$<%=totalPriceTotal%></td>
 	                						</tr><!-- End .summary-total -->
+
 	                					</tbody>
 	                				</table><!-- End .table table-summary -->
 
-	                				<a href="/usercheckout" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+	                				<button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</button>
+								</form>
 	                			</div><!-- End .summary -->
+						
 
 		            			<a href="/allproducts" class="btn btn-outline-dark-2 btn-block mb-3"><span>CONTINUE SHOPPING</span><i class="icon-refresh"></i></a>
+
+
 	                		</aside><!-- End .col-lg-3 -->
 	                	</div><!-- End .row -->
 	                </div><!-- End .container -->
                 </div><!-- End .cart -->
+
             </div><!-- End .page-content -->
         </main><!-- End .main -->
 
 
-x
+		<% } else { %>
+			<div  class="mb-5">
+				<p >No items in the cart.</p>
+			
+				<a href="/" class="btn btn-outline-primary-2 btn-minwidth-lg">
+					<span>BACK TO HOMEPAGE</span>
+					<i class="icon-long-arrow-right"></i>
+				</a>
+			  
+			  </div>
 
-		  <!-- ... (your existing HTML code) ... -->
+		<% } %>
+	
+        <!-- for update the price while quantity + or  -   -->
+
+
+	
 		  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		  <script>
 			document.addEventListener('DOMContentLoaded', function () {
@@ -158,7 +174,8 @@ x
 
 			  quantityInputs.forEach(function (quantityInput) {
 				quantityInput.addEventListener("input", function () {
-					const cartId= "<%=cartData._id%>"
+					const cartId= document.getElementById('cartid').value
+					
 				  // Fetch to update the database
 				  fetch(`/updateQuantity`, {
 					method: 'POST',
@@ -172,13 +189,28 @@ x
 					console.log('Server response:', data);
 					const totalCol = document.querySelector(`[id="${quantityInput.id}"]`).closest('tr').querySelector('.total-col');
                     totalCol.innerHTML = `$${data.updatedTotalPrice}`;
-				  })
+
+					const totalPriceTotalElement = document.querySelector('.summary-total td:last-child');
+                    totalPriceTotalElement.innerHTML = `$${data.totalPriceTotal}`;
+
+					const subtotalElement = document.querySelector('.summary-subtotal td:last-child');
+                     if (subtotalElement) {
+                       subtotalElement.innerHTML = `$${data.totalPriceTotal}`;
+                     } else {
+                       console.error('Unable to find element for subtotal update.');
+                     }
+                   })
+
+				  
 				  .catch(error => {
 					console.error('Error:', error);
 				  });
 				});
 			  });
 			});
+
+
+/////////for remove product from the cart
 
 			function removeFromCart(productId) {
       // Display SweetAlert confirmation dialog
@@ -192,7 +224,7 @@ x
       }).then((result) => {
         if (result.isConfirmed) {
           // If user clicks 'Yes', proceed to remove the product
-          const cartId = "<%=cartData._id%>";
+          const cartId = document.getElementById('cartid').value
           fetch(`/removeFromCart`, {
             method: 'POST',
             headers: {

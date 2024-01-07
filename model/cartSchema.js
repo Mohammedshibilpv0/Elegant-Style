@@ -33,6 +33,9 @@ const cartSchema = new mongoose.Schema({
             cancellationReason: {
                 type: String,
                 default: "none"
+            },
+            image:{
+                type:String
             }
 
         },

@@ -1,7 +1,8 @@
 const User = require("../model/User");
 const Users = require("../model/User");
 const Category=require('../model/category')
-
+const Orders= require('../model/orderSchema')
+const Products = require('../model/Products')
 const home = async (req, res) => {
   try {
     const admin=req.session.admin
@@ -221,6 +222,46 @@ const blockUser = async (req, res) => {
     }
    }
 
+   const allorders = async (req, res) => {
+    try {
+      const admin= req.session.admin
+      const allOrders = await Orders.find()
+      .populate({
+          path: 'Products.products',
+          model: 'Products'
+      }).populate('user', 'Name').exec();
+
+
+        res.render('allorders', { allOrders,admin});
+    } catch (err) {
+        console.error(err);
+        // Handle the error and send an appropriate response
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
+const changestatus = async (req,res)=>{
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+      // Update the order status in the database
+      const updatedOrder = await Orders.findByIdAndUpdate(orderId, { $set: { 'Products.$[element].orderStatus': status } }, { arrayFilters: [{ 'element.orderStatus': { $ne: status } }] });
+
+      if (!updatedOrder) {
+          return res.status(404).json({ error: 'Order not found' });
+      }
+
+      // Send a response indicating success
+      res.json({ success: true, message: 'Status updated successfully' });
+  } catch (error) {
+      console.error('Error updating order status:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
 module.exports = {
   home,
   login,
@@ -235,5 +276,7 @@ module.exports = {
   unlistCategory,
   listCategory,
   editcategory,
-  submiteditcategory
+  submiteditcategory,
+  allorders,
+  changestatus
 };

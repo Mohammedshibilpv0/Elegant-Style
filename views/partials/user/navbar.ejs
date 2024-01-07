@@ -18,9 +18,11 @@
                 <a href="/" class="logo">
                     <img src="/user/assets/images/demos/demo-6/logo.png" alt="Molla Logo" width="82" height="20">
                 </a>
+                
             </div><!-- End .header-left -->
 
             <div class="header-right">
+                
                 <a href="wishlist.html" class="wishlist-link">
                     <i class="icon-heart-o"></i>
                     <span class="wishlist-count"> 0 </span>
@@ -66,7 +68,38 @@
                        
                         <li>
                         
-                           
+                            <% if (locals.userName) { %>
+                                <div class="page-wrapper mt-2" style="margin-left: 640px;">
+                            <div class="container">
+                                    <div class="dropdown d-flex justify-content-end mb-3 ">
+                                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            
+                                                <p style="color: white;"><%= userName.Name %></p>
+                                                <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+                                                    <a class="dropdown-item" href="/Profile"><h6>Profile</h6></a>
+                                                    <a class="dropdown-item" href="/logout"><h6>Logout</h6></a>
+                            
+                                        </a>
+                            
+                            
+                                        </div>
+                                      </div>
+                                      <% }else{%>
+                                        <div class="container">
+                                            <div class="dropdown d-flex justify-content-end mb-3 mt-2" style="margin-left: 640px;">
+                                                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    
+                                                        <p style="color: white;">Profile</p>
+                                                        <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
+                                                            <a class="dropdown-item" href="/login"><h6>Login</h6></a>
+                            
+                                                </a>
+                            
+                                                </div>
+                                              </div>
+                                              <% } %>
+                                    </div>
+                                   
 
                     
                         </li>

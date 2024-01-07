@@ -178,7 +178,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
           <div class="card">
             <div class="card-body">
               <form class="forms-sample" method="POST" action="/admin/products/upload" enctype="multipart/form-data">
-              
+
                 <!-- Your existing form fields... -->
                 <div class="form-group row">
                   <label for="productName" class="col-sm-3 col-form-label">Product Name</label>
@@ -204,7 +204,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
                   </div>
                 </div>
 
-               
+
 
             <div class="form-group row">
                 <label for="productDescription" class="col-sm-3 col-form-label">Product Description</label>
@@ -213,7 +213,6 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
                     <small id="descriptionError" class="text-danger"></small>
                 </div>
             </div>
-
             <div class="form-group row">
                 <label for="productCategory" class="col-sm-3 col-form-label">Category</label>
                 <div class="col-sm-9">
@@ -240,6 +239,25 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
                     <small id="dateError" class="text-danger"></small>
                 </div>
             </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Sizes</label>
+              <div class="col-sm-9">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label for="sizeName1">Size 1</label>
+                    <input type="text" class="form-control" id="sizeName1" name="sizes[0][name]" placeholder="Size Name" required>
+                    <input type="number" class="form-control" name="sizes[0][quantity]" min="0" placeholder="Quantity" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="sizeName2">Size 2</label>
+                    <input type="text" class="form-control" id="sizeName2" name="sizes[1][name]" placeholder="Size Name" required>
+                    <input type="number" class="form-control" name="sizes[1][quantity]" min="0" placeholder="Quantity" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="sizeName3">Size 3</label>
+                    <input type="text" class="form-control" id="sizeName3" name="sizes[2][name]" placeholder="Size Name" required>
+                    <input type="number" class="form-control" name="sizes[2][quantity]" min="0" placeholder="Quantity" required>
+                  </div>
 
 
                 <div class="form-group row">

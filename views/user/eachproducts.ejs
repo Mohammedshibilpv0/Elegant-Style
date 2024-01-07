@@ -213,7 +213,7 @@
                 <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
             </form>
-            
+
             <nav class="mobile-nav">
                 <ul class="mobile-menu">
                     <li class="active">
@@ -222,35 +222,55 @@
                     </li>
                     <li>
                         <a href="category.html">Shop</a>
-                       
+
                     </li>
                     <li>
                         <a href="/" class="sf-with-ul">Product</a>
-                       
+
                     </li>
                     <li>
                         <a href="#">Pages</a>
-                        
+
                             </li>
                             <li>
                                 <a href="contact.html">Contact</a>
 
-                                
+
                             </li>
-                        
-                        
+
+
                     </li>
-                   
-                    
+
                 </ul>
             </nav><!-- End .mobile-nav -->
 
-          
         </div>
     </div>
 
 
 
+
+
+<!-- Your script that initializes the zoom functionality -->
+<script>
+    $(document).ready(function() {
+        // Initialize ElevateZoom on the product image
+        $('#product-zoom').elevateZoom({
+            // Configuration options
+            zoomType: 'inner',
+            cursor: 'crosshair',
+            zoomWindowFadeIn: 500,
+            zoomWindowFadeOut: 500
+            // ... other options
+        });
+
+        // Additional script for the product gallery button, if needed
+        $('#btn-product-gallery').on('click', function(e) {
+            e.preventDefault();
+            // Handle gallery functionality, if needed
+        });
+    });
+</script>
 
 
 <!-- Include SweetAlert library -->

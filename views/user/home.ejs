@@ -29,37 +29,7 @@
   </div>
   
 
-<% if (userName) { %>
-    <div class="page-wrapper">
-<div class="container">
-        <div class="dropdown d-flex justify-content-end mb-3 ">
-            <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
-                    <p style="color: white;"><%= userName %></p>
-                    <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="#"><h6>Profile</h6></a>
-                        <a class="dropdown-item" href="/logout"><h6>Logout</h6></a>
-
-            </a>
-
-
-            </div>
-          </div>
-          <% }else{%>
-            <div class="container">
-                <div class="dropdown d-flex justify-content-end mb-3 ">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        
-                            <p style="color: white;">Profile</p>
-                            <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item" href="/login"><h6>Login</h6></a>
-
-                    </a>
-
-                    </div>
-                  </div>
-                  <% } %>
-        </div>
        
 
          
@@ -154,7 +124,7 @@
 
                                         <div class="product-action">
                                             <hr>
-                                            <a href="#" onclick="addtoCart('<%=product._id%>','<%=userName%>')" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <a href="#" onclick="addtoCart('<%=product._id%>','<%=userid%>')" class="btn-product btn-cart"><span>add to cart</span></a>
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
 

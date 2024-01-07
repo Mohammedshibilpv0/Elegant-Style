@@ -13,9 +13,11 @@ const home = async (req, res) => {
   try {
     const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length||0
-    const userName = req.session.user;
+    const userName = await User.findOne({_id:req.session.user_id})
+    
+    const userid= req.session.user_id
     const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
-    res.render("home", { userName, Product,count });
+    res.render("home", { userName, Product,count,userid });
   } catch (err) {
     console.log(err);
     // Handle the error appropriately, perhaps by rendering an error page
@@ -286,6 +288,75 @@ const allproducts= async (req,res)=>{
 
 
 
+const changepassword = async (req, res) => {
+  const currentPassword = req.body.password;
+  const newPassword = req.body.newpassword;
+  const confirmPassword = req.body.confirmpassword;
+  const userId = req.session.user_id; // Assuming you store the user's ID in the session
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Verify the current password
+    if (currentPassword) {
+      const passwordMatch = await bcrypt.compare(currentPassword, user.Password);
+
+      if (!passwordMatch) {
+        return res.json({ message: 'Current password is incorrect' });
+      }
+    }
+
+    // Check if the new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      return res.json({ message: 'New password and confirm password do not match' });
+    }
+
+    // Update the user's password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    user.Password = hashedPassword;
+
+    // Save the updated user data
+    await user.save();
+
+    // Send a success response with a message
+    return res.status(200).json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error.message);
+    
+    // Send an error response with a message
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+const submitprofile = async (req, res) => {
+  try {
+    // Retrieve the user by ID
+    const user = await User.findOne({ _id: req.session.user_id });
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    // Update the user's name
+    user.Name =req.body.name
+    // Save the updated user data
+    await user.save();
+
+    return res.status(200).json({ success: true, message: 'Form submitted successfully' });
+  } catch (err) {
+    console.error('Error submitting profile:', err.message);
+    return res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
+
+
+
 
 const logout = (req, res) => {
   try {
@@ -308,5 +379,7 @@ module.exports = {
   submitlogin,
   signup,
   allproducts,
+  changepassword,
+  submitprofile,
   logout,
 };

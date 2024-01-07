@@ -116,6 +116,7 @@ const submitedit = async (req, res) => {
       Quantity: req.body.quantity,
       Price: req.body.price,
       OfferPrice: req.body.offerprice,
+      Category:req.body.category
     };
     
     Object.keys(updatedData).forEach(

@@ -12,6 +12,7 @@ const session=require('express-session')
 const crypto=require('crypto')
 const noCache= require('nocache')
 app.use(noCache());
+const bcrypt = require('bcrypt');
 
 
 app.use(session({

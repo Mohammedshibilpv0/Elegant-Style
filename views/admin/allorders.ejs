@@ -1,0 +1,359 @@
+<%- include("../partials/user/adminheader.ejs")%>
+
+<div
+  id="main-wrapper"
+  data-theme="light"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+  data-boxed-layout="full"
+>
+  <!-- ============================================================== -->
+  <!-- Topbar header - style you can find in pages.scss -->
+  <!-- ============================================================== -->
+  <header class="topbar" data-navbarbg="skin6">
+    <nav class="navbar top-navbar navbar-expand-lg">
+      <div class="navbar-header" data-logobg="skin6">
+        <!-- This is for the sidebar toggle which is visible on mobile only -->
+        <a
+          class="nav-toggler waves-effect waves-light d-block d-lg-none"
+          href="javascript:void(0)"
+          ><i class="ti-menu ti-close"></i
+        ></a>
+        <!-- ============================================================== -->
+        <!-- Logo -->
+        <!-- ============================================================== -->
+        <div class="navbar-brand">
+          <!-- Logo icon -->
+          <a href="home.ejs">
+            <img
+              src="/admin/assets/images/freedashDark.svg"
+              alt=""
+              class="img-fluid"
+            />
+          </a>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Logo -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Toggle which is visible on mobile only -->
+        <!-- ============================================================== -->
+        <a
+          class="topbartoggler d-block d-lg-none waves-effect waves-light"
+          href="javascript:void(0)"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+          ><i class="ti-more"></i
+        ></a>
+      </div>
+      <!-- ============================================================== -->
+      <!-- End Logo -->
+      <!-- ============================================================== -->
+      <div class="navbar-collapse collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav float-end">
+          <!-- ============================================================== -->
+          <!-- Search -->
+          <!-- ============================================================== -->
+          <!-- <li class="nav-item d-none d-md-block">
+                            <a class="nav-link" href="javascript:void(0)">
+                                <form>
+                                    <div class="customize-input">
+                                        <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                            type="search" placeholder="Search" aria-label="Search">
+                                        <i class="form-control-icon" data-feather="search"></i>
+                                    </div>
+                                </form>
+                            </a>
+                        </li> -->
+
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="javascript:void(0)"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="ms-2 d-none d-lg-inline-block"
+                ><span>Hello,</span> <span class="text-dark"></span>
+                <i data-feather="chevron-down" class="svg-icon"></i
+              ></span>
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY"
+            >
+              <a class="dropdown-item" href="javascript:void(0)"
+                ><i data-feather="user" class="svg-icon me-2 ms-1"></i> My
+                Profile</a
+              >
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/admin/logout"
+                ><i data-feather="power" class="svg-icon me-2 ms-1"></i>
+                Logout</a
+              >
+              <div class="dropdown-divider"></div>
+            </div>
+          </li>
+          <!-- ============================================================== -->
+          <!-- User profile and search -->
+          <!-- ============================================================== -->
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- ============================================================== -->
+  <!-- End Topbar header -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <aside class="left-sidebar" data-sidebarbg="skin6">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar" data-sidebarbg="skin6">
+      <!-- Sidebar navigation-->
+      <nav class="sidebar-nav">
+        <ul id="sidebarnav">
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/"
+              aria-expanded="false"
+              ><i data-feather="home" class="feather-icon"></i
+              ><span class="hide-menu">Dashboard</span></a
+            >
+          </li>
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Users</span></li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/allusers" aria-expanded="false"
+              ><i class="fa-regular fa-user"></i
+              ><span class="hide-menu">All Users </span></a
+            >
+          </li>
+
+          <li class="list-divider"></li>
+
+          <li class="nav-small-cap"><span class="hide-menu">Products</span></li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/products" aria-expanded="false"
+              ><i class="fa-regular fa-user"></i
+              ><span class="hide-menu">All Product </span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link"
+              href="/admin/addproducts"
+              aria-expanded="false"
+              ><i class="fa-solid fa-plus"></i
+              ><span class="hide-menu">Add Products</span></a
+            >
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="/admin/category" aria-expanded="false"
+              ><i class="fa-solid fa-list"></i
+              ><span class="hide-menu">category</span></a
+            >
+          </li>
+
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Orders</span></li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/allorders"
+              aria-expanded="false"
+              ><i class="fa-solid fa-cart-shopping"></i
+              ><span class="hide-menu">All Orders </span></a
+            >
+          </li>
+
+          <li class="list-divider"></li>
+          <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
+
+          <li class="sidebar-item">
+            <a
+              class="sidebar-link sidebar-link"
+              href="/admin/logout"
+              aria-expanded="false"
+              ><i data-feather="log-out" class="feather-icon"></i
+              ><span class="hide-menu">Logout</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+      <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+  </aside>
+  <!-- ============================================================== -->
+  <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+  <!-- ============================================================== -->
+  <!-- ============================================================== -->
+  <!-- Page wrapper  -->
+  <!-- ============================================================== -->
+  <div class="page-wrapper bg-dark" style="min-height: 775px">
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="main-box clearfix">
+            <div class="table-responsive">
+              <table class="table user-list" id="userTable" style="color: white;">
+                <thead>
+                  <tr>
+                    <th><span class="ms-1">Order Id</span></th>
+                    <th><span class="ms-1">Product Name</span></th>
+                    <th><span class="ms-1">User Name</span></th>
+                    <th><span class="ms-1">Price</span></th>
+                    <th><span class="ms-5">Quantity</span></th>
+                    <th><span class="ms-1">Address</th>
+                    <th><span class="ms-1">Images</span></th>
+                    <th><span class="ms-1">Status</span></th>
+                    <th><span class="ms-1">Action</span></th>
+                   
+
+                  </tr>
+                </thead>
+                <tbody>
+               
+                  <% allOrders.forEach(order => { %>
+                    <% order.Products.forEach(product => { %>
+               
+              <input type="text" id="orderid" value="<%=order._id%>" hidden>
+                  <tr>
+                    <td>
+                      <p>  </p>
+                    </td>
+                    <td>
+                          <p><%=product.name%></p>
+                    </td>
+                          
+                    <td>
+                      <p><%= order.user.Name %></p>
+                    </td>
+                    <td>
+                        <p><%=order.total%></p>
+                    </td>
+                    <td>
+                        <p class="text-center"> <%=product.quantity%> </p>
+                    </td>
+
+                    <td>
+                          <p><%=order.address%></p>
+                    </td>
+                    <!-- Popup HTML -->
+                   
+                            <td>
+                              <img
+                              class="circular-image"
+                              src="/uploads/<%= product.image %>"
+                              alt="<%= product.Name %> Image"
+                              onclick="openPopup('/uploads/<%= product.image %>')"
+                            />
+                            </td>
+                            <div id="imagePopup" class="image-popup">
+                              <div class="popup-content">
+                                <span class="close-popup" onclick="closePopup()"
+                                  >&times;</span
+                                >
+                                <img id="popupImage" />
+                              </div>
+                            </div>
+                            <td>
+                              <p id="orderStatus_<%= order._id %>"><%= product.orderStatus %></p>
+                            </td>
+                        <td>
+                      
+                      <div class="btn-group">
+                        <div class="btn-group dropstart">
+                          <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Status
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped')">shipped</a></li>
+                            <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered')">delivered</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled')">cancelled</a></li>
+                          </ul>
+                        </div>
+
+
+                    </td>
+                  </tr>
+                  <% }); %>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  
+</div>
+<link rel="stylesheet" href="/admin/css/allproducts.css">
+<script>
+      function openPopup(imageSrc) {
+      // Set the source of the popup image
+      document.getElementById("popupImage").src = imageSrc;
+
+      // Show the popup
+      document.getElementById("imagePopup").style.display = "flex";
+    }
+
+    function closePopup() {
+      // Hide the popup
+      document.getElementById("imagePopup").style.display = "none";
+    }
+
+
+//updating the status of product
+    function updateStatus(status) {
+        // Make an AJAX request to update the status in the database
+        const orderId = document.getElementById('orderid').value 
+        console.log(orderId);
+        const url = `/admin/updateStatus/${orderId}`;  // Replace with your API endpoint
+
+        // Assuming you are using fetch API
+        fetch(url, {
+            method: 'PUT',  // Use the appropriate HTTP method
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the response from the server
+            console.log('Status updated successfully:', data);
+            const orderStatusElement = document.getElementById(`orderStatus_${orderId}`);
+            if (orderStatusElement) {
+                orderStatusElement.innerText = status;
+            }
+            // Optionally, you can reload the page or update the UI here
+        })
+        .catch(error => {
+            // Handle errors
+            console.error('There was a problem updating the status:', error.message);
+        });
+    }
+</script>
+<%-include("../partials/user/adminfooter.ejs")%>

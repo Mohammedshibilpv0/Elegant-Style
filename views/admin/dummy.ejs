@@ -233,7 +233,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
           <small id="descriptionError" class="text-danger"></small>
       </div>
   </div>
-
+     <input type="text" id="proid" value="<%=products._id%>" hidden>
   <div class="form-group row">
       <label for="productCategory" class="col-sm-3 col-form-label">Category</label>
       <div class="col-sm-9">
@@ -279,29 +279,32 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
 </form>
 
 
-<form action="/admin/update/:<%=products._id%>" method="POST" enctype="multipart/form-data">
-<div class="card-container mt-4" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
-  <% products.Images.forEach((image, index) => { %>
-    <div class="card mr-3" style="flex: 0 0 auto;">
-      <img src="/uploads/<%= image %>" class="card-img-top small-image" id="image<%= index %>">
-      <div class="card-body">
-        <!-- Additional information or actions can be added here -->
-        <p class="card-text">Image <%= index + 1 %></p>
-        
-        <button class="btn btn-danger" onclick="deleteImage(event, '<%=image%>', '<%=index%>','<%=products._id%>' )">remove</button>
+<form action="/admin/update/<%= products._id %>" method="POST" enctype="multipart/form-data">
+  <div class="card-container mt-4" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+    <% products.Images.forEach((image, index) => { %>
+      <div class="card mr-3" style="flex: 0 0 auto;">
+        <img src="/uploads/<%= image %>" class="card-img-top small-image" id="image<%= index %>">
+        <div class="card-body">
+          <!-- Additional information or actions can be added here -->
+          <p class="card-text">Image <%= index + 1 %></p>
+          <button class="btn btn-danger" onclick="deleteImage(event, '<%= image %>', '<%= index %>','<%= products._id %>' )">remove</button>
+        </div>
       </div>
-    </div>
-  <% }); %>
-  <div class="image-box">
-    <input id="fileInput" type="file" accept="image/*" />
-   
-    <span>Add Image</span>
+    <% }); %>
   </div>
-</div>
-<button type="submit">sub</button>
 </form>
+<% if (products.Images.length < 4) { %>
+  <div class="card mr-3" style="flex: 0 0 auto;">
+    <form id="addImageForm">
+      <input type="file" name="image" id="imageInput">
+      <button class="btn btn-success" style="height: 40px;" type="button" onclick="addImage()">Submit</button>
+    </form>
+  </div>
+<% } %>
 <!-- Closing tags for your HTML structure -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
 <script>
 function deleteImage(event, imgid, index, productid) {
   event.preventDefault();
@@ -366,6 +369,43 @@ function deleteImage(event, imgid, index, productid) {
   });
 }
 
+</script>
+<script>
+  function addImage() {
+      // Get the form and image input elements
+      const form = document.getElementById('addImageForm');
+      const imageInput = document.getElementById('imageInput');
+      const proid= document.getElementById('proid').value
+      console.log(proid);
+      // Create a FormData object to append the image file
+      const formData = new FormData(form);
+      formData.append('productId', proid); // Replace with your actual product ID
+
+      // Make an AJAX request to add the new image
+      fetch('/admin/addImage', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          // Handle the response from the server
+          console.log('Image added successfully:', data)
+
+      window.location.reload()
+
+          // Reset the form (optional)
+          form.reset();
+      })
+      .catch(error => {
+          // Handle errors
+          console.error('There was a problem adding the image:', error.message);
+      });
+  }
 </script>
 
 
