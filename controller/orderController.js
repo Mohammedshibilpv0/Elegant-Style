@@ -13,7 +13,7 @@ const cancelorder = async (req, res) => {
       },
       {
           $set: {
-              'Products.$.orderStatus': 'cancelled'
+              'orderStatus': 'cancelled'
           }
       }
   );

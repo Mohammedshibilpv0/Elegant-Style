@@ -35,42 +35,41 @@ const addProducts = async (req, res) => {
 };
 
 const uploadProducts = async (req, res) => {
-  //submitting addproduct
   try {
     upload(req, res, async function (err) {
       if (err) {
         const errorMsg = "Image more than 4 is not allowed";
         req.flash("err", errorMsg);
-        res.redirect("/admin/addproducts");
-      } else {
-        // The files are uploaded successfully
-        // Access them in req.files array
-        // Example: req.files[0], req.files[1], ...
-
-        const alreadyproduct = await Products.findOne({ Name: req.body.name }); /// checking already product
-        if (alreadyproduct) {
-          const errorMsg = "product already added";
-          req.flash("err", errorMsg);
-          res.redirect("/admin/addproducts");
-        } else {
-          const product = new Products({
-            // adding product details to schema
-            Name: req.body.name,
-            Price: req.body.price,
-            Quantity: req.body.quantity,
-            Description: req.body.description,
-            Category: req.body.category,
-            Date: req.body.date,
-            OfferPrice: req.body.offerprice,
-            // Use req.files to get the uploaded file information
-            Images: req.files.map((file) => file.filename),
-          });
-
-          await product.save(); //saving the products in the database
-
-          res.redirect("/admin/products"); // Redirect to the products page or wherever you want
-        }
+        return res.redirect("/admin/addproducts");
       }
+
+      const alreadyProduct = await Products.findOne({ Name: req.body.name });
+
+      if (alreadyProduct) {
+        const errorMsg = "Product already added";
+        req.flash("err", errorMsg);
+        return res.redirect("/admin/addproducts");
+      }
+
+   
+  
+
+ 
+      const product = new Products({
+        Name: req.body.name,
+        Price: req.body.price,
+        Quantity: req.body.quantity,
+        Description: req.body.description,
+        Category: req.body.category,
+        Date: req.body.date,
+        OfferPrice: req.body.offerprice,
+        Images: req.files.map((file) => file.filename),
+      
+      });
+
+      await product.save();
+
+      res.redirect("/admin/products");
     });
   } catch (error) {
     console.error(error);
@@ -109,6 +108,7 @@ const submitedit = async (req, res) => {
         res.redirect("/admin/addproducts");
       } else {
 
+
     const productId = req.params.id;
     const updatedData = {
       Name: req.body.name,
@@ -116,7 +116,8 @@ const submitedit = async (req, res) => {
       Quantity: req.body.quantity,
       Price: req.body.price,
       OfferPrice: req.body.offerprice,
-      Category:req.body.category
+      Category:req.body.category,
+   
     };
     
     Object.keys(updatedData).forEach(
@@ -139,10 +140,11 @@ const submitedit = async (req, res) => {
 const singleProduct = async (req, res) => {
   try{
     const user_id=req.session.user_id
+    const userid= req.session.user_id
     const product_id = req.params.id;
     const products = await Products.findOne({ _id: product_id }).populate('Category').exec();
     const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
-    res.render("eachproducts", {products,recommend,user_id});
+    res.render("eachproducts", {products,recommend,user_id,userid});
   }catch(err){
     console.log(err);
   }

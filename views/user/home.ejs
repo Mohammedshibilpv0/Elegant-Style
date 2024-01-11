@@ -135,7 +135,7 @@
                                         <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="/singleproduct/<%=product._id%>" ><%=product.Name%></a></h3><!-- End .product-title -->
                                         <p style="margin-bottom:  8px; margin-left: 16px;"> <%= product.Category ? product.Category.Name : 'No Category' %></p>
                                         <div class="product-price " style="margin-left: 16px; ;">
-                                            $<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">$<%= product.Price %></s>  
+                                            ₹<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">₹<%= product.Price %></s>  
                                           </div>
                                         <!-- End .product-price -->
                                         <p style="margin-left: 16px;">only <span class="text-danger" ><%=product.Quantity%></span> left</p>
@@ -185,6 +185,7 @@
                 .then((data) => {
                     // Handle the response from the backend
                     console.log('Response from backend:', data);
+                    document.querySelector('.cart-count').innerText=data.newCartCount
     
                     // Display SweetAlert notification
                     Swal.fire({
@@ -197,13 +198,20 @@
                 .catch((error) => {
                     console.error('Error:', error);
     
-                    // Display SweetAlert error notification
+                    // Display SweetAlert error notific0ation
                     Swal.fire({
                         icon: 'error',
                         title: 'Error adding to cart',
                         text: 'An error occurred while adding the product to the cart.',
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to the login page
+                            window.location.href = '/login'; // Replace '/login' with the actual URL of your login page
+                        }
                     });
+
                 });
+                
         }
     </script>
    

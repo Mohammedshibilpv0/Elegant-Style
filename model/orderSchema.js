@@ -28,11 +28,7 @@ const ordersSchema = mongoose.Schema({
             type: Number,
 
         },
-        orderStatus: {
-            type: String,
-            default: 'placed',
-            enum: ['placed', 'shipped', 'delivered', 'request return', 'returned', 'request cancellation', 'cancelled']
-        },
+       
         reason:{
             type: String
         },
@@ -40,9 +36,19 @@ const ordersSchema = mongoose.Schema({
             type:String
         }
     }],
+    orderStatus: {
+        type: String,
+        default: 'placed',
+        enum: ['placed', 'shipped', 'delivered', 'request return', 'returned', 'request cancellation', 'cancelled']
+    },
     paymentMode: {
         type: String,
 
+
+    },
+    paymentStatus:{
+        type:String,
+        default:"pending"
     },
     total: {
         type: Number

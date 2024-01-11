@@ -226,71 +226,63 @@
                   </tr>
                 </thead>
                 <tbody>
-               
                   <% allOrders.forEach(order => { %>
                     <% order.Products.forEach(product => { %>
-               
-              <input type="text" id="orderid" value="<%=order._id%>" hidden>
-                  <tr>
-                    <td>
-                      <p>  </p>
-                    </td>
-                    <td>
-                          <p><%=product.name%></p>
-                    </td>
-                          
-                    <td>
-                      <p><%= order.user.Name %></p>
-                    </td>
-                    <td>
-                        <p><%=order.total%></p>
-                    </td>
-                    <td>
-                        <p class="text-center"> <%=product.quantity%> </p>
-                    </td>
-
-                    <td>
-                          <p><%=order.address%></p>
-                    </td>
-                    <!-- Popup HTML -->
-                   
-                            <td>
-                              <img
-                              class="circular-image"
-                              src="/uploads/<%= product.image %>"
-                              alt="<%= product.Name %> Image"
-                              onclick="openPopup('/uploads/<%= product.image %>')"
-                            />
-                            </td>
-                            <div id="imagePopup" class="image-popup">
-                              <div class="popup-content">
-                                <span class="close-popup" onclick="closePopup()"
-                                  >&times;</span
-                                >
-                                <img id="popupImage" />
-                              </div>
-                            </div>
-                            <td>
-                              <p id="orderStatus_<%= order._id %>"><%= product.orderStatus %></p>
-                            </td>
+                      <tr>
                         <td>
-                      
-                      <div class="btn-group">
-                        <div class="btn-group dropstart">
-                          <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Status
-                          </button>
-                          <ul class="dropdown-menu">
-                            <li><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped')">shipped</a></li>
-                            <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered')">delivered</a></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled')">cancelled</a></li>
-                          </ul>
+                          <p><%= order._id %> </p>
+                        </td>
+                        <td>
+                          <p><%= product.name %></p>
+                        </td>
+                        <td>
+                          <p><%= order.user.Name %></p>
+                        </td>
+                        <td>
+                          <p><%= order.total %></p>
+                        </td>
+                        <td>
+                          <p class="text-center"> <%= product.quantity %> </p>
+                        </td>
+                        <td>
+                          <p><%= order.address %></p>
+                        </td>
+                        <!-- Popup HTML -->
+                        <td>
+                          <img
+                            class="circular-image"
+                            src="/uploads/<%= product.image %>"
+                            alt="<%= product.Name %> Image"
+                            onclick="openPopup('/uploads/<%= product.image %>')"
+                          />
+                        </td>
+                        <div id="imagePopup" class="image-popup">
+                          <div class="popup-content">
+                            <span class="close-popup" onclick="closePopup()"
+                              >&times;</span
+                            >
+                            <img id="popupImage" />
+                          </div>
                         </div>
-
-
-                    </td>
-                  </tr>
-                  <% }); %>
+                        <td>
+                          <p id="orderStatus_<%= order._id %>"><%= order.orderStatus %></p>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <div class="btn-group dropstart">
+                              <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Status
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped', '<%= order._id %>')">shipped</a></li>
+                                <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered', '<%= order._id %>')">delivered</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled', '<%= order._id %>')">cancelled</a></li>
+                              </ul>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    <% }); %>
                   <% }); %>
                 </tbody>
               </table>
@@ -321,9 +313,9 @@
 
 
 //updating the status of product
-    function updateStatus(status) {
+    function updateStatus(status,orderId) {
         // Make an AJAX request to update the status in the database
-        const orderId = document.getElementById('orderid').value 
+       
         console.log(orderId);
         const url = `/admin/updateStatus/${orderId}`;  // Replace with your API endpoint
 
@@ -344,10 +336,11 @@
         .then(data => {
             // Handle the response from the server
             console.log('Status updated successfully:', data);
-            const orderStatusElement = document.getElementById(`orderStatus_${orderId}`);
-            if (orderStatusElement) {
-                orderStatusElement.innerText = status;
-            }
+            // const orderStatusElement = document.getElementById(`orderStatus_${orderId}`);
+            // if (orderStatusElement) {
+            //     orderStatusElement.innerText = status;
+            // }
+            window.location.reload()
             // Optionally, you can reload the page or update the UI here
         })
         .catch(error => {

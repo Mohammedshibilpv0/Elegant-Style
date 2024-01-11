@@ -234,10 +234,10 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
       </div>
   </div>
      <input type="text" id="proid" value="<%=products._id%>" hidden>
-  <div class="form-group row">
-      <label for="productCategory" class="col-sm-3 col-form-label">Category</label>
+     <div class="row">
+      <label for="productCategory" class="col-sm-3 col-form-label mt-5">Category</label>
       <div class="col-sm-9">
-        <select class="form-control" id="productCategory" name="category" required>
+        <select class="form-control mt-5" id="productCategory" name="category" required>
             <% category.forEach(category => { %>
               <option value="<%= category._id %>" <%= (category._id.toString() === products.Category.toString()) ? 'selected' : '' %>><%= category.Name %></option>
             <% }); %>
@@ -246,6 +246,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
           <small id="categoryError" class="text-danger"></small>
       </div>
   </div>
+  
   <div class="form-group row">
       <label for="productQuantity" class="col-sm-3 col-form-label">Quantity</label>
       <div class="col-sm-9">
@@ -253,8 +254,6 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
           <small id="quantityError" class="text-danger"></small>
       </div>
   </div>
-
-
 
 
         </div>

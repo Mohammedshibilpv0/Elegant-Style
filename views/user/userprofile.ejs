@@ -185,7 +185,7 @@ z-index: 0
 
 					<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
 						<section class="vh-100 gradient-custom-2">
-							<div class="container py-5 h-100">
+							<div class="container py-5 ">
 							  <% orders.forEach(order => { %>
 								<div class="row align-items-center h-100">
 								  <div class="col-md-10 col-lg-8 col-xl-6">
@@ -218,8 +218,8 @@ z-index: 0
 											  <img class="align-self-center img-fluid" src="/uploads/<%=product.image%>" width="250">
 											</div>
 										  </div>
-										  <% if(product.orderStatus=="placed"){%>
-												<p class="text-primary"><%=product.orderStatus%></p>
+										  <% if(order.orderStatus=="placed"){%>
+												<p class="text-primary"><%=order.orderStatus%></p>
 										  <div class="card-footer p-4">
 											<div class="d-flex justify-content-between">
 											  <h5 class="fw-normal mb-0">
@@ -229,7 +229,7 @@ z-index: 0
 											</div>
 										  </div>
 										  <%}%>
-											<%if(product.orderStatus=="shipped"){%>
+											<%if(order.orderStatus=="shipped"){%>
 											<h6 class="text-primary " style="margin-left: 20px; margin-bottom: 30px;" ><%=product.orderStatus%></h6>
 											<div class="card-footer p-4">
 												<div class="d-flex justify-content-between">
@@ -240,11 +240,11 @@ z-index: 0
 												</div>
 											  </div>
 											<%}%>
-											<%if(product.orderStatus=="delivered"){%>
-												<h6 class="text-success"><%=product.orderStatus%></h6>
+											<%if(order.orderStatus=="delivered"){%>
+												<h6 class="text-success"><%=order.orderStatus%></h6>
 												<%}%>
-												<%if(product.orderStatus=="cancelled"){%>
-													<h6 class="text-danger " ><%=product.orderStatus%></h6>
+												<%if(order.orderStatus=="cancelled"){%>
+													<h6 class="text-danger " ><%=order.orderStatus%></h6>
 													<%}%>
 										<% }); %>
 									  </div>
@@ -262,39 +262,113 @@ z-index: 0
 
 								    <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
 
-										<% userdetails.Addresses.forEach(user=>{%>
-
-								    	<div class="row">
-								    		<div class="col-lg-6">
-								    			<div class="card card-dashboard">
-								    				<div class="card-body">
-								    					<h3 class="card-title">Billing Address</h3><!-- End .card-title -->
-														<p> Location : <%=user.location%><br>
-															Address	<%=user.address%><br>
-															city :   <%=user.city%><br>
-															Zip : <%=user.zip%><br>
-															Phone : <%=user.phone%><br>
-															Email : <%=user.email%><br>
-															State : <%=user.state%> <br>
-														<!-- <a href="#">Edit <i class="icon-edit"></i></a></p> -->
-								    				</div><!-- End .card-body -->
-													<div class="container" hidden>
-														<button data-toggle="modal" data-target="#editModal">Edit <i class="icon-edit"></i></button>
+										<% userdetails.Addresses.forEach(user => { %>
+											<div class="row">
+												<div class="col-lg-6">
+													<div class="card card-dashboard">
+														<div class="card-body">
+															<h3 class="card-title">Billing Address</h3>
+															<!-- End .card-title -->
+															<p> Location : <%=user.location%><br>
+																Address <%=user.address%><br>
+																city : <%=user.city%><br>
+																Zip : <%=user.zip%><br>
+																Phone : <%=user.phone%><br>
+																Email : <%=user.email%><br>
+																State : <%=user.state%> <br>
+															</p>
+														</div>
+														<!-- End .card-body -->
+														<div class="container justify-content-between">
+															<!-- Edit button with data-toggle attribute to open the modal -->
+															<a href="#" data-toggle="modal" data-target="#editModal<%=user._id%>">Edit <i class="icon-edit"></i></a>
+										
+															<!-- Delete button --> '<%=user._id%>'
+															<a href="#" style="margin-left: 255px;" onclick="removeAddress('<%=user._id%>')">Delete <i class="fa-solid fa-trash"></i></a>
+														</div>
 													</div>
+													<!-- End .card-dashboard -->
+												</div>
+												<!-- End .col-lg-6 -->
+										
+												<!-- Edit Modal -->
+												<div class="modal fade" id="editModal<%=user._id%>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel<%=user._id%>" aria-hidden="true">
+													<div class="modal-dialog" role="document">
+														<div class="modal-content">
+															<!-- Add your modal content here -->
+															<div class="modal-header">
+																<h5 class="modal-title" id="editModalLabel<%=user._id%>">Edit Address</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">&times;</span>
+																</button>
+															</div>
 
-								    			</div><!-- End .card-dashboard -->
-								    		</div><!-- End .col-lg-6 -->
+															<div class="modal-body">
+																<!-- Add your form fields with predefined values here -->
+																<form id="editForm<%=user._id%>">
+																	<!-- Example input field (replace with your actual form fields) -->
+																	<div class="modal-body mx-3">
+																	<div class="form-group">
+																		<label for="editLocation<%=user._id%>">Location</label>
+																		<input type="text" class="form-control" id="editLocation<%=user._id%>" value="<%=user.location%>" required>
+																	</div>
+																	<div class="md-form mb-5">
 
+																		<input type="text" id="editaddress<%=user._id%>" class="form-control validate" name="Address" value="<%=user.address%>">
+																		<label data-error="wrong" data-success="right" for="form29">Address</label>
+																	  </div>
 
-								    	</div><!-- End .row -->
-										<%})%>
+																	  <div class="md-form mb-5">
+																		<i class="fas fa-tag prefix grey-text"></i>
+																		<input type="text" id="editcity<%=user._id%>" class="form-control validate" name="city" value="<%=user.city%>">
+																		<label data-error="wrong" data-success="right" for="form32">City</label>
+																	  </div>
+
+																	  <div class="md-form mb-5">
+																		<i class="fas fa-tag prefix grey-text"></i>
+																		<input type="text" id="editzip<%=user._id%>" class="form-control validate" name="zip" value="<%=user.zip%>">
+																		<label data-error="wrong" data-success="right" for="form32">Zip</label>
+																	  </div>
+																	  <div class="md-form mb-5">
+																		<i class="fas fa-tag prefix grey-text"></i>
+																		<input type="text" id="editphone<%=user._id%>" class="form-control validate" name="phone" value="<%=user.phone%>">
+																		<label data-error="wrong" data-success="right" for="form32">Phone</label>
+																	  </div>
+							
+																	  <div class="md-form mb-5">
+																		<i class="fas fa-tag prefix grey-text"></i>
+																		<input type="email"id="editemail<%=user._id%>" class="form-control validate" name="email" value="<%=user.email%>">
+																		<label data-error="wrong" data-success="right" for="form32">Email</label>
+																	  </div>
+							
+																	  <div class="md-form mb-5">
+																		<i class="fas fa-tag prefix grey-text"></i>
+																		<input type="text" id="editstate<%=user._id%>" class="form-control validate" name="state" value="<%=user.state%>">
+																		<label data-error="wrong" data-success="right" for="form32">State</label>
+																	  </div>
+							
+																	<!-- Add more fields as needed -->
+									
+																	<!-- Example Save button -->
+																	<button type="button" class="btn btn-primary" onclick="saveEdit('<%=user._id%>')">Save Changes</button>
+																</div>
+																</form>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- End Edit Modal -->
+										
+											</div>
+											<!-- End .row -->
+										<% }) %>
+										
 
 										<div>
 											<a href="" class="btn btn-primary btn-rounded mb-4 mt-3" data-toggle="modal" data-target="#modalContactForm">Add Address
 										</a>
 										  </div>
-
-		         					<form action="/profileAddress" method="POST">
+								  <form action="/profileAddress" method="POST" onsubmit="return validateForm()">
 									<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 									aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -308,7 +382,7 @@ z-index: 0
 										<div class="modal-body mx-3">
 										  <div class="md-form mb-5">
 											<i class="fas fa-user prefix grey-text"></i>
-											<input type="text" id="form34" class="form-control validate" name="location">
+											<input type="text" id="form28" class="form-control validate" name="location">
 											<label data-error="wrong" data-success="right" for="form34">Location</label>
 										  </div>
 
@@ -320,13 +394,13 @@ z-index: 0
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="city">
+											<input type="text" id="form30" class="form-control validate" name="city">
 											<label data-error="wrong" data-success="right" for="form32">City</label>
 										  </div>
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="zip">
+											<input type="text" id="form31" class="form-control validate" name="zip">
 											<label data-error="wrong" data-success="right" for="form32">Zip</label>
 										  </div>
 										  <div class="md-form mb-5">
@@ -337,19 +411,19 @@ z-index: 0
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="email" id="form32" class="form-control validate" name="email">
+											<input type="email" id="form33" class="form-control validate" name="email">
 											<label data-error="wrong" data-success="right" for="form32">Email</label>
 										  </div>
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="state">
+											<input type="text" id="form34" class="form-control validate" name="state">
 											<label data-error="wrong" data-success="right" for="form32">State</label>
 										  </div>
 
 										</div>
 										<div class="modal-footer d-flex justify-content-center">
-										  <button type="submit" class="btn btn-primary">Send <i class="fas fa-paper-plane-o ml-1"></i></button>
+											<button type="submit" class="btn btn-primary">Send <i class="fas fa-paper-plane-o ml-1"></i></button>
 										</div>
 									  </div>
 									</div>
@@ -526,29 +600,201 @@ fetch('/submitprofile', {
     }
 </script>
 
-
 <script>
-    // Assume you have a variable orderStatus that holds the current order status
-    const orderStatus = "PLACED"; // Replace this with your actual order status
+    function removeAddress(userId) {
+        // Show SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You won\'t be able to revert this!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with the delete operation
+                deleteAddress(userId);
+            }
+        });
+    }
 
-    // Reset all steps to their initial state
-    document.querySelectorAll("#progressbar-1 li").forEach(function (li) {
-        li.className = "step0";
-    });
+    function deleteAddress(userId) {
+        fetch(`/removeaddress/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                // You may need to include additional headers such as authentication tokens
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            // Handle success, e.g., update UI or reload page
+            console.log('Address removed successfully');
+            reloadAddressTab();
+        })
+        .catch(error => {
+            // Handle errors, e.g., show an alert to the user
+            console.error('Error removing address:', error);
+        });
+    }
 
-    // Activate the appropriate step based on the orderStatus
-    if (orderStatus === "PLACED") {
-        document.getElementById("step1").className = "step0 active";
-    } else if (orderStatus === "SHIPPED") {
-        document.getElementById("step1").className = "step0 active";
-        document.getElementById("step2").className = "step0 active text-center";
-    } else if (orderStatus === "DELIVERED") {
-        document.getElementById("step1").className = "step0 active";
-        document.getElementById("step2").className = "step0 active text-center";
-        document.getElementById("step3").className = "step0 text-muted text-end";
+    function reloadAddressTab() {
+        // Use vanilla JavaScript to fetch the content and update the specific div
+        fetch(window.location.href, { method: 'GET' })
+            .then(response => response.text())
+            .then(html => {
+                // Extract the content of the 'tab-address' div from the fetched HTML
+                const tabAddressContent = new DOMParser().parseFromString(html, 'text/html')
+                    .getElementById('tab-address').innerHTML;
+
+                // Update the content of the 'tab-address' div
+                document.getElementById('tab-address').innerHTML = tabAddressContent;
+            })
+            .catch(error => {
+                console.error('Error reloading address tab:', error);
+            });
     }
 </script>
 
+<script>
+
+</script>
+
+
+
+
+<script>
+    function validateForm() {
+        // Get references to form elements
+        const location = document.getElementById('form28');
+        const address = document.getElementById('form29');
+        const city = document.getElementById('form30');
+        const zip = document.getElementById('form31'); // Note: You have duplicate IDs, which is not valid. Consider using unique IDs.
+        const phone = document.getElementById('form32');
+        const email = document.getElementById('form33');
+        const state = document.getElementById('form34');
+
+        // Reset previous error messages
+        resetErrorMessages();
+
+        // Validate each field
+        if (location.value.length < 5) {
+            displayErrorMessage(location, "Location must have at least 5 characters.");
+            return false;
+        }
+
+        if (address.value.length < 5) {
+            displayErrorMessage(address, "Address must have at least 5 characters.");
+            return false;
+        }
+
+        if (city.value.length < 5) {
+            displayErrorMessage(city, "City must have at least 5 characters.");
+            return false;
+        }
+
+        if (zip.value.length < 5) {
+            displayErrorMessage(zip, "Zip code must have at least 5 characters.");
+            return false;
+        }
+
+        if (phone.value.length < 5) {
+            displayErrorMessage(phone, "Phone number must have at least 5 characters.");
+            return false;
+        }
+
+        if (email.value.length < 5 || !isValidEmail(email.value)) {
+            displayErrorMessage(email, "Email must have at least 5 characters and be valid.");
+            return false;
+        }
+
+        if (state.value.length < 5) {
+            displayErrorMessage(state, "State must have at least 5 characters.");
+            return false;
+        }
+
+        // All validations passed
+        return true;
+    }
+
+    function isValidEmail(email) {
+        // Simple email validation using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function displayErrorMessage(element, message) {
+        // Create and append an error message next to the element
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "text-danger";
+        errorMessage.innerHTML = message;
+        element.parentNode.appendChild(errorMessage);
+    }
+
+    function resetErrorMessages() {
+        // Remove all previous error messages
+        const errorMessages = document.querySelectorAll(".text-danger");
+        errorMessages.forEach(function (errorMessage) {
+            errorMessage.parentNode.removeChild(errorMessage);
+        });
+    }
+</script>
+
+
+<script>
+    function saveEdit(userId) {
+        // Get the values from the modal form
+		const address = document.getElementById(`editaddress${userId}`).value;
+		const city = document.getElementById(`editcity${userId}`).value;
+		const state = document.getElementById(`editstate${userId}`).value;
+		const phone = document.getElementById(`editphone${userId}`).value;
+		const location = document.getElementById(`editLocation${userId}`).value;  // Corrected ID
+		const zip = document.getElementById(`editzip${userId}`).value;
+		const email = document.getElementById(`editemail${userId}`).value;
+
+        // Add more fields as needed
+
+        // Prepare the data to be sent in the request body
+        const formData = {
+			location:location,
+            address: address,
+            city: city,
+			zip:zip,
+			phone:phone,
+			email:email,
+			state:state
+
+        }
+
+        // Send a PUT or PATCH request to update the address
+        fetch(`/updateaddress/${userId}`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+                
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+           
+            console.log('Address updated successfully');
+            reloadAddressTab();
+        })
+        .catch(error => {
+    
+            console.error('Error updating address:', error);
+        });
+
+       
+        $(`#editModal${userId}`).modal('hide');
+    }
+</script>
 
 
  <%-include('../partials/user/footer.ejs')%>

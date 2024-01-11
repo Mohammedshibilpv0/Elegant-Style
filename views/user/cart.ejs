@@ -42,15 +42,16 @@
 												  <a href="/singleproduct/<%= product.productId._id %>">  <%= product.productId.Name %> </a> 
 												</h3><!-- End .product-title -->
 											  </div><!-- End .product -->
+											  <p id="proid" hidden><%= product.productId._id %></p>
 											</td>
-											<td class="price-col">$ <%= product.productPrice %></td>
+											<td class="price-col">₹ <%= product.productPrice %></td>
 											<td class="quantity-col">
 											  <!-- End .cart-product-quantity -->
 											  <div class="cart-product-quantity">
 												<input type="number" class="form-control" value="<%= product.quantity %>" min="1" max="<%= product.productId.Quantity %>" step="1" data-decimals="0" required id="<%= product.productId._id %>">
 											  </div>
 											</td>
-											<td class="total-col">$<%= product.totalPrice %></td>
+											<td class="total-col">₹<%= product.totalPrice %></td>
 											<input type="text" id="cartid" value="<%=cartData._id%>" hidden >
 											<td class="remove-col">
 											  <button class="btn-remove" onclick="removeFromCart('<%= product.productId._id %>')"><i class="icon-close"></i></button>
@@ -79,7 +80,7 @@
 	                		<aside class="col-lg-3">
 	                			<div class="summary summary-cart">
 
-							   <form action="/paymentmethod" method="POST">
+							   <form action="/paymentmethod" method="GET">
 	                				<h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
 
 	                				<table class="table table-summary">
@@ -100,7 +101,7 @@
 														<label class="custom-control-label" for="free-shipping">Free Shipping</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$0.00</td>
+	                							<td>₹0.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
 	                						<tr class="summary-shipping-row" hidden>
@@ -110,7 +111,7 @@
 														<label class="custom-control-label" for="standart-shipping">Standart:</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$10.00</td>
+	                							<td>₹10.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
 	                						<tr class="summary-shipping-row" hidden>
@@ -120,13 +121,13 @@
 														<label class="custom-control-label" for="express-shipping">Express:</label>
 													</div><!-- End .custom-control -->
 	                							</td>
-	                							<td>$20.00</td>
+	                							<td>₹20.00</td>
 	                						</tr><!-- End .summary-shipping-row -->
 
 
 	                						<tr class="summary-total" >
 	                							<td>Total:</td>
-	                							<td>$<%=totalPriceTotal%></td>
+	                							<td>₹<%=totalPriceTotal%></td>
 	                						</tr><!-- End .summary-total -->
 
 	                					</tbody>
@@ -163,7 +164,9 @@
 		<% } %>
 	
         <!-- for update the price while quantity + or  -   -->
-
+		<%-include('../partials/user/mobilenav.ejs')%>
+		<%-include('../partials/user/footbar.ejs')%>
+		<%-include('../partials/user/footer.ejs')%>
 
 	
 		  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -175,7 +178,7 @@
 			  quantityInputs.forEach(function (quantityInput) {
 				quantityInput.addEventListener("input", function () {
 					const cartId= document.getElementById('cartid').value
-					
+
 				  // Fetch to update the database
 				  fetch(`/updateQuantity`, {
 					method: 'POST',
@@ -254,9 +257,34 @@
 
 		  </script>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+$(document).ready(function() {
+    // Add an event listener to all input fields with the specified class
+    $(".cart-product-quantity input").on("input", function() {
+        var inputElement = $(this);
+        var currentValue = parseInt(inputElement.val()) || 0;
+        var maxValue = parseInt(inputElement.attr("max")) || Infinity;
+
+        // Check if the maximum value is reached
+        if (currentValue >= maxValue) {
+            // Show SweetAlert when the maximum value is reached
+            Swal.fire({
+                icon: 'warning',
+                title: 'Maximum Quantity Reached',
+                text: 'You cannot exceed the maximum quantity.',
+                showConfirmButton: false,
+                timer: 3500 // Automatically close after 3.5 seconds
+            });
+
+            // Reset the value to the maximum allowed
+            inputElement.val(maxValue);
+        }
+    });
+});
+
+</script>
 
 
 
-<%-include('../partials/user/mobilenav.ejs')%>
-<%-include('../partials/user/footbar.ejs')%>
-<%-include('../partials/user/footer.ejs')%>

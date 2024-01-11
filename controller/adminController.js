@@ -241,25 +241,38 @@ const blockUser = async (req, res) => {
 };
 
 
-const changestatus = async (req,res)=>{
+const changestatus = async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
 
   try {
-      // Update the order status in the database
-      const updatedOrder = await Orders.findByIdAndUpdate(orderId, { $set: { 'Products.$[element].orderStatus': status } }, { arrayFilters: [{ 'element.orderStatus': { $ne: status } }] });
+    // Update the order status in the database
+    const updatedOrder = await Orders.updateOne(
+      {
+        _id: orderId,
+        'Products.orderStatus': { $ne: status },
+      },
+      {
+        $set: { 'orderStatus': status },
+      },
+      
+    );
 
-      if (!updatedOrder) {
-          return res.status(404).json({ error: 'Order not found' });
-      }
+    console.log('Update result:', updatedOrder);
 
-      // Send a response indicating success
-      res.json({ success: true, message: 'Status updated successfully' });
+    if (updatedOrder.nModified === 0) {
+      return res.status(404).json({ error: 'Order not found or status already updated' });
+    }
+
+    // Send a response indicating success
+    res.json({ success: true, message: 'Status updated successfully' });
   } catch (error) {
-      console.error('Error updating order status:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error updating order status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
+
+
 
 
 module.exports = {

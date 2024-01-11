@@ -1,7 +1,38 @@
+const { generate } = require("otp-generator");
 const Product = require("../model/Products");
 const User = require("../model/User");
 const Cart = require("../model/cartSchema");
-const order= require('../model/orderSchema')
+const Order= require('../model/orderSchema')
+const Razorpay = require('razorpay');
+const { response } = require("express");
+
+
+const instance = new Razorpay({
+  key_id: "rzp_test_QmkTPpR7YwgsmH",
+  key_secret:"XEwHXRnbP4kAiT17e5nWBbLk",
+});
+
+
+const generateRazorpay=(orderid,adjustedAmount)=>{
+
+ return new Promise((resolve,reject)=>{
+
+
+  const options = {
+    amount: adjustedAmount,
+    currency: "INR",
+    receipt: ""+orderid
+  };
+  instance.orders.create(options, function(err, order) {
+    if(err){
+      console.log(err);
+    }
+
+    resolve(order)
+  });
+ })
+}
+
 
 const cart = async (req, res) => {
   try {
@@ -97,8 +128,10 @@ const addtocart = async (req, res) => {
         await newCart.save();
         console.log("New cart created:", newCart);
       }
+      const updatedCart = await Cart.findOne({ userid: user_id });
+      const newCartCount = updatedCart ? updatedCart.products.length : 0;
 
-      res.status(200).json({ message: "Product added to cart successfully." });
+      res.status(200).json({ message: "Product added to cart successfully.",newCartCount });
     } else {
       res.status(400).json({ error: "Invalid product or user." });
     }
@@ -210,10 +243,11 @@ const addAddress = async (req, res) => {
 
 const  placecorder=async (req,res)=>{
   try {
+    const paymentmethod=req.body.paymentMethod
     const selectedValue = req.body.selectedValue;
     const cartId = req.session.user_id; // Replace with the actual cart ID
     const cart = await Cart.findOne({ userid: cartId });
-    console.log(cart);
+
 
     // Fetch product details for each product in the cart
     const products = await Promise.all(cart.products.map(async (cartProduct) => {
@@ -234,26 +268,64 @@ const  placecorder=async (req,res)=>{
     const orderData = {
         user: req.session.user_id,
         Products: products,
-        paymentMode: 'Cash on Delivery',
+        paymentMode: paymentmethod,
         total: products.reduce((acc, product) => acc + product.total, 0),
         date: new Date(),
         address: selectedValue,
     };
-    // Create an instance of the Orders model
-    const orderInstance = new order(orderData);
-    // Save the instance to the database
-    const savedOrder = await orderInstance.save().then(async()=>{
-        await Cart.deleteOne({userid:req.session.user_id})
-    })
   
-
-    res.json({ success: true, products: products });
+    // Create an instance of the Orders model
+    const orderInstance = new Order(orderData);
+   
+   
+      if(paymentmethod==="Cash on delivery"){
+        const savedOrder = await orderInstance.save().then(async()=>{
+          await Cart.deleteOne({userid:req.session.user_id})
+      })
+       res.json({ success: true, products: products });
+      }else if(paymentmethod==="Razorpay"){
+        const totalpriceInPaise = Math.round(orderData.total * 100); // Convert rupees to paise
+        const minimumAmount = 100;
+        const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
+        
+       generateRazorpay(orderInstance._id,adjustedAmount).then(async(response)=>{
+        
+        const savedOrder = await orderInstance.save()
+        res.json({ Razorpay: response, products: products });
+       })
+      
+      }
 } catch (error) {
     console.error('Error:', error);
     // Respond with an error message
     res.status(500).json({ success: false, message: 'An error occurred while processing the order or updating product stock.' });
 }
 
+}
+
+const verfypayment= async (req,res)=>{
+      try{
+        const userid= req.session.user_id
+        const {payment,order}=req.body
+        const crypto=require('crypto')
+        const orderid= order.receipt
+      
+        console.log(order);
+        console.log(orderid);
+        let hmac= crypto.createHmac('sha256','XEwHXRnbP4kAiT17e5nWBbLk')
+        hmac.update(payment.razorpay_order_id+'|'+payment.razorpay_payment_id)
+        hmac=hmac.digest('hex')
+        if(hmac===payment.razorpay_signature){
+           const order = await Order.findById(orderid)
+          order.paymentStatus="Razorpay"
+          await order.save();
+          const cart= await Cart.deleteOne({userid:userid})
+          res.json({payment:true})
+        }
+       
+      }catch(err){
+      console.log(err);
+    }
 }
 
 const profileaddAddress = async (req, res) => {
@@ -288,5 +360,6 @@ module.exports = {
   removecart,
   cartquantity,
   placecorder,
+  verfypayment,
   profileaddAddress
 };

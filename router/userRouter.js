@@ -29,32 +29,23 @@ router.get('/allproducts',userController.allproducts)
 
 
 ///cart  handlng
-router.get('/usercart',cartController.cart)
-router.post('/addingcart/:productid/:userid/:quantity',cartController.addtocart)
+router.get('/usercart',middleware.notlogged,cartController.cart)
+router.post('/addingcart/:productid/:userid/:quantity',middleware.notlogged,cartController.addtocart)
 // router.get('/usercheckout',cartController.checkout)
 router.post('/updateQuantity',cartController.cartquantity)
 router.post('/removeFromCart',cartController.removecart)
 router.post('/addadress',cartController.addAddress)
 router.post('/profileAddress',cartController.profileaddAddress)
 router.get('/usercheckout',cartController.checkout)
-router.post('/paymentmethod',cartController.checkout)
+router.get('/paymentmethod',cartController.checkout)
 
 router.post('/placeorder',cartController.placecorder)
 
-router.get('/profile',async (req,res)=>{
-    const userid=req.session.user_id
-    const userdetails = await Users.findOne({ _id: userid });
-    const orders = await order.find({ user:userid})
-          .populate({
-              path: 'Products.products',
-              model: 'Products'
-          })
-          .exec();
-
-
-    res.render('userprofile',{userdetails,orders})
-})
+router.get('/profile',userController.userprofile)
 router.post('/changepassword',userController.changepassword)
 router.post('/submitprofile',userController.submitprofile)
 router.post('/cancelOrder/:orderId/:productId',orderController.cancelorder)
+router.delete('/removeaddress/:id',userController.removeAddress)
+router.post('/updateaddress/:id',userController.editaddress)
+router.post('/verifypayment',cartController.verfypayment)
 module.exports=router

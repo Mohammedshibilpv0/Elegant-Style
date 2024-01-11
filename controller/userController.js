@@ -5,6 +5,7 @@ const Category=require('../model/category')
 const userOtpVerification=require('../model/otpVerify')
 const nodemailer=require('nodemailer')
 const Cart=require('../model/cartSchema')
+const Orders= require('../model/orderSchema')
 
 
 
@@ -354,8 +355,105 @@ const submitprofile = async (req, res) => {
   }
 };
 
+const userprofile= async (req,res)=>{
+  try{
+    const userid=req.session.user_id
+    const userdetails = await User.findOne({ _id: userid });
+    const orders = await Orders.find({ user:userid})
+          .populate({
+              path: 'Products.products',
+              model: 'Products'
+          })
+          .exec();
 
 
+    res.render('userprofile',{userdetails,orders})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const removeAddress = async (req,res)=>{
+  try{
+    const userId = req.session.user_id;
+    const addressId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Pull the address with the given ID from the Addresses array
+    user.Addresses.pull({ _id: addressId });
+    res.status(200).json({ message: 'Address removed successfully' });
+
+    // Save the updated user document
+    await user.save();
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const editaddress = async (req, res) => {
+  try {
+    const addressfind = await User.findOne({ _id: req.session.user_id });
+
+    if (!addressfind) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const value =  req.body.address
+    console.log(value);
+
+    const specificaddress = addressfind.Addresses.find((add) => add.address === req.body.address);
+console.log(specificaddress);
+
+    
+
+
+    if (specificaddress) {
+      // Update the specific address fields
+      specificaddress.location = req.body.location;
+      specificaddress.address = req.body.address;
+      specificaddress.city = req.body.city;
+      specificaddress.zip = req.body.zip;
+      specificaddress.phone = req.body.phone;
+      specificaddress.email = req.body.email;
+      specificaddress.state = req.body.state;
+
+      try {
+        // Use findOneAndUpdate to directly update the specific address
+        await User.findOneAndUpdate(
+          { email: req.session.email, 'Addresses.address': req.body.address },
+          {
+            $set: {
+              'Addresses.$.location': req.body.location,
+              'Addresses.$.address': req.body.address,
+              'Addresses.$.city': req.body.city,
+              'Addresses.$.zip': req.body.zip,
+              'Addresses.$.phone': req.body.phone,
+              'Addresses.$.email': req.body.email,
+              'Addresses.$.state': req.body.state,
+            },
+          }
+        );
+
+        console.log('Address updated successfully');
+        res.status(200).json({ message: 'Address updated successfully' });
+      } catch (error) {
+        console.error('Error updating address:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+      }
+    } else {
+      console.log('Specific address not found');
+      // Handle the case where the specific address is not found
+      res.status(404).json({ message: 'Specific address not found' });
+    }
+  } catch (error) {
+    console.error('Error updating address:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 
 const logout = (req, res) => {
@@ -381,5 +479,8 @@ module.exports = {
   allproducts,
   changepassword,
   submitprofile,
+  userprofile,
   logout,
+  removeAddress,
+  editaddress
 };

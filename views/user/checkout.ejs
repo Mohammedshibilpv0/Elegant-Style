@@ -1,6 +1,6 @@
 <%-include('../partials/user/header.ejs')%>
 <%-include('../partials/user/navbar.ejs')%>
-
+<%-include('../partials/user/mobilenav.ejs')%>
         <main class="main">
         	<div class="page-header text-center" style="background-image: url('/user/assets/images/page-header-bg.jpg')">
         		<div class="container">
@@ -17,10 +17,25 @@
             					<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
             				</form>
             			</div><!-- End .checkout-discount -->
-            			
+
 		                	<div class="row">
 		                		<div class="col-lg-9">
-									<form action="/addadress" method="POST">
+									<form action="/addadress" method="POST" onsubmit="return validateForm()">
+										<select id="addressSelect" class="selectpicker" style="max-width: 200px;"  onchange="updateSelectedAddress()">
+											<% if (user && user.Addresses && user.Addresses.length > 0) { %>
+												<% user.Addresses.forEach(Address => { %>
+
+												<option >
+
+												  <%= `Location: ${Address.location}, Address: ${Address.address},
+												  City: ${Address.city}, Zip: ${Address.zip},Phone: ${Address.phone}, 
+												 Email:  ${Address.email}, State: ${Address.state}` %>
+												</option>
+											  <% }); %>
+											<% } else { %>
+											  <option>No addresses found for this user.</option>
+											<% } %>
+										  </select>
 									<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 									aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -34,7 +49,7 @@
 										<div class="modal-body mx-3">
 										  <div class="md-form mb-5">
 											<i class="fas fa-user prefix grey-text"></i>
-											<input type="text" id="form34" class="form-control validate" name="location">
+											<input type="text" id="form28" class="form-control validate" name="location">
 											<label data-error="wrong" data-success="right" for="form34">Location</label>
 										  </div>
 
@@ -46,13 +61,13 @@
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="city">
+											<input type="text" id="form30" class="form-control validate" name="city">
 											<label data-error="wrong" data-success="right" for="form32">City</label>
 										  </div>
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="zip">
+											<input type="text" id="form31" class="form-control validate" name="zip">
 											<label data-error="wrong" data-success="right" for="form32">Zip</label>
 										  </div>
 										  <div class="md-form mb-5">
@@ -63,13 +78,13 @@
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="email" id="form32" class="form-control validate" name="email">
+											<input type="email" id="form33" class="form-control validate" name="email">
 											<label data-error="wrong" data-success="right" for="form32">Email</label>
 										  </div>
 
 										  <div class="md-form mb-5">
 											<i class="fas fa-tag prefix grey-text"></i>
-											<input type="text" id="form32" class="form-control validate" name="state">
+											<input type="text" id="form34" class="form-control validate" name="state">
 											<label data-error="wrong" data-success="right" for="form32">State</label>
 										  </div>
 
@@ -80,26 +95,14 @@
 									  </div>
 									</div>
 								  </div>
+								  <div id="selectedAddress" style="max-width: 400px;"></div>
 								</form>
-								<div id="selectedAddress" style="max-width: 400px;"></div>
+								
 
 
 						
 								<!-- Your select element -->
-								<select id="addressSelect" class="selectpicker" style="max-width: 200px;" required onchange="updateSelectedAddress()">
-									<option disabled selected value="" >Please select an address</option>
-									<% if (user && user.Addresses && user.Addresses.length > 0) { %>
-									  <% user.Addresses.forEach(Address => { %>
-										<option>
-										  <%= `Location: ${Address.location}, Address: ${Address.address},
-										  City: ${Address.city}, Zip: ${Address.zip},Phone: ${Address.phone}, 
-										 Email:  ${Address.email}, State: ${Address.state}` %>
-										</option>
-									  <% }); %>
-									<% } else { %>
-									  <option>No addresses found for this user.</option>
-									<% } %>
-								  </select>
+								
 								  <div id="selectedAddress"></div>
 
 								  <div>
@@ -123,7 +126,6 @@
 		                					</thead>
 
 		                					<tbody>
-												
 													<% cartData.products.forEach(product => { %>
 		                						<tr>
 		                							<td><a href="#"><%= product.productId.Name %></a></td>
@@ -132,7 +134,7 @@
 												<% }); %>
 		                						<tr class="summary-subtotal">
 		                							<td>Subtotal:</td>
-		                							<td>$160.00</td>
+		                							<td>₹<%= totalPriceTotal %></td>
 		                						</tr><!-- End .summary-subtotal -->
 		                						<tr>
 		                							<td>Shipping:</td>
@@ -140,76 +142,18 @@
 		                						</tr>
 		                						<tr class="summary-total">
 		                							<td>Total:</td>
-		                							<td>$<%= totalPriceTotal %></td>
+		                							<td>₹<%= totalPriceTotal %></td>
 		                						</tr><!-- End .summary-total -->
 											
 		                					</tbody>
 		                				</table><!-- End .table table-summary -->
+										
+										<select name="paymentMethod" id="payment">
+											<option value="Cash on delivery">Cash on delivery</option>
+											<option value="Razorpay">Razorpay</option>
+										</select>
 
-		                				<div class="accordion-summary" id="accordion-payment">
-										    <div class="card" hidden>
-										        <div class="card-header" id="heading-1">
-										            <h2 class="card-title">
-										                <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-										                    Direct bank transfer
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-1" class="collapse show" aria-labelledby="heading-1" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										    <div class="card" hidden>
-										        <div class="card-header" id="heading-2">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
-										                    Check payments
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div hidden id="collapse-2" class="collapse" aria-labelledby="heading-2" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Ipsum dolor sit amet, consectetuer adipiscing elit. Donec odio. Quisque volutpat mattis eros. Nullam malesuada erat ut turpis. 
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										    <div class="card">
-										        <div class="card-header" id="heading-3">
-										            <h2 class="card-title">
-										                <a class="collapsed"  role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
-										                    Cash on delivery
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-3" class="collapse" aria-labelledby="heading-3" data-parent="#accordion-payment">
-										            <div class="card-body">Cash on delivery Available now
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										    <div class="card" hidden>
-										        <div class="card-header" id="heading-4">
-										            <h2 class="card-title">
-										                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-4" aria-expanded="false" aria-controls="collapse-4">
-										                    PayPal <small class="float-right paypal-link">What is PayPal?</small>
-										                </a>
-										            </h2>
-										        </div><!-- End .card-header -->
-										        <div id="collapse-4" class="collapse" aria-labelledby="heading-4" data-parent="#accordion-payment">
-										            <div class="card-body">
-										                Nullam malesuada erat ut turpis. Suspendisse urna nibh, viverra non, semper suscipit, posuere a, pede. Donec nec justo eget felis facilisis fermentum.
-										            </div><!-- End .card-body -->
-										        </div><!-- End .collapse -->
-										    </div><!-- End .card -->
-
-										   
-										</div><!-- End .accordion -->
-
-		                				<button  class="btn btn-outline-primary-2 btn-order btn-block" onclick="sendSelection('cash on delivery')">
+		                				<button  class="btn btn-outline-primary-2 btn-order btn-block" onclick="sendSelection()">
 		                					<span class="btn-text">Place Order</span>
 		                					<span class="btn-hover-text">Proceed to Checkout</span>
 		                				</button>
@@ -231,29 +175,40 @@
 
 
 </div>
-
-<!-- Include SweetAlert library (choose one of the following options) -->
-<!-- Option 1: CDN -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- Option 2: Local download -->
-<!-- <script src="path/to/sweetalert2.all.min.js"></script> -->
 
-<script>
+
+<script>  //preview of the address in checkout page
 	function updateSelectedAddress() {
-		// Get the selected option
-		const selectedOption = document.getElementById('addressSelect').value;
-
-		// Update the div with the selected address
-		document.getElementById('selectedAddress').textContent = `Selected Address: ${selectedOption}`;
+	  // Get the selected option
+	  const selectedOption = document.getElementById('addressSelect').value;
+  
+	  // Update the div with the selected address
+	  document.getElementById('selectedAddress').textContent = `Selected Address: ${selectedOption}`;
 	}
-</script>
+  
+	// Function to set the default address when the page is loaded
+	function setDefaultAddress() {
+	  const defaultOption = document.querySelector('#addressSelect option:not([disabled])');
+	  if (defaultOption) {
+		const defaultAddress = defaultOption.textContent;
+		document.getElementById('selectedAddress').textContent = `Selected Address: ${defaultAddress}`;
+	  }
+	}
+  
+	// Call setDefaultAddress when the page is loaded
+	window.onload = setDefaultAddress;
+  </script>
 
 <script>
 	
-    function sendSelection(paymentMethod) {
+    function sendSelection() {
+
         // Get the selected value
         const selectedValue = document.getElementById("addressSelect").value;
+		const  paymentMethod= document.getElementById('payment').value
 
         // Example fetch API request
         fetch('/placeorder', {
@@ -272,7 +227,7 @@
 
             // Check if the order processing was successful
             if (data.success) {
-                // Display SweetAlert success notification
+               
                 Swal.fire({
                     title: 'Order Placed Successfully!',
                     icon: 'success',
@@ -285,7 +240,39 @@
 						// Redirect to the user cart page after the alert is closed
 						window.location.href = '/usercart';
 				},2000)
+			}else if(data.Razorpay){
+			
+				var options = {
+    "key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
+    "amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Elegant style",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": data.Razorpay.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+	"handler": function (response){
+        alert(response.razorpay_payment_id);
+        alert(response.razorpay_order_id);
+        alert(response.razorpay_signature)
+		 verifyPayment(response,data.Razorpay)
+    },
+    "prefill": {
+        "name": "Gaurav Kumar",
+        "email": "gaurav.kumar@example.com",
+        "contact": "9000090000"
+    },
+    "notes": {
+        "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
 
+var rzp1 = new Razorpay(options);
+rzp1.open();
+			var rzp1 = new Razorpay(options);
+			rzp1.open()
             } else {
                 // Display SweetAlert error notification
                 Swal.fire({
@@ -294,6 +281,7 @@
                     icon: 'error',
                     confirmButtonText: 'OK'
                 });
+				
             }
         })
         .catch(error => {
@@ -301,6 +289,130 @@
             // Handle errors if any
         });
     }
+
+	function verifyPayment(payment,order){
+      $.ajax({
+		url:'/verifypayment',
+		data:{
+			payment,
+			order
+		},
+		method:"POST",
+		success:(response)=>{
+			if(response.payment){
+				    
+                Swal.fire({
+                    title: 'Order Placed Successfully!',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000 // Set the duration for the alert
+					
+                });
+
+				setTimeout(()=>{
+						// Redirect to the user cart page after the alert is closed
+						window.location.href = '/usercart';
+				},2000)
+			}
+		}
+	  })
+	}
 </script>
 
 
+
+
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+	  var form = document.querySelector("form");
+  
+	  form.addEventListener("submit", function (event) {
+		var selectedAddressDiv = document.getElementById("selectedAddress");
+  
+		// Check if the #selectedAddress div has content
+		if (!selectedAddressDiv.innerHTML.trim()) {
+		  // If no content, prevent the form from being submitted
+		  event.preventDefault();
+		  alert("Please select an address before submitting the form.");
+		}
+	  });
+	});
+  </script>
+
+<script>
+	// address validation
+    function validateForm() {
+        // Get references to form elements
+        const location = document.getElementById('form28');
+        const address = document.getElementById('form29');
+        const city = document.getElementById('form30');
+        const zip = document.getElementById('form31'); // Note: You have duplicate IDs, which is not valid. Consider using unique IDs.
+        const phone = document.getElementById('form32');
+        const email = document.getElementById('form33');
+        const state = document.getElementById('form34');
+
+        // Reset previous error messages
+        resetErrorMessages();
+
+        // Validate each field
+        if (location.value.length < 5) {
+            displayErrorMessage(location, "Location must have at least 5 characters.");
+            return false;
+        }
+
+        if (address.value.length < 5) {
+            displayErrorMessage(address, "Address must have at least 5 characters.");
+            return false;
+        }
+
+        if (city.value.length < 5) {
+            displayErrorMessage(city, "City must have at least 5 characters.");
+            return false;
+        }
+
+        if (zip.value.length < 5) {
+            displayErrorMessage(zip, "Zip code must have at least 5 characters.");
+            return false;
+        }
+
+        if (phone.value.length < 5) {
+            displayErrorMessage(phone, "Phone number must have at least 5 characters.");
+            return false;
+        }
+
+        if (email.value.length < 5 || !isValidEmail(email.value)) {
+            displayErrorMessage(email, "Email must have at least 5 characters and be valid.");
+            return false;
+        }
+
+        if (state.value.length < 5) {
+            displayErrorMessage(state, "State must have at least 5 characters.");
+            return false;
+        }
+
+        // All validations passed
+        return true;
+    }
+
+    function isValidEmail(email) {
+        // Simple email validation using a regular expression
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function displayErrorMessage(element, message) {
+        // Create and append an error message next to the element
+        const errorMessage = document.createElement("div");
+        errorMessage.className = "text-danger";
+        errorMessage.innerHTML = message;
+        element.parentNode.appendChild(errorMessage);
+    }
+
+    function resetErrorMessages() {
+        // Remove all previous error messages
+        const errorMessages = document.querySelectorAll(".text-danger");
+        errorMessages.forEach(function (errorMessage) {
+            errorMessage.parentNode.removeChild(errorMessage);
+        });
+    }
+</script>
