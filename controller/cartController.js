@@ -245,6 +245,10 @@ const  placecorder=async (req,res)=>{
   try {
     const paymentmethod=req.body.paymentMethod
     const selectedValue = req.body.selectedValue;
+    const total=req.body.total
+     console.log(total);
+
+
     const cartId = req.session.user_id; // Replace with the actual cart ID
     const cart = await Cart.findOne({ userid: cartId });
 
@@ -269,7 +273,7 @@ const  placecorder=async (req,res)=>{
         user: req.session.user_id,
         Products: products,
         paymentMode: paymentmethod,
-        total: products.reduce((acc, product) => acc + product.total, 0),
+        total:total,
         date: new Date(),
         address: selectedValue,
     };

@@ -275,25 +275,63 @@ const changestatus = async (req, res) => {
 };
 
 
-const coupon= (req,res)=>{
+const coupon= async (req,res)=>{
   try{
+    const coupons= await Coupon.find()
     const admin= req.session.admin
-    res.render("coupon",{admin})
+    res.render("coupon",{admin,coupons})
   }catch(err){
     console.log(err);
   }
 }
 
-const addcoupon= (req,res)=>{
+const addcoupon= async (req,res)=>{
   try{
-  const admin=req.session.admin
-   res.render('addcoupon',{admin})
+
+      const admin=req.session.admin
+    
+      res.render('addcoupon',{admin})
 
   }catch(err){
     console.log(err)
   }
 }
 
+
+const postaddcoupon= async (req,res)=>{
+  try{
+
+    let {name,code,min,Discount,description,expiryDate}=req.body
+    console.log(req.body);
+    const addcoupon= new  Coupon({
+      couponName:name,
+      couponCode:code,
+      couponDescription:description,
+      minAmount:min,
+      discountamount:Discount,
+      expiryDate:expiryDate
+    })
+    await addcoupon.save()
+
+    res.redirect('/admin/coupon')
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
+const deleteCoupon = async (req,res)=>{
+  try{
+    console.log("hello");
+    const couponid=req.params.id
+    const deleteCoupon= await Coupon.deleteOne({_id:couponid})
+    res.json({success:"deleted"})
+
+  }catch(err){
+    console.log(err);
+  }
+}
 
 
 module.exports = {
@@ -314,5 +352,7 @@ module.exports = {
   allorders,
   changestatus,
   coupon,
-  addcoupon
+  addcoupon,
+  postaddcoupon,
+  deleteCoupon
 };

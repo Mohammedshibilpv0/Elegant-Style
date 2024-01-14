@@ -6,7 +6,7 @@ const userOtpVerification=require('../model/otpVerify')
 const nodemailer=require('nodemailer')
 const Cart=require('../model/cartSchema')
 const Orders= require('../model/orderSchema')
-
+const Coupon=require('../model/couponSchema')
 
 
 
@@ -367,8 +367,10 @@ const userprofile= async (req,res)=>{
           })
           .exec();
 
+    const coupon= await Coupon.find()
 
-    res.render('userprofile',{userdetails,orders})
+
+    res.render('userprofile',{userdetails,orders,coupon})
   }catch(err){
     console.log(err);
   }

@@ -11,12 +11,7 @@
             <div class="page-content mt-5">
             	<div class="checkout">
 	                <div class="container">
-            			<div class="checkout-discount" hidden>
-            				<form action="#">
-        						<input type="text" class="form-control" required id="checkout-discount-input">
-            					<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-            				</form>
-            			</div><!-- End .checkout-discount -->
+            			
 
 		                	<div class="row">
 		                		<div class="col-lg-9">
@@ -97,12 +92,8 @@
 								  </div>
 								  <div id="selectedAddress" style="max-width: 400px;"></div>
 								</form>
-								
-
-
-						
 								<!-- Your select element -->
-								
+
 								  <div id="selectedAddress"></div>
 
 								  <div>
@@ -110,7 +101,14 @@
 								</a>
 								  </div>
 
-
+								  <div class="checkout-discount" >
+									<form id="couponForm">
+										<input type="text" class="form-control"  required id="checkout-discount-input">
+										<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
+										<button class="btn btn-primary mt-4" type="submit">Submit</button>
+									</form>
+									<p id="already" class="text-danger"></p>
+								</div><!-- End .checkout-discount -->
 
 		                		</div><!-- End .col-lg-9 -->
 		                		<aside class="col-lg-3">
@@ -139,10 +137,21 @@
 		                						<tr>
 		                							<td>Shipping:</td>
 		                							<td>Free shipping</td>
+
 		                						</tr>
+												<tr id="display1" >
+													<td  id="Namec"></td>
+													<td id="success" class="text-success"></td>
+													
+												</tr>
+												<tr id="display2">
+													<td id="msg"></td>
+													<td id="org"></td>
+												</tr>
+												
 		                						<tr class="summary-total">
-		                							<td>Total:</td>
-		                							<td>₹<%= totalPriceTotal %></td>
+		                							<td id="offer">Total:</td>
+		                							<td >₹<span id="discount"><%= totalPriceTotal %></span></td>
 		                						</tr><!-- End .summary-total -->
 											
 		                					</tbody>
@@ -209,6 +218,7 @@
         // Get the selected value
         const selectedValue = document.getElementById("addressSelect").value;
 		const  paymentMethod= document.getElementById('payment').value
+		const  total=document.getElementById('discount').textContent
 
         // Example fetch API request
         fetch('/placeorder', {
@@ -218,7 +228,8 @@
             },
             body: JSON.stringify({
                 paymentMethod: paymentMethod,
-                selectedValue: selectedValue
+                selectedValue: selectedValue,
+				total:total
             }),
         })
         .then(response => response.json())
@@ -251,9 +262,9 @@
     "image": "https://example.com/your_logo",
     "order_id": data.Razorpay.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 	"handler": function (response){
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature)
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
 		 verifyPayment(response,data.Razorpay)
     },
     "prefill": {
@@ -300,13 +311,13 @@ rzp1.open();
 		method:"POST",
 		success:(response)=>{
 			if(response.payment){
-				    
+
                 Swal.fire({
                     title: 'Order Placed Successfully!',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 2000 // Set the duration for the alert
-					
+
                 });
 
 				setTimeout(()=>{
@@ -415,4 +426,55 @@ rzp1.open();
             errorMessage.parentNode.removeChild(errorMessage);
         });
     }
+
+
+	document.getElementById('display1').style.display = 'none';
+document.getElementById('display2').style.display = 'none';
+
+	document.getElementById('couponForm').addEventListener('submit', async function (event) {
+  event.preventDefault();
+
+  const couponCode = document.getElementById('checkout-discount-input').value;
+
+  try {
+    const response = await fetch('/applyCoupon', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ couponCode }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Handle the 'data' here, for example:
+    if (data.success) {
+		document.getElementById('display1').style.display = 'table-row';
+      document.getElementById('display2').style.display = 'table-row';
+      document.getElementById('success').innerHTML=data.success
+	  document.getElementById('Namec').innerHTML="Coupon Name :"
+	  document.getElementById('msg').innerHTML=" Old Price:"
+	  document.getElementById('org').innerHTML= " ₹ "+ data.totalPriceTotal
+	  document.getElementById('offer').innerHTML="Offer Price"
+	  document.getElementById('discount').innerHTML=data.discount
+    } else if (data.already) {
+	document.getElementById('already').innerHTML=data.already
+      console.log(data.already); // Coupon already used by this user
+      
+    } else {
+      
+		document.getElementById('already').innerHTML=data.error
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    // Handle fetch errors
+  }
+});
+
+
 </script>

@@ -48,4 +48,8 @@ router.post('/cancelOrder/:orderId/:productId',orderController.cancelorder)
 router.delete('/removeaddress/:id',userController.removeAddress)
 router.post('/updateaddress/:id',userController.editaddress)
 router.post('/verifypayment',cartController.verfypayment)
+router.post('/applyCoupon',orderController.applycoupon)
+
+
+
 module.exports=router

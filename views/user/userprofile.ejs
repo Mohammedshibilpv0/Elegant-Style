@@ -119,7 +119,7 @@ z-index: 0
 								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
 								    </li>
 								    <li class="nav-item">
-								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false" hidden>Downloads</a>
+								        <a class="nav-link" id="tab-downloads-link" data-toggle="tab" href="#tab-downloads" role="tab" aria-controls="tab-downloads" aria-selected="false" >Coupons</a>
 								    </li>
 								    <li class="nav-item">
 								        <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address" role="tab" aria-controls="tab-address" aria-selected="false">Adresses</a>
@@ -256,6 +256,32 @@ z-index: 0
 						  </section>
 
 					  </div>
+
+					  <div class="tab-pane fade" id="tab-downloads" role="tabpanel" aria-labelledby="tab-downloads-link">
+						<h4 class="text-center">Coupons</h4>
+
+						<%if(coupon){%>
+							<%coupon.forEach(coupon=>{%>
+
+						<div class="card mt-5 mx-3" style="width: 87%;">
+							<div class="card-body">
+							  <h5 class="card-title mt-1">CouponName:<%=coupon.couponName%></h5>
+							  <p class="card-text">couponCode:<%=coupon.couponCode%></p>
+							  <p class="card-text">discountamount:<%=coupon.discountamount%></p>
+							  <p class="card-text">minAmount:<%=coupon.minAmount%></p>
+							  <p class="card-text">couponDescription:<%=coupon.couponDescription%></p>
+							  <p class="card-text">expiryDate:<%=coupon.expiryDate%></p>
+								<p class="text-danger">Already Claimed</p>
+								<p class="text-success">Not Claimed</p>
+							</div>
+						  </div>
+
+						  <%})%>
+						  <%}else{%>
+							<h3>NO Coupons</h3>
+							<%}%>
+
+				</div>
 
 					  <a hidden href="/" class="btn btn-outline-primary-2"><span>GO SHOP</span><i class="icon-long-arrow-right"></i></a>
 
@@ -771,7 +797,7 @@ fetch('/submitprofile', {
 
         // Send a PUT or PATCH request to update the address
         fetch(`/updateaddress/${userId}`, {
-            method: 'POST', 
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 
