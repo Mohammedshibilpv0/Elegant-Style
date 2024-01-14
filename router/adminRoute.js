@@ -80,8 +80,8 @@ adminRoute.get('/allorders',adminController.allorders)
 
 adminRoute.post('/deleteimage/:imgid/:index/:proid',middleware.verify,productsController.imagedelete)
 adminRoute.put('/updateStatus/:orderId',adminController.changestatus)
-
-
+adminRoute.get('/coupon',adminController.coupon)
+adminRoute.post('/allcoupons',adminController.addcoupon)
 
 
 

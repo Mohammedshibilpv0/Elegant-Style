@@ -162,76 +162,57 @@
         <div class="page-wrapper">
 
 
+            <div class="page-wrapper bg-dark" style="min-height: 775px;">
+                <div class="container mt-5">
+                  <div class="main-panel">
+                    <div class="content-wrapper">
+                      <div class="card">
+                        <div class="card-body">
+                          <form class="forms-sample" method="POST" action="/admin/addCoupon">
 
-<section class="intro  bg-dark shadow-2-strong pt-5 pb-3 mb-3" >
-    <div class="mask d-flex align-items-center h-100" >
-      <div class="container">
-        <% if (locals.succ) { %>
-           <h4 style="background-color: rgb(223, 73, 73); text-align: center; color: white;"><%= succ%></h4>
+                            <!-- Your existing form fields... -->
+                            <div class="form-group row">
+                              <label for="productName" class="col-sm-3 col-form-label">Coupon Name</label>
+                              <div class="col-sm-9">
+                                <input type="text" class="form-control" id="Couponname" name="name" placeholder="Coupon Name" required>
+                                <small id="nameError" class="text-danger"></small>
+                              </div>
+                            </div>
 
-          <% }%>
-        <div class="row justify-content-center">
-          <div class="col-10">
-            <div class="card bg-dark shadow-2-strong">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-dark table-borderless mb-0">
-                    <thead>
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Category Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Edit</th>
-                         <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <% category.forEach((category, index) => { %>
-                    <tbody>
+                            <div class="form-group row">
+                              <label for="productPrice" class="col-sm-3 col-form-label">Discount Percent</label>
+                              <div class="col-sm-9">
+                                <input type="number" class="form-control" id="Discount Percent" name="Discount" min="1" placeholder="Discount Percent" required>
+                                <small id="priceError" class="text-danger"></small>
+                              </div>
+                            </div>
 
-                      <tr>
-                        <th scope="row"><%= index +1 %> </th>
-                        <td><%=category.Name%></td>
-                        <td><%=category.Description%></td>
-                        <td id="status_<%= category._id %>"><%= category.Status %></td>
-                        <td> <a href="/admin/editcategory/<%=category._id%>" class="btn btn-danger">  edit</a>  </td>
 
-                       
-                          <td >
-                           
-                            <% if (category.Status === "active") { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','unlist')">Unlist</button>
-                            <% } else { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','list')">List</button>
-                            <% } %>
-                            
+                            <div class="form-group row">
+                            <label for="productDescription" class="col-sm-3 col-form-label"> Coupon Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="Coupon Description" name="description" placeholder="Coupon Description" required></textarea>
+                                <small id="descriptionError" class="text-danger"></small>
+                            </div>
+                           </div>
 
-                        </td>
-                    
-                      </tr>
-                    
-                     
-                    </tbody>
-                    <% }); %>
-                  </table>
-              
+                           <div class="form-group row">
+                            <label for="productPrice" class="col-sm-3 col-form-label"> expiryDate</label>
+                            <div class="col-sm-9">
+                              <input type="date" class="form-control" id="expiryDate" name="expiryDate"  required>
+                              <small id="priceError" class="text-danger"></small>
+                            </div>
+                          </div>
+
+                            <button type="submit" class="btn btn-primary mr-2"">Submit</button>
+
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="container d-flex align-items-center justify-content-end mt-3">
-            <a href="/admin/addcategory" class="btn btn-success btn-rounded">Add new category</a>
-           </div>
-      </div>
-      
-    </div>
- 
-      
-
-</section>
-
-
 
 </div>
 
@@ -239,57 +220,4 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-<script>
- function changeStatus(categoryId, Action) {
-    // Show a confirmation dialog
-    Swal.fire({
-        title: 'Confirmation',
-        text: `Are you sure you want to ${Action === 'list' ? 'list' : 'unlist'} this category?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Proceed with the API call
-            fetch(`/admin/${Action}category/${categoryId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryId }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Update the status in the table without reloading the page
-                    const statusElement = document.getElementById(`status_${categoryId}`);
-                    const buttonElement = document.getElementById(`button_${categoryId}`);
-
-                    if (statusElement && buttonElement) {
-                        statusElement.textContent = data.status;
-
-                        // Update button text based on the received status
-                        if (data.status === "active") {
-                            buttonElement.textContent = "Unlist";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'unlist')`);
-                        } else {
-                            buttonElement.textContent = "List";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'list')`);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-        // If the user clicked "No" or closed the dialog, do nothing
-    });
-}
-
-    
- </script>
- 
-
-
-
-
 <%- include("../partials/user/adminfooter.ejs")%>

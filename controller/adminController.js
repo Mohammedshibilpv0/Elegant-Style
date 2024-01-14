@@ -3,6 +3,8 @@ const Users = require("../model/User");
 const Category=require('../model/category')
 const Orders= require('../model/orderSchema')
 const Products = require('../model/Products')
+const Coupon=require('../model/couponSchema')
+
 const home = async (req, res) => {
   try {
     const admin=req.session.admin
@@ -273,6 +275,25 @@ const changestatus = async (req, res) => {
 };
 
 
+const coupon= (req,res)=>{
+  try{
+    const admin= req.session.admin
+    res.render("coupon",{admin})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const addcoupon= (req,res)=>{
+  try{
+  const admin=req.session.admin
+   res.render('addcoupon',{admin})
+
+  }catch(err){
+    console.log(err)
+  }
+}
+
 
 
 module.exports = {
@@ -291,5 +312,7 @@ module.exports = {
   editcategory,
   submiteditcategory,
   allorders,
-  changestatus
+  changestatus,
+  coupon,
+  addcoupon
 };
