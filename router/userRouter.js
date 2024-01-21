@@ -44,12 +44,14 @@ router.post('/placeorder',cartController.placecorder)
 router.get('/profile',userController.userprofile)
 router.post('/changepassword',userController.changepassword)
 router.post('/submitprofile',userController.submitprofile)
-router.post('/cancelOrder/:orderId/:productId',orderController.cancelorder)
+router.post('/cancelOrder/:orderId/:productId/:orgproId',orderController.cancelorder)
+router.post('/returnrequest/:orderId/:productId',orderController.returnRequest)
 router.delete('/removeaddress/:id',userController.removeAddress)
 router.post('/updateaddress/:id',userController.editaddress)
 router.post('/verifypayment',cartController.verfypayment)
 router.post('/applyCoupon',orderController.applycoupon)
 
+router.get('/vieworder/:id',orderController.vieworder)
 
 
 module.exports=router

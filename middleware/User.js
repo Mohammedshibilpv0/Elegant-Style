@@ -1,6 +1,6 @@
 const session = require('express-session')
 const Users=require('../model/User')
-
+const Cart=require('../model/cartSchema')
 
 
 const islogin=(req,res,next)=>{
@@ -32,8 +32,23 @@ const isBlock= async (req,res,next)=>{
        }
 }
 
+const cartcount= async (req,res,next)=>{
+  try{
+    const userid=req.session.user_id
+    const count=await Cart.findOne({userid:userid}).count
+    if(count>0){
+      next()
+    }else{
+      res.redirect('/usercart')
+    }
+  }catch(err){
+    console.log(err);
+  }
+}
+
 module.exports={
     islogin,
     notlogged,
     isBlock,
+    cartcount
 }

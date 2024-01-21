@@ -4,6 +4,7 @@ const User = require("../model/User");
 const Cart = require("../model/cartSchema");
 const Order= require('../model/orderSchema')
 const Razorpay = require('razorpay');
+const Coupondb =require('../model/couponSchema')
 const { response } = require("express");
 
 
@@ -59,12 +60,17 @@ const cart = async (req, res) => {
 
 const checkout = async (req, res) => {
   try {
+
     const userid = req.session.user_id;
     const user = await User.findOne({ _id: userid });
     const cartData = await Cart.findOne({ userid: userid }).populate({
       path: "products.productId",
       model: "Products", // Make sure it matches the model name for the Product
     });
+    const length= await Cart.findOne({userid:req.session.user_id}).count()
+   if(length<=0){
+    res.redirect('/usercart')
+   }
     const totalPriceTotal = cartData.products.reduce((total, product) => {
       return total + product.totalPrice;
     }, 0);
@@ -243,10 +249,23 @@ const addAddress = async (req, res) => {
 
 const  placecorder=async (req,res)=>{
   try {
+    const userId=req.session.user_id
     const paymentmethod=req.body.paymentMethod
     const selectedValue = req.body.selectedValue;
     const total=req.body.total
-     console.log(total);
+    const couponid=req.body.couponid
+
+
+    if(couponid){
+
+     const couponCheck = await Coupondb.findById(couponid)
+     console.log(couponCheck);
+     if(couponCheck){
+      couponCheck.userUsed.push({ user_id: userId });
+      await couponCheck.save()
+     }
+    }
+
 
 
     const cartId = req.session.user_id; // Replace with the actual cart ID
@@ -254,10 +273,13 @@ const  placecorder=async (req,res)=>{
 
 
     // Fetch product details for each product in the cart
+    
     const products = await Promise.all(cart.products.map(async (cartProduct) => {
         const productDetails = await Product.findById(cartProduct.productId);
+        productDetails.Quantity -= cartProduct.quantity;
+        await productDetails.save();
         return {
-            productId: cartProduct.productId,
+            products: cartProduct.productId,
             name: productDetails.Name,
             price: productDetails.Price,
             quantity: cartProduct.quantity,
@@ -281,23 +303,44 @@ const  placecorder=async (req,res)=>{
     // Create an instance of the Orders model
     const orderInstance = new Order(orderData);
    
+    if(paymentmethod=="wallet"){
+      orderInstance.paymentStatus="Wallet"
+      await orderInstance.save()
+       const savedOrder = await orderInstance.save().then(async()=>{
+         await Cart.deleteOne({userid:req.session.user_id})
+     })
+     const user=await User.findOne({_id:req.session.user_id})
+     user.wallet=user.wallet-total
+     const transaction = {
+      amount: total, // Negative value for deduction
+      description: "Product Purchased ",
+      date: new Date(),
+      status: "out",
+      }
+      user.walletHistory.push(transaction);
+     await user.save()
+
+      res.json({ success: true, products: products,orderId: orderInstance._id});
+    }
    
       if(paymentmethod==="Cash on delivery"){
+        orderInstance.paymentStatus="COD"
+       await orderInstance.save()
         const savedOrder = await orderInstance.save().then(async()=>{
           await Cart.deleteOne({userid:req.session.user_id})
       })
-       res.json({ success: true, products: products });
+       res.json({ success: true, products: products,orderId: orderInstance._id });
       }else if(paymentmethod==="Razorpay"){
         const totalpriceInPaise = Math.round(orderData.total * 100); // Convert rupees to paise
         const minimumAmount = 100;
         const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
-        
+
        generateRazorpay(orderInstance._id,adjustedAmount).then(async(response)=>{
-        
+
         const savedOrder = await orderInstance.save()
         res.json({ Razorpay: response, products: products });
        })
-      
+
       }
 } catch (error) {
     console.error('Error:', error);

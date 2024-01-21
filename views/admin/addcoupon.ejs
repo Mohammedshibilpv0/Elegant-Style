@@ -168,61 +168,125 @@
                 <div class="row">
                     <div class="col-md-6 offset-md-3">
                         <div class="mb-3">
-                            <form class="forms-sample p-5" class="shadow p-4 " style="background-color: white;" method="POST" action="/admin/addCouponsubmit">
+                      
+    <form class="forms-sample p-5" class="shadow p-4 " style="background-color: white;" method="POST" action="/admin/addCouponsubmit" onsubmit="return validateForm()">
 
-                                <!-- Your existing form fields... -->
-                                <div class="form-group row">
-                                  <label for="productName" class="col-sm-3 col-form-label">Coupon Name</label>
-                                  <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="Couponname" name="name" placeholder="Coupon Name" required>
-                                    <small id="nameError" class="text-danger"></small>
-                                  </div>
-                                </div>
+        <!-- Your existing form fields... -->
 
-                                <div class="form-group row">
-                                    <label for="productName" class="col-sm-3 col-form-label">Coupon Code</label>
-                                    <div class="col-sm-9">
-                                      <input type="text" class="form-control" id="Couponname" name="code" placeholder="Coupon Name" required>
-                                      <small id="nameError" class="text-danger"></small>
-                                    </div>
-                                  </div>
+        <div class="form-group row">
+            <label for="Couponname" class="col-sm-3 col-form-label">Coupon Name</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="Couponname" name="name" placeholder="Coupon Name" required>
+                <small id="nameError" class="text-danger"></small>
+            </div>
+        </div>
 
-                                  <div class="form-group row">
-                                    <label for="productName" class="col-sm-3 col-form-label">Min amount</label>
-                                    <div class="col-sm-9">
-                                      <input type="text" class="form-control" id="Couponname" name="min" placeholder="Coupon Name" required>
-                                      <small id="nameError" class="text-danger"></small>
-                                    </div>
-                                  </div>
-                
-                                <div class="form-group row">
-                                  <label for="productPrice" class="col-sm-3 col-form-label">Discount Amount</label>
-                                  <div class="col-sm-9">
-                                    <input type="number" class="form-control" id="Discount Percent" name="Discount" min="1" placeholder="Discount Percent" required>
-                                    <small id="priceError" class="text-danger"></small>
-                                  </div>
-                                </div>
-                
-                
-                                <div class="form-group row">
-                                <label for="productDescription" class="col-sm-3 col-form-label"> Coupon Description</label>
-                                <div class="col-sm-9">
-                                    <textarea class="form-control" id="Coupon Description" name="description" placeholder="Coupon Description" required></textarea>
-                                    <small id="descriptionError" class="text-danger"></small>
-                                </div>
-                               </div>
-                
-                               <div class="form-group row">
-                                <label for="productPrice" class="col-sm-3 col-form-label"> expiryDate</label>
-                                <div class="col-sm-9">
-                                  <input type="date" class="form-control" id="expiryDate" name="expiryDate"  required>
-                                  <small id="priceError" class="text-danger"></small>
-                                </div>
-                              </div>
-                
-                                <button type="submit" class="btn btn-primary mr-2"">Submit</button>
-                
-                              </form>
+        <div class="form-group row">
+            <label for="Couponcode" class="col-sm-3 col-form-label">Coupon Code</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="Couponcode" name="code" placeholder="Coupon Code" required>
+                <small id="codeError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="MinAmount" class="col-sm-3 col-form-label">Min Amount</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="MinAmount" name="min" placeholder="Minimum Amount" required>
+                <small id="minError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="DiscountPercent" class="col-sm-3 col-form-label">Discount Amount</label>
+            <div class="col-sm-9">
+                <input type="number" class="form-control" id="DiscountPercent" name="Discount" min="1" placeholder="Discount Percent" required>
+                <small id="discountError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="CouponDescription" class="col-sm-3 col-form-label">Coupon Description</label>
+            <div class="col-sm-9">
+                <textarea class="form-control" id="CouponDescription" name="description" placeholder="Coupon Description" required></textarea>
+                <small id="descriptionError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+            <div class="col-sm-9">
+                <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+                <small id="expiryDateError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+
+    </form>
+
+    <script>
+        function validateForm() {
+            // Reset error messages
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("codeError").textContent = "";
+            document.getElementById("minError").textContent = "";
+            document.getElementById("discountError").textContent = "";
+            document.getElementById("descriptionError").textContent = "";
+            document.getElementById("expiryDateError").textContent = "";
+            
+            // Get form values
+            var couponName = document.getElementById("Couponname").value;
+            var couponCode = document.getElementById("Couponcode").value;
+            var minAmount = document.getElementById("MinAmount").value;
+            var discountAmount = document.getElementById("DiscountPercent").value;
+            var couponDescription = document.getElementById("CouponDescription").value;
+            var expiryDate = document.getElementById("expiryDate").value;
+
+            // Validate Coupon Name
+            if (couponName.trim() === "") {
+                document.getElementById("nameError").textContent = "Coupon Name is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Coupon Code
+            if (couponCode.trim() === "") {
+                document.getElementById("codeError").textContent = "Coupon Code is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Min Amount
+            if (minAmount.trim() === "") {
+                document.getElementById("minError").textContent = "Min Amount is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Discount Amount
+            if (isNaN(discountAmount) || discountAmount < 1) {
+                document.getElementById("discountError").textContent = "Enter a valid Discount Amount";
+                return false; // Prevent form submission
+            }
+
+            // Validate Coupon Description
+            if (couponDescription.trim() === "") {
+                document.getElementById("descriptionError").textContent = "Coupon Description is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Expiry Date
+            if (expiryDate.trim() === "") {
+                document.getElementById("expiryDateError").textContent = "Expiry Date is required";
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
+                        
+                              <%if(locals.message){%>
+                                <p class="text-danger"> <%=locals.message%> </p>
+                             <%}%>
+                              
 
                         </div>
                     </div>

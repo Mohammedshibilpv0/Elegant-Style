@@ -146,6 +146,7 @@
 												</tr>
 												<tr id="display2">
 													<td id="msg"></td>
+													<input type="text" id="couponcode" hidden>
 													<td id="org"></td>
 												</tr>
 												
@@ -158,9 +159,15 @@
 		                				</table><!-- End .table table-summary -->
 										
 										<select name="paymentMethod" id="payment">
-											<option value="Cash on delivery">Cash on delivery</option>
+											<option value="Cash on delivery" >Cash on delivery</option>
 											<option value="Razorpay">Razorpay</option>
+											<%if(user.wallet >totalPriceTotal){%>
+												<option value="wallet">Wallet</option>
+												<%}else{%>
+											<option disabled >Wallet</option>
+											<%}%>
 										</select>
+								
 
 		                				<button  class="btn btn-outline-primary-2 btn-order btn-block" onclick="sendSelection()">
 		                					<span class="btn-text">Place Order</span>
@@ -219,7 +226,7 @@
         const selectedValue = document.getElementById("addressSelect").value;
 		const  paymentMethod= document.getElementById('payment').value
 		const  total=document.getElementById('discount').textContent
-
+		const  couponid  =  document.getElementById('couponcode').value
         // Example fetch API request
         fetch('/placeorder', {
             method: 'POST',
@@ -229,7 +236,8 @@
             body: JSON.stringify({
                 paymentMethod: paymentMethod,
                 selectedValue: selectedValue,
-				total:total
+				total:total,
+				couponid:couponid
             }),
         })
         .then(response => response.json())
@@ -238,21 +246,21 @@
 
             // Check if the order processing was successful
             if (data.success) {
-               
+
                 Swal.fire({
                     title: 'Order Placed Successfully!',
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 2000 // Set the duration for the alert
-					
+
                 });
 
-				setTimeout(()=>{
-						// Redirect to the user cart page after the alert is closed
-						window.location.href = '/usercart';
-				},2000)
+					setTimeout(()=>{
+
+						window.location.href = `/vieworder/${data.orderId}`;
+						},2000)
 			}else if(data.Razorpay){
-			
+
 				var options = {
     "key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
     "amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -302,6 +310,7 @@ rzp1.open();
     }
 
 	function verifyPayment(payment,order){
+		console.log(payment);
       $.ajax({
 		url:'/verifypayment',
 		data:{
@@ -319,10 +328,10 @@ rzp1.open();
                     timer: 2000 // Set the duration for the alert
 
                 });
-
+				const orderid=order.receipt
 				setTimeout(()=>{
-						// Redirect to the user cart page after the alert is closed
-						window.location.href = '/usercart';
+
+						window.location.href = `/vieworder/${orderid}`;
 				},2000)
 			}
 		}
@@ -435,6 +444,7 @@ document.getElementById('display2').style.display = 'none';
   event.preventDefault();
 
   const couponCode = document.getElementById('checkout-discount-input').value;
+  const checkprice=document.getElementById('discount').textContent
 
   try {
     const response = await fetch('/applyCoupon', {
@@ -442,7 +452,7 @@ document.getElementById('display2').style.display = 'none';
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ couponCode }),
+      body: JSON.stringify({ couponCode,checkprice }),
     });
 
     if (!response.ok) {
@@ -455,6 +465,7 @@ document.getElementById('display2').style.display = 'none';
     if (data.success) {
 		document.getElementById('display1').style.display = 'table-row';
       document.getElementById('display2').style.display = 'table-row';
+	  document.getElementById('couponcode').value=data.couponid
       document.getElementById('success').innerHTML=data.success
 	  document.getElementById('Namec').innerHTML="Coupon Name :"
 	  document.getElementById('msg').innerHTML=" Old Price:"
@@ -465,10 +476,13 @@ document.getElementById('display2').style.display = 'none';
 	document.getElementById('already').innerHTML=data.already
       console.log(data.already); // Coupon already used by this user
       
-    } else {
+    } else if(data.minimum) {
       
+		document.getElementById('already').innerHTML=data.minimum
+    }else{
+		console.log(data.error);
 		document.getElementById('already').innerHTML=data.error
-    }
+	}
 
   } catch (error) {
     console.error('Error:', error);

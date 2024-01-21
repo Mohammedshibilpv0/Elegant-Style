@@ -216,81 +216,133 @@
             <div class="table-responsive">
               <table class="table user-list" id="userTable" style="color: white;">
                 <thead>
-                  <tr>
-                    <th><span class="ms-1">Order Id</span></th>
-                    <th><span class="ms-1">Product Name</span></th>
-                    <th><span class="ms-1">User Name</span></th>
-                    <th><span class="ms-1">Price</span></th>
-                    <th><span class="ms-5">Quantity</span></th>
-                    <th><span class="ms-1">Address</th>
-                    <th><span class="ms-1">Images</span></th>
-                    <th><span class="ms-1">Status</span></th>
-                    <th><span class="ms-1">Action</span></th>
-                   
-
-                  </tr>
+                    <tr>
+                        <th><span class="ms-1">Order Id</span></th>
+                        <th><span class="ms-1">User </span></th>
+                        <th><span class="ms-1">Price</span></th>
+                        <th><span class="ms-1">Address</span></th>
+                        <th><span class="ms-1">Product </span></th>
+                        <th><span class="ms-1">Quantity</span></th>
+                        <th><span class="ms-1">Images</span></th>
+                        <th><span >Status</span></th>
+                        <th><span> Action</span></th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <% allOrders.forEach(order => { %>
-                    <% order.Products.forEach(product => { %>
-                      <tr>
-                        <td>
-                          <p><%= order._id %> </p>
-                        </td>
-                        <td>
-                          <p><%= product.name %></p>
-                        </td>
-                        <td>
-                          <p><%= order.user.Name %></p>
-                        </td>
-                        <td>
-                          <p><%= order.total %></p>
-                        </td>
-                        <td>
-                          <p class="text-center"> <%= product.quantity %> </p>
-                        </td>
-                        <td>
-                          <p><%= order.address %></p>
-                        </td>
-                        <!-- Popup HTML -->
-                        <td>
-                          <img
-                            class="circular-image"
-                            src="/uploads/<%= product.image %>"
-                            alt="<%= product.Name %> Image"
-                            onclick="openPopup('/uploads/<%= product.image %>')"
-                          />
-                        </td>
-                        <div id="imagePopup" class="image-popup">
-                          <div class="popup-content">
-                            <span class="close-popup" onclick="closePopup()"
-                              >&times;</span
-                            >
-                            <img id="popupImage" />
-                          </div>
-                        </div>
-                        <td>
-                          <p id="orderStatus_<%= order._id %>"><%= order.orderStatus %></p>
-                        </td>
-                        <td>
-                          <div class="btn-group">
-                            <div class="btn-group dropstart">
-                              <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Status
-                              </button>
-                              <ul class="dropdown-menu">
-                                <li><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped', '<%= order._id %>')">shipped</a></li>
-                                <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered', '<%= order._id %>')">delivered</a></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled', '<%= order._id %>')">cancelled</a></li>
-                              </ul>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
+                    <% allOrders.forEach(order => { %>
+                        <% order.Products.forEach((product, index) => { %>
+                            <tr class="mt-4">
+                                <% if (index === 0) { %>
+                                    <!-- Display order-related information only for the first product in the order -->
+                                    <td rowspan="<%= order.Products.length %>">
+                                        <p ><%= order._id %> </p>
+                                    </td>
+                                    <td rowspan="<%= order.Products.length %>">
+                                        <p><%= order.user.Name %></p>
+                                        <input type="text" value="<%= order.user._id %>" id="userid_<%= order._id %>" hidden>
+                                    </td>
+                                    <td rowspan="<%= order.Products.length %>">
+                                        <p><%= order.total %></p>
+                                    </td>
+                                    <td rowspan="<%= order.Products.length %>">
+                                        <p class="text-center"> <%= order.address %></p>
+                                    </td>
+                                <% } %>
+                               
+                                <td>
+                                    <p><%= product.name %></p>
+                                </td>
+                                <td>
+                                    <p class="text-center"><%= product.quantity %></p>
+                                </td>
+                                <td>
+                                    <img class="circular-image" src="/uploads/<%= product.image %>" alt="<%= product.Name %> Image" onclick="openPopup('/uploads/<%= product.image %>')" />
+                                    <div id="imagePopup" class="image-popup">
+                                        <div class="popup-content">
+                                            <span class="close-popup" onclick="closePopup()">&times;</span>
+                                            <img id="popupImage" />
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <p id="orderStatus_<%= order._id %>"><%= product.Status %></p>
+                                    <% if (product.Status == "returned") { %>
+                                        <br>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal_<%= order._id %>">
+                                            View
+                                        </button>
+            
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal_<%= order._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">Reason of return</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body" style="color: black;">
+                                                        <p> Reason of return : &nbsp; <%= product.reason %></p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td>
+                                  <td>
+                                    <div class="btn-group">
+                                      <div class="btn-group dropstart">
+                                        <%if(product.Status=="request return"){%>
+                                          <!-- Button trigger modal -->
+                                          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal=<%= order._id %>">
+                                            View
+                                          </button>
+    
+                                          <!-- Modal -->
+                                          <div class="modal fade" id="exampleModal=<%= order._id %>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <h1 class="modal-title fs-5 " id="exampleModalLabel" style="color: black;">Reason</h1>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body" style="color: black;">
+                                                  <p><%=product.reason%></p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                  <a href="#" class="btn btn-danger"  onclick="updateStatus('returned', '<%= order._id %>','<%=product._id%>')">Request Approved</a>
+    
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <%}else{%>
+                                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                          Status
+                                        </button>
+                                        <ul class="dropdown-menu" >
+                                          <li ><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped', '<%= order._id %>','<%=product._id%>')">Shipped</a></li>
+                                          <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered', '<%= order._id %>','<%=product._id%>')">Delivered</a></li>
+                                          <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled', '<%= order._id %>','<%=product._id%>')">Cancelled</a></li>
+                                         
+                                            
+                                        
+                                        </ul>
+                                      </div>
+                                    </div>
+                                    <%}%>
+                                  </td>
+                            </tr>
+                        <% }); %>
                     <% }); %>
-                  <% }); %>
                 </tbody>
-              </table>
+            </table>
+            
             </div>
           </div>
         </div>
@@ -301,6 +353,7 @@
  
   
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="/admin/css/allproducts.css">
 <script>
       function openPopup(imageSrc) {
@@ -318,40 +371,60 @@
 
 
 //updating the status of product
-    function updateStatus(status,orderId) {
-        // Make an AJAX request to update the status in the database
-       
-        console.log(orderId);
-        const url = `/admin/updateStatus/${orderId}`;  // Replace with your API endpoint
+function updateStatus(status, orderId, productid) {
+    // Show SweetAlert confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You are about to update the status. This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, update it!',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If user clicks "Yes" on the confirmation dialog
 
-        // Assuming you are using fetch API
-        fetch(url, {
-            method: 'PUT',  // Use the appropriate HTTP method
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status }),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Handle the response from the server
-            console.log('Status updated successfully:', data);
-            // const orderStatusElement = document.getElementById(`orderStatus_${orderId}`);
-            // if (orderStatusElement) {
-            //     orderStatusElement.innerText = status;
-            // }
-            window.location.reload()
-            // Optionally, you can reload the page or update the UI here
-        })
-        .catch(error => {
-            // Handle errors
-            console.error('There was a problem updating the status:', error.message);
-        });
-    }
+            // Make an AJAX request to update the status in the database
+            const url = `/admin/updateStatus/${orderId}`; // Replace with your API endpoint
+          const userid=document.getElementById(`userid_${orderId}`).value
+            // Assuming you are using fetch API
+            fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status, productid,userid }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle the response from the server
+                    console.log('Status updated successfully:', data);
+                    // const orderStatusElement = document.getElementById(`orderStatus_${orderId}`);
+                    // if (orderStatusElement) {
+                    //     orderStatusElement.innerText = status;
+                    // }
+                    Swal.fire('Success!', 'Status updated successfully', 'success');
+                    // Optionally, you can reload the page or update the UI here
+                    window.location.reload();
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('There was a problem updating the status:', error.message);
+                    Swal.fire('Error', 'There was an error updating the status', 'error');
+                });
+        }
+    });
+}
+
+
 </script>
 <%-include("../partials/user/adminfooter.ejs")%>
+
+
+

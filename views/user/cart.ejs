@@ -26,7 +26,7 @@
 									</thead>
 								  
 									<tbody>
-										<% if(cartData){%>
+										<% if(cartData.products.length > 0){%>
 										<% if (cartData.products && cartData.products.length > 0) { %>
 											<% cartData.products.forEach(product => { %>
 										  <tr data-product-id="<%= product.productId._id %>">
@@ -65,7 +65,7 @@
 	                			<div class="cart-bottom" >
 			            			<div class="cart-discount" hidden
 								< form action="#" >
-			            					<div class="input-group">
+			            						<div class="input-group">
 				        						<input type="text" class="form-control" required placeholder="coupon code">
 				        						<div class="input-group-append">
 													<button class="btn btn-outline-primary-2" type="submit"><i class="icon-long-arrow-right"></i></button>

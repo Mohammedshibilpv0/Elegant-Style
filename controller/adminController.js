@@ -245,20 +245,41 @@ const blockUser = async (req, res) => {
 
 const changestatus = async (req, res) => {
   const { orderId } = req.params;
-  const { status } = req.body;
+  const { status,productid,userid } = req.body;
+
 
   try {
+    if(status=="returned"){
+
+      const checkuser= await Users.findOne({_id:userid})
+      const checking= await Orders.findOne({_id:orderId,'Products._id': productid,})
+      const productTotal = checking.Products.reduce((acc, product) => {
+        return acc + (product.quantity * product.price);
+      }, 0);
+      checkuser.wallet=checkuser.wallet+productTotal
+   const transaction = {
+    amount: productTotal, // Negative value for deduction
+    description: "Product Return",
+    date: new Date(),
+    status: "in",
+    }
+
+    checkuser.walletHistory.push(transaction);
+
+    await checkuser.save()
+
+  }
     // Update the order status in the database
-    const updatedOrder = await Orders.updateOne(
+    const updatedOrder = await Orders.findOneAndUpdate(
       {
-        _id: orderId,
-        'Products.orderStatus': { $ne: status },
+          _id: orderId,
+          'Products._id': productid,
       },
       {
-        $set: { 'orderStatus': status },
+          $set: { 'Products.$.Status': status },
       },
-      
-    );
+      { new: true } // To return the updated document
+  );
 
     console.log('Update result:', updatedOrder);
 
@@ -289,8 +310,8 @@ const addcoupon= async (req,res)=>{
   try{
 
       const admin=req.session.admin
-    
-      res.render('addcoupon',{admin})
+      const message=req.flash('fail')
+      res.render('addcoupon',{admin,message})
 
   }catch(err){
     console.log(err)
@@ -303,6 +324,18 @@ const postaddcoupon= async (req,res)=>{
 
     let {name,code,min,Discount,description,expiryDate}=req.body
     console.log(req.body);
+    const checkcoupon= await Coupon.findOne({couponName:name})
+    const couponcode= await Coupon.findOne({couponCode:code})
+    if(checkcoupon){
+      const fail = "Name is already in the coupon list";
+        req.flash("fail", fail);
+        res.redirect('/admin/addcoupon')
+    }
+    if(couponcode){
+      const fail = " Coupon code is already in the coupon list";
+        req.flash("fail", fail);
+        res.redirect('/admin/addcoupon')
+    }
     const addcoupon= new  Coupon({
       couponName:name,
       couponCode:code,

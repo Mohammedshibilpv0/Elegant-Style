@@ -15,8 +15,6 @@ const bcrypt = require('bcrypt');
 
 
 
-
-
 app.use(noCache());
 app.use(session({
     secret:crypto.randomBytes(64).toString('hex'),

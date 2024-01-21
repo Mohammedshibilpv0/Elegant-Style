@@ -124,7 +124,11 @@
 
                                         <div class="product-action">
                                             <hr>
+                                            <%if(!product.Quantity<=0){%>    
                                             <a href="#" onclick="addtoCart('<%=product._id%>','<%=userid%>')" class="btn-product btn-cart"><span>add to cart</span></a>
+                                            <%}else{%>
+                                                <a  class="btn-product btn-cart"><span>Out of stock</span></a>
+                                                <%}%>
                                         </div><!-- End .product-action -->
                                     </figure><!-- End .product-media -->
 

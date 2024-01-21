@@ -1,5 +1,6 @@
 <%-include("../partials/user/header.ejs")%>
 <%-include('../partials/user/navbar.ejs')%>
+<%-include('../partials/user/mobilenav.ejs')%>
 <style>
 	#successMessage {
 		color: green;
@@ -115,6 +116,7 @@ z-index: 0
 								    <li class="nav-item">
 								        <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab" href="#tab-dashboard" role="tab" aria-controls="tab-dashboard" aria-selected="true">Dashboard</a>
 								    </li>
+
 								    <li class="nav-item">
 								        <a class="nav-link" id="tab-orders-link" data-toggle="tab" href="#tab-orders" role="tab" aria-controls="tab-orders" aria-selected="false">Orders</a>
 								    </li>
@@ -155,6 +157,85 @@ z-index: 0
 
 
 								    	</div><!-- End .row -->
+										<div class="row d-flex align-items-center justify-content-center">
+											<div class="col-lg-6">
+												<div class="card card-dashboard">
+													<div class="card-body">
+														<h3 class="card-title text-center">wallet </h3><!-- End .card-title -->
+														<br>
+														<h5>Total Balance: &nbsp; ₹ &nbsp; <%=userdetails.wallet%>  </h5><br>
+
+														
+														<button type="button" class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#myModal">
+															View Transactions
+														  </button>
+													</div><!-- End .card-body -->
+												</div><!-- End .card-dashboard -->
+											</div><!-- End .col-lg-6 -->
+				
+				
+										</div><!-- End .row -->
+										<div class="modal" id="myModal">
+												
+											<div class="modal-dialog">
+											  <div class="modal-content">
+												
+												<!-- Modal Header -->
+												<div class="modal-header">
+												  <h4 class="modal-title">Wallet Transactions</h4>
+												  <button type="button" class="close" data-dismiss="modal">&times;</button>
+												</div>
+										  
+												<!-- Modal body -->
+											
+												<div class="modal-body">
+													
+													<table class="table table-striped">
+													<div class="container">
+											  <thead>
+												<tr>
+												  <th>Date</th>
+												  <th>Amount</th>
+												  <th>Description</th>
+												  <th>Status</th>
+												</tr>
+											  </thead>
+											  <tbody>
+												<%userdetails.walletHistory.forEach(wallet =>{%>
+
+												
+												<tr>
+												  <td><%=wallet.date.toLocaleDateString()%></td>
+													
+
+												  <td><%=wallet.amount%></td>
+												  <td><%=wallet.description%></td>
+												  
+												 
+												  <td>
+													<%if(wallet.status=="in"){%>
+														<i class="fa-solid fa-arrow-left" style="color: #087f06;"></i>
+													<%}else if(wallet.status=="out") {%>
+														<i class="fa-solid fa-arrow-left fa-rotate-180" style="color: #a21606;"></i>
+												
+													<%}%>
+													</td>
+												
+												</tr>
+												<%})%>
+											  </tbody>
+											</div>
+											</table>
+											</div>
+										  
+												<!-- Modal footer -->
+												<div class="modal-footer">
+												  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+												</div>
+										  
+											  </div>
+											</div>
+										  </div>
 
 								    </div><!-- .End .tab-pane -->
 									 <!-- Edit Modal -->
@@ -182,12 +263,13 @@ z-index: 0
 						</div>
 					</div>
 
+					
 
-					<div class="tab-pane fade" id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
-						<section class="vh-100 gradient-custom-2">
-							<div class="container py-5 ">
-							  <% orders.forEach(order => { %>
-								<div class="row align-items-center h-100">
+					<div class="tab-pane fade mb-5 "  id="tab-orders" role="tabpanel" aria-labelledby="tab-orders-link">
+						<section class="vh-100 gradient-custom-2 mt-5" >
+							<div class="container py-5 mt-5">
+							  <% orders.forEach(order=> { %>
+								<div class="row align-items-center h-100  mb-5">
 								  <div class="col-md-10 col-lg-8 col-xl-6">
 									<div class="card card-stepper " style="border-radius: 16px;">
 									  <div class="card-header p-4">
@@ -203,55 +285,43 @@ z-index: 0
 												}).replace(/\//g, '-'
 												)
 												%></span> </p>
-										  </div>
-										</div>
-									  </div>
-									  <div class="card-body p-4 ">
-										<% order.Products.forEach(product => { %>
-										  <div class="d-flex flex-row mb-4 pb-2 mt-4 ">
-											<div class="flex-fill">
-											  <h5 class="bold"> <a href="/singleproduct/<%=product._id%>"><%= product.name %></a></h5>
-											  <p class="text-muted"> Qt: <%= product.quantity %> item</p>
-											  <h4 class="mb-3"> $ <%= product.total %> <span class="small text-muted"> <br> via (<%=order.paymentMode%>) </span></h4>
-											</div>
-											<div>
-											  <img class="align-self-center img-fluid" src="/uploads/<%=product.image%>" width="250">
-											</div>
-										  </div>
-										  <% if(order.orderStatus=="placed"){%>
-												<p class="text-primary"><%=order.orderStatus%></p>
-										  <div class="card-footer p-4">
-											<div class="d-flex justify-content-between">
-											  <h5 class="fw-normal mb-0">
-												<a href="#" class="mb-4" onclick="removefromorder('<%=order._id%>' , '<%=product._id%>')">Cancel</a>
-											  </h5>
-											  <div class="border-start h-100"></div>
-											</div>
-										  </div>
-										  <%}%>
-											<%if(order.orderStatus=="shipped"){%>
-											<h6 class="text-primary " style="margin-left: 20px; margin-bottom: 30px;" ><%=product.orderStatus%></h6>
-											<div class="card-footer p-4">
+												<% order.Products.forEach((product,index ) => { %>
+													<div class="d-flex flex-row mb-4 pb-2 mt-4 ">
+													  <div class="flex-fill">
+														<h5 class="bold"> <a href="/singleproduct/<%=product._id%>"><%=index+1%>. &nbsp; <%= product.name %></a></h5>
+														<p class="text-muted"> Qt: <%= product.quantity %> item</p>
+														<h4 class="mb-3">  ₹ <%= product.total %> <span class="small text-muted"> </span></h4>
+													  </div>
+													  <div>
+														<img class="align-self-center img-fluid" src="/uploads/<%=product.image%>" width="50">
+													  </div>
+													</div>
+
+
+												  <% }); %>
+												  <br> via (<%=order.paymentMode%>)
+												  <% if(order.orderStatus=="placed"){%>
+													<p class="text-primary"><%=order.orderStatus%></p>
+											  <div class="card-footer p-4">
 												<div class="d-flex justify-content-between">
 												  <h5 class="fw-normal mb-0">
-													<a href="#" class="mb-4" onclick="removefromorder('<%=order._id%>' , '<%=product._id%>')">Cancel</a>
+													<a href="#" class="mb-4" onclick="removefromorder('<%=order._id%>' )">Cancel</a>
 												  </h5>
 												  <div class="border-start h-100"></div>
 												</div>
 											  </div>
-											<%}%>
-											<%if(order.orderStatus=="delivered"){%>
-												<h6 class="text-success"><%=order.orderStatus%></h6>
-												<%}%>
-												<%if(order.orderStatus=="cancelled"){%>
-													<h6 class="text-danger " ><%=order.orderStatus%></h6>
-													<%}%>
-										<% }); %>
+											  <%}%>
+											
+										  </div>
+										</div>
+									  </div>
+									  <div class="card-body p-4 ">
+										<a href="/vieworder/<%=order._id%>" class="btn btn-primary">View More</a>
 									  </div>
 									</div>
 								  </div>
 								</div>
-							  <% }); %>
+							  <% }) %>
 							</div>
 						  </section>
 
@@ -265,14 +335,21 @@ z-index: 0
 
 						<div class="card mt-5 mx-3" style="width: 87%;">
 							<div class="card-body">
-							  <h5 class="card-title mt-1">CouponName:<%=coupon.couponName%></h5>
-							  <p class="card-text">couponCode:<%=coupon.couponCode%></p>
-							  <p class="card-text">discountamount:<%=coupon.discountamount%></p>
-							  <p class="card-text">minAmount:<%=coupon.minAmount%></p>
-							  <p class="card-text">couponDescription:<%=coupon.couponDescription%></p>
-							  <p class="card-text">expiryDate:<%=coupon.expiryDate%></p>
-								<p class="text-danger">Already Claimed</p>
-								<p class="text-success">Not Claimed</p>
+							  <span class="card-title mt-1">CouponName: &nbsp; <%=coupon.couponName%></span>
+							  <p class="card-text">couponCode: &nbsp; <%=coupon.couponCode%></p>
+							  <p class="card-text">discountamount:  &nbsp; <%=coupon.discountamount%></p>
+							  <p class="card-text">minAmount: &nbsp;<%=coupon.minAmount%></p>
+							  <p class="card-text">couponDescription: &nbsp; <%=coupon.couponDescription%></p>
+							  <p class="card-text">expiryDate: &nbsp; <%=coupon.expiryDate.toLocaleDateString('en-US',
+								{
+								year:'numeric',
+								month: 'short'
+								,
+								day: '2-digit'
+								}).replace(/\//g, '-'
+								)
+								%></p>
+								
 							</div>
 						  </div>
 
@@ -572,7 +649,7 @@ fetch('/submitprofile', {
 
 <script>
     ///// deleting the order product
-    function removefromorder(orderId, proId) {
+    function removefromorder(orderId) {
         // Show SweetAlert confirmation dialog
         Swal.fire({
             title: 'Are you sure?',
@@ -587,7 +664,7 @@ fetch('/submitprofile', {
                 // If user clicks "Yes" on the confirmation dialog
 
                 // Make a fetch request to your server to cancel the product from the order
-                fetch(`/cancelOrder/${orderId}/${proId}`, {
+                fetch(`/cancelOrder/${orderId}/`, {
                     method: 'POST',
                 })
                     .then(response => {
@@ -607,7 +684,7 @@ fetch('/submitprofile', {
                             text: 'Your order has been cancelled successfully.',
                         }).then(() => {
                             // Reload the page
-                            window.location.reload();
+                            reloadOrderTab()
                         });
                     })
                     .catch(error => {
@@ -678,6 +755,23 @@ fetch('/submitprofile', {
 
                 // Update the content of the 'tab-address' div
                 document.getElementById('tab-address').innerHTML = tabAddressContent;
+            })
+            .catch(error => {
+                console.error('Error reloading address tab:', error);
+            });
+    }
+
+	function reloadOrderTab() {
+        // Use vanilla JavaScript to fetch the content and update the specific div
+        fetch(window.location.href, { method: 'GET' })
+            .then(response => response.text())
+            .then(html => {
+                // Extract the content of the 'tab-address' div from the fetched HTML
+                const tabAddressContent = new DOMParser().parseFromString(html, 'text/html')
+                    .getElementById('tab-orders').innerHTML;
+
+                // Update the content of the 'tab-address' div
+                document.getElementById('tab-orders').innerHTML = tabAddressContent;
             })
             .catch(error => {
                 console.error('Error reloading address tab:', error);
@@ -820,6 +914,9 @@ fetch('/submitprofile', {
        
         $(`#editModal${userId}`).modal('hide');
     }
+
+
+
 </script>
 
 

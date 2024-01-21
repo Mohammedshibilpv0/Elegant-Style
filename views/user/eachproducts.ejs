@@ -70,13 +70,21 @@
                                     </div>
 
                                     <div class="product-details-action mt-5">
-                                        <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=user_id%>')"><span>add to cart</span></a>
-
+                                        <% if (products.quantity > 0) { %>
+                                          <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=user_id%>')">
+                                            <span>Add to Cart</span>
+                                          </a>
+                                        <% } else { %>
+                                          <span class="out-of-stock-message text-danger " style="margin-left: 60px;">Out of Stock</span>
+                                        <% } %>
+                                      
                                         <div class="details-action-wrapper">
-                                            <a href="#" class="btn-product btn-wishlist" title="Wishlist"><span>Add to Wishlist</span></a>
-                                            
+                                          <a href="#" class="btn-product btn-wishlist" title="Wishlist">
+                                            <span>Add to Wishlist</span>
+                                          </a>
                                         </div><!-- End .details-action-wrapper -->
-                                    </div><!-- End .product-details-action -->
+                                      </div>
+                                      
 
                                     <div class="product-details-footer">
                                         <!-- End .product-cat -->

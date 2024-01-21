@@ -91,7 +91,7 @@ const sendOTPverificationEmail = async ({Email} , res) => {
           secure: true,
           auth: {
               user: 'mazziotechlounger@gmail.com',
-              pass: 'lrdy kzvc krph itja'
+              pass: 'imbv sshe dpux ttba'
           }
       });
 
@@ -120,7 +120,7 @@ const sendOTPverificationEmail = async ({Email} , res) => {
       await transporter.sendMail(mailOptions);
       
       res.redirect(`/otp?email=${Email}`);
-     
+    
 
   } catch (err) {
       console.log(err.message);
@@ -360,16 +360,9 @@ const userprofile= async (req,res)=>{
   try{
     const userid=req.session.user_id
     const userdetails = await User.findOne({ _id: userid });
-    const orders = await Orders.find({ user:userid})
-          .populate({
-              path: 'Products.products',
-              model: 'Products'
-          })
-          .exec();
+    const orders = await Orders.find({user:userid})
 
     const coupon= await Coupon.find()
-
-
     res.render('userprofile',{userdetails,orders,coupon})
   }catch(err){
     console.log(err);

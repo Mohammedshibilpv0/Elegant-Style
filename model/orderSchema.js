@@ -9,7 +9,7 @@ const ordersSchema = mongoose.Schema({
     Products: [{
         products: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product',
+            ref: 'products',
 
         },
         name: {
@@ -19,6 +19,11 @@ const ordersSchema = mongoose.Schema({
         price: {
             type: Number,
 
+        },
+        Status: {
+            type: String,
+            default: 'placed',
+            enum: ['placed', 'shipped', 'delivered', 'request return', 'returned', 'request cancellation', 'cancelled']
         },
         quantity: {
             type: Number,
@@ -36,11 +41,7 @@ const ordersSchema = mongoose.Schema({
             type:String
         }
     }],
-    orderStatus: {
-        type: String,
-        default: 'placed',
-        enum: ['placed', 'shipped', 'delivered', 'request return', 'returned', 'request cancellation', 'cancelled']
-    },
+   
     paymentMode: {
         type: String,
 
