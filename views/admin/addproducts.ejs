@@ -1,19 +1,18 @@
 <%-include('../partials/user/adminheader.ejs')%>
 
+
 <style>
-    #image-preview-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-  
-    .img-thumbnail {
-      max-width: 200px;
-      max-height: 200px;
-      margin-bottom: 5px;
-    }
-  </style>
-  
+ 
+
+#image-preview-container img {
+  margin-left: 30px;
+    max-width: 100%;
+    height: 300px;
+    border-radius: 8px; /* Optional: Add rounded corners to the images */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+
+</style>
 
 
 <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -175,7 +174,7 @@ data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="fu
 <!-- Page wrapper  -->
 <!-- ============================================================== -->
 
-<div class="page-wrapper bg-dark" style="min-height: 775px;">
+<div class="page-wrapper " style="min-height: 775px;">
     <div class="container mt-5">
       <div class="main-panel">
         <div class="content-wrapper">

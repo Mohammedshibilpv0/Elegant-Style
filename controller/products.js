@@ -1,5 +1,6 @@
 const Products = require("../model/Products");
 const Category = require("../model/category");
+const Cart=require('../model/cartSchema')
 const multer = require("multer");
 const path = require("path");
 const express = require("express");
@@ -77,16 +78,38 @@ const uploadProducts = async (req, res) => {
   }
 };
 
+// const allProducts = async (req, res) => {
+//   //rendring page all products
+//   try {
+//     const allProducts = await Products.find();
+//     const admin = req.session.admin;
+//     res.render("allproducts", { allProducts, admin });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
 const allProducts = async (req, res) => {
-  //rendring page all products
   try {
-    const allProducts = await Products.find();
-    const admin = req.session.admin;
-    res.render("allproducts", { allProducts, admin });
+      const admin = req.session.admin;
+      const perPage = 6; // Set the number of products to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+
+      const totalProducts = await Products.countDocuments();
+      const totalPages = Math.ceil(totalProducts / perPage);
+
+      const allProducts = await Products.find()
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
+
+      res.render('allproducts', { allProducts, admin, totalPages, currentPage: page });
   } catch (err) {
-    console.log(err);
+      console.error(err);
+      res.status(500).send('Internal Server Error');
   }
 };
+
 
 const editProduct = async (req, res) => {
   try {
@@ -139,12 +162,23 @@ const submitedit = async (req, res) => {
 
 const singleProduct = async (req, res) => {
   try{
-    const user_id=req.session.user_id
+   
     const userid= req.session.user_id
     const product_id = req.params.id;
     const products = await Products.findOne({ _id: product_id }).populate('Category').exec();
     const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
-    res.render("eachproducts", {products,recommend,user_id,userid});
+    const cartcheck= await Cart.findOne({userid:userid})
+    if(cartcheck){
+      const existsProduct =  cartcheck.products.find((pro) => pro.productId.toString() === product_id);
+      if(existsProduct){
+        let already=true
+      return  res.render("eachproducts", {products,recommend,userid,already});
+      }
+
+    }
+      res.render("eachproducts", {products,recommend,userid,already:false});
+    
+   
   }catch(err){
     console.log(err);
   }

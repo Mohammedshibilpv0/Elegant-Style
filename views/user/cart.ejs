@@ -26,6 +26,7 @@
 									</thead>
 								  
 									<tbody>
+										<% if(cartData){%>
 										<% if(cartData.products.length > 0){%>
 										<% if (cartData.products && cartData.products.length > 0) { %>
 											<% cartData.products.forEach(product => { %>
@@ -44,14 +45,23 @@
 											  </div><!-- End .product -->
 											  <p id="proid" hidden><%= product.productId._id %></p>
 											</td>
-											<td class="price-col">₹ <%= product.productPrice %></td>
-											<td class="quantity-col">
-											  <!-- End .cart-product-quantity -->
-											  <div class="cart-product-quantity">
-												<input type="number" class="form-control" value="<%= product.quantity %>" min="1" max="<%= product.productId.Quantity %>" step="1" data-decimals="0" required id="<%= product.productId._id %>">
-											  </div>
+											<td class="price-col" id="each">₹ <%= product.productPrice %></td>
+											<td class="quantity-col d-flex" style="width: 320px;">
+												<div class="d-flex" style="margin-top: 53px;">
+													<div class="down" style="margin-bottom: 36px; width: 30px; height: 40px;">
+														<p style="margin-top: 8px; margin-left: 12px; cursor: pointer;">-</p>
+													</div>
+													<div class="product-details-quantity">
+														<input type="number" class="form-control" readonly value="<%= product.quantity %>" min="1" max="<%= product.productId.Quantity %>" step="1" data-decimals="0" required id="<%= product.productId._id %>">
+													</div>
+													<div class="up text-center" style="margin-bottom: 36px; width: 30px; height: 40px;">
+														<p style="margin-top: 8px; cursor: pointer;">+</p>
+													</div>
+												</div>
 											</td>
-											<td class="total-col">₹<%= product.totalPrice %></td>
+
+											<td class="total-col" >₹ <%= product.totalPrice %></td>
+
 											<input type="text" id="cartid" value="<%=cartData._id%>" hidden >
 											<td class="remove-col">
 											  <button class="btn-remove" onclick="removeFromCart('<%= product.productId._id %>')"><i class="icon-close"></i></button>
@@ -59,6 +69,7 @@
 										  </tr>
 										  <% }); %>
 										  <%}%>
+
 									</tbody>
 								  </table><!-- End .table table-wishlist -->
 
@@ -73,10 +84,16 @@
 			        						</div>
 			            				</form>
 			            			</div>
-
+									<% if (locals.errmsg) { %>
+										<p style="color: red;"><%= errmsg%></p>
+									  <% }%>
+									  <% if (locals.succmsg) { %>
+										<p class="text-success" ><%= succmsg%></p>
+									  <% }%>
 			            			<a href="/usercart" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>
 		            			</div><!-- End .cart-bottom -->
 	                		</div><!-- End .col-lg-9 -->
+							
 	                		<aside class="col-lg-3">
 	                			<div class="summary summary-cart">
 
@@ -150,6 +167,18 @@
         </main><!-- End .main -->
 
 
+		<% } else { %>
+			<div  class="mb-5">
+				<p >No items in the cart.</p>
+			
+				<a href="/" class="btn btn-outline-primary-2 btn-minwidth-lg">
+					<span>BACK TO HOMEPAGE</span>
+					<i class="icon-long-arrow-right"></i>
+				</a>
+			  
+			  </div>
+
+		<% } %>
 		<% } else { %>
 			<div  class="mb-5">
 				<p >No items in the cart.</p>
@@ -260,29 +289,90 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
-$(document).ready(function() {
-    // Add an event listener to all input fields with the specified class
-    $(".cart-product-quantity input").on("input", function() {
-        var inputElement = $(this);
-        var currentValue = parseInt(inputElement.val()) || 0;
-        var maxValue = parseInt(inputElement.attr("max")) || Infinity;
 
-        // Check if the maximum value is reached
-        if (currentValue >= maxValue) {
-            // Show SweetAlert when the maximum value is reached
-            Swal.fire({
-                icon: 'warning',
-                title: 'Maximum Quantity Reached',
-                text: 'You cannot exceed the maximum quantity.',
-                showConfirmButton: false,
-                timer: 3500 // Automatically close after 3.5 seconds
-            });
 
-            // Reset the value to the maximum allowed
-            inputElement.val(maxValue);
-        }
-    });
-});
+</script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function () {
+	  $(".up").off('click').on('click', function () {
+		  updateQuantity(this, 1);
+	  });
+
+	  $(".down").off('click').on('click', function () {
+		  updateQuantity(this, -1);
+	  });
+
+	  function updateQuantity(element, change) {
+		  let inputField = $(element).siblings(".product-details-quantity").find("input");
+		  let currentValue = parseInt(inputField.val());
+		  let minValue = parseInt(inputField.attr("min"));
+		  let maxValue = parseInt(inputField.attr("max"));
+		  let cartId = document.getElementById('cartid').value
+
+		  let newValue = currentValue + change;
+
+		  if (newValue >= minValue && newValue <= maxValue) {
+			  inputField.val(newValue);
+
+			  fetch(`/updateQuantity`, {
+				  method: 'POST',
+				  headers: {
+					  'Content-Type': 'application/json',
+				  },
+				  body: JSON.stringify({
+					  cartId: cartId,
+					  productId: inputField.attr("id"),
+					  quantity: newValue
+				  }),
+			  })
+			  .then(response => response.json())
+			  .then(data => {
+				  console.log('Server response:', data);
+
+				  const totalPriceTotalElement = document.querySelector('.summary-total td:last-child');
+				  totalPriceTotalElement.innerHTML = `$${data.totalPriceTotal}`;
+
+				  const totalCol = document.querySelector(`[id="${inputField.attr("id")}"]`).closest('tr').querySelector('.total-col');
+				  totalCol.innerHTML = `$${data.updatedTotalPrice}`;
+
+				  const subtotalElement = document.querySelector('.summary-subtotal td:last-child');
+				  if (subtotalElement) {
+					  subtotalElement.innerHTML = `$${data.totalPriceTotal}`;
+				  } else {
+					  console.error('Unable to find element for subtotal update.');
+				  }
+			  })
+			  .catch(error => {
+				  console.error('Error:', error);
+			  });
+		  }
+	  }
+  });
+
+  //sweet aleart for the maximum qunatity of the product 
+
+	function increaseQuantity(productId, maxQuantity) {
+		let quantityInput = document.getElementById(productId);
+		let currentQuantity = parseInt(quantityInput.value);
+
+		if (currentQuantity < maxQuantity) {
+			// Increment quantity
+			quantityInput.value = currentQuantity + 1;
+		} else {
+			// Display SweetAlert when the quantity is at its maximum
+			Swal.fire({
+				title: 'Maximum Quantity Reached!',
+				text: 'You cannot add more items.',
+				icon: 'warning',
+				confirmButtonText: 'OK'
+			});
+		}
+	}
+
+
 
 </script>
 

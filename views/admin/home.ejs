@@ -1,5 +1,6 @@
 <%- include("../partials/user/adminheader.ejs")%>
 
+
     <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
         data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
         <!-- ============================================================== -->
@@ -172,7 +173,7 @@
                         <div class="d-flex align-items-center">
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb m-0 p-0">
-                                    <li class="breadcrumb-item"><a href="index.html">Dashboard</a>
+                               
                                     </li>
                                 </ol>
                             </nav>
@@ -216,7 +217,7 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><sup
-                                                class="set-doller">$</sup>0</h2>
+                                                class="set-doller">₹</sup><%=locals.totalDeliveredAmount%></h2>
                                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Earning
                                         </h6>
                                     </div>
@@ -233,12 +234,12 @@
                                 <div class="d-flex align-items-center">
                                     <div>
                                         <h2 class="text-dark mb-1 w-100 text-truncate font-weight-medium"><sup
-                                                class="set-doller ms-1">$</sup>0</h2>
-                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Last Month
+                                                class="set-doller ms-1"></sup><%=totalproduct%></h2>
+                                        <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">All Products
                                         </h6>
                                     </div>
                                     <div class="ms-auto mt-md-3 mt-lg-0">
-                                        <span class="opacity-7 text-muted"><i data-feather="dollar-sign"></i></span>
+                                       <i class=" fas fa-shopping-bag"></i>
                                     </div>
                                 </div>
                             </div>
@@ -249,7 +250,7 @@
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
                                     <div>
-                                        <h2 class="text-dark mb-1 font-weight-medium">0</h2>
+                                        <h2 class="text-dark mb-1 font-weight-medium"><%=totalorder%></h2>
                                         <h6 class="text-muted font-weight-normal mb-0 w-100 text-truncate">Total Orders</h6>
                                     </div>
                                     <div class="ms-auto mt-md-3 mt-lg-0">
@@ -257,6 +258,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div>
+                            <a href="/admin/salesreport" class="btn btn-primary  mb-3 ms-5">Sales Report</a>
                         </div>
                     </div>
                 </div>
@@ -266,49 +270,155 @@
                 <!-- *************************************************************** -->
                 <!-- Start Sales Charts Section -->
                 <!-- *************************************************************** -->
-                <div class="row">
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Total Sales</h4>
-                                <div id="campaign-v2" class="mt-2" style="height:283px; width:100%;"></div>
-                                <ul class="list-style-none mb-0">
-                                    <li>
-                                        <i class="fas fa-circle text-primary font-10 me-2"></i>
-                                        <span class="text-muted">Direct Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$2346</span>
-                                    </li>
-                                    <li class="mt-3">
-                                        <i class="fas fa-circle text-danger font-10 me-2"></i>
-                                        <span class="text-muted">Referral Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$2108</span>
-                                    </li>
-                                    <li class="mt-3">
-                                        <i class="fas fa-circle text-cyan font-10 me-2"></i>
-                                        <span class="text-muted">Affiliate Sales</span>
-                                        <span class="text-dark float-end font-weight-medium">$1204</span>
-                                    </li>
-                                </ul>
-                            </div>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <div class="row" >
+                    <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <h3 class="ms-3">Monthly</h3>
+                            <div id="salesOrdersChart" style=" max-width: 1100px; height: 300px;"></div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Net Income</h4>
-                                <div class="net-income mt-4 position-relative" style="height:294px;"></div>
-                                <ul class="list-inline text-center mt-5 mb-2">
-                                    <li class="list-inline-item text-muted fst-italic">Sales for this month</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                            <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+                            <script>
+                              document.addEventListener('DOMContentLoaded', function () {
+                                let options = {
+                                  chart: {
+                                    type: 'bar'
+                                  },
+                                  series: [{
+                                    name: 'Sales',
+                                    data: [<%- monthlyData.map(data => data.sales).join(',') %>]
+                                  }, {
+                                    name: 'Orders',
+                                    data: [<%- monthlyData.map(data => data.orders).join(',') %>]
+                                  }],
+                                  xaxis: {
+                                    categories: [<%- monthlyData.map(data => `'${data.month}'`).join(',') %>]
+                                  }
+                                }
 
+                                let chart = new ApexCharts(document.querySelector("#salesOrdersChart"), options);
+                                chart.render();
+                              });
+                            </script>
+
+                    </div>
                 </div>
+            </div>
+         </div>
+         <div class="row" >
+            <div class="card">
+            <div class="card-body">
+                <canvas id="salesChart" width="400" height="200"></canvas>
+
+       <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Extract data from EJS template
+        const data = <%- JSON.stringify(result) %>;
+
+        // Extract existing years from the data
+        const existingYears = Array.from(new Set(data.map(item => item._id.year)));
+
+        // Determine the range of years to display (last 7 years or all years if less than 7)
+        const currentYear = new Date().getFullYear();
+        const startYear = Math.min(currentYear, Math.min(...existingYears));
+        const endYear = Math.max(currentYear, Math.max(...existingYears));
+
+        // Create an array of years within the determined range
+        const allYears = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index);
+
+        // Prepare data for the chart
+        const labels = allYears;
+        const chartData = allYears.map(year => {
+            const matchingData = data.find(item => item._id.year === year);
+            return matchingData ? { totalSale: matchingData.totalSale, totalOrders: matchingData.totalOrders } : { totalSale: 0, totalOrders: 0 };
+        });
+
+        const totalSales = chartData.map(item => item.totalSale);
+        const totalOrders = chartData.map(item => item.totalOrders);
+
+        // Create a bar chart
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Sales',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        data: totalSales,
+                    },
+                    {
+                        label: 'Total Orders',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                        data: totalOrders,
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true },
+                },
+            },
+        });
+    });
+</script>
 
             </div>
+        </div>
+    </div>
 
-            <section class="intro">
+            <div class="row" >
+                <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Total Sales</h4>
+                    <div class="col-lg-4 col-md-12">
+                        <canvas id="paymentChart" width="400" height="200" style="max-width: 400px;"></canvas>
+                    </div>
+                    <ul class="list-style-none mb-0">
+                        <br />
+                        <li>
+                            <i class="fas fa-circle text-primary font-10 mr-2"></i>
+                            <span class="text-muted"
+                                >Online Payment (<span id="onlinePaymentCount"> <%=countsArray[1]%> </span>)</span
+                            >
+
+                            <span class="text-dark float-right font-weight-medium" id="onlinePaymentAmount"
+                                >₹<%=totalPrices[1]%></span
+                            >
+                        </li>
+                        <li class="mt-3">
+                            <i class="fas fa-circle text-danger font-10 mr-2"></i>
+                            <span class="text-muted"
+                                >Cash on Delivery (<span id="cashOnDeliveryCount"> <%=countsArray[0]%> </span>)</span
+                            >
+                            <span class="text-dark float-right font-weight-medium" id="cashOnDeliveryAmount"
+                                >₹<%=totalPrices[0]%></span>
+
+                        </li>
+                        <li class="mt-3">
+                            <i class="fas fa-circle text-danger font-10 mr-2"></i>
+                            <span class="text-muted"
+                                >Wallet (<span id="cashOnDeliveryCount"> <%=countsArray[2]%> </span>)</span
+                            >
+                            <span class="text-dark float-right font-weight-medium" id="cashOnDeliveryAmount"
+                                >₹<%=totalPrices[2]%></span
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+                </div>
+            
+
+            <section class="intro" hidden>
                 <div class="gradient-custom-1 h-100">
                   <div class="mask d-flex align-items-center h-100">
                     <div class="container">
@@ -369,9 +479,44 @@
                 </div>
               </section>
 
+              
         </div>
+
     </div>
 
+
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+       
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              // Fetch data from your Node.js server (replace with actual data)
+              const paymentData = {
+                labels: ["Cash on Delivery", "Online", "Wallet"],
+                datasets: [
+                  {
+                    label: "Payment Status",
+                    data: <%= JSON.stringify(countsArray) %>,
+                    backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
+                    borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+                    borderWidth: 1,
+                  },
+                ],
+              };
+          
+              // Get the canvas element
+              const ctx = document.getElementById("paymentChart").getContext("2d");
+          
+              // Create the chart
+              const paymentChart = new Chart(ctx, {
+                type: "pie", // You can use other types like 'bar', 'line', etc.
+                data: paymentData,
+              });
+            });
+          </script>
+          
+          
+          
 
 
     <%- include("../partials/user/adminfooter.ejs")%>

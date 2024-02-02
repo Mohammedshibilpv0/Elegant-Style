@@ -21,7 +21,7 @@ router.post('/loginsubmit',middleware.islogin,userController.submitlogin)
 router.get('/otp',userController.loadOtp);
 router.post('/otp',userController.verifyOtp);
 router.get('/logout',userController.logout)
-
+router.get('/resendotp',userController.resendOtp)
 
 //products setting
 router.get('/singleproduct/:id',productsController.singleProduct)
@@ -41,7 +41,7 @@ router.get('/paymentmethod',cartController.checkout)
 
 router.post('/placeorder',cartController.placecorder)
 
-router.get('/profile',userController.userprofile)
+router.get('/profile',middleware.notlogged,middleware.isBlock,userController.userprofile)
 router.post('/changepassword',userController.changepassword)
 router.post('/submitprofile',userController.submitprofile)
 router.post('/cancelOrder/:orderId/:productId/:orgproId',orderController.cancelorder)
@@ -52,6 +52,10 @@ router.post('/verifypayment',cartController.verfypayment)
 router.post('/applyCoupon',orderController.applycoupon)
 
 router.get('/vieworder/:id',orderController.vieworder)
+router.get('/download-invoice/:id',orderController.invoiceDownload);
+
+
+
 
 
 module.exports=router

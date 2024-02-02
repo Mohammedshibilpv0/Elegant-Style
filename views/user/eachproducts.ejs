@@ -15,7 +15,7 @@
                                 <div class="product-gallery product-gallery-vertical">
                                     <div class="row">
                                         <figure class="product-main-image">
-                                            <img id="product-zoom" src="/uploads/<%= products.Images[0] %>" data-zoom-image="/uploads/<%= products.Images[0] %>" alt="product image" style="height: 500px;">
+                                            <img id="product-zoom" src="/uploads/<%= products.Images[0] %>" data-zoom-image="/uploads/<%= products.Images[0] %>" alt="product image" style="height: 600px;">
 
                                             <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                                 <i class="icon-arrows"></i>
@@ -65,15 +65,40 @@
                                     <div class="details-filter-row details-row-size mt-5">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
-                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="<%=products.Quantity%>" step="1" data-decimals="0" required>
+                                            <input type="number" id="qty" class="form-control" value="1" min="1" max="<%=products.Quantity%>" step="1" data-decimals="0" oninput="validateQuantity(this)" required>
                                         </div><!-- End .product-details-quantity -->
                                     </div>
+                                    
+                                    <script>
+                                        function validateQuantity(input) {
+                                            // Remove non-numeric characters from the input value
+                                            input.value = input.value.replace(/\D/g, '');
+                                    
+                                            // Ensure the value is within the specified range
+                                            const min = parseInt(input.min) || 1;
+                                            const max = parseInt(input.max) || 1000;
+                                            const value = parseInt(input.value) || min;
+                                    
+                                            input.value = Math.min(Math.max(value, min), max);
+                                        }
+                                    </script>
+                                    
 
-                                    <div class="product-details-action mt-5">
-                                        <% if (products.quantity > 0) { %>
-                                          <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=user_id%>')">
+                                   
+                                    
+
+                                    <div class="product-details-action mt-5" >
+                                      
+                                        <% if (products.Quantity > 0) { %>
+                                            <% if(!already){%>
+                                          <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=userid%>')">
                                             <span>Add to Cart</span>
                                           </a>
+                                          <%}else{%>
+                                            <a href="/usercart" class="btn-product btn-cart" >
+                                                <span>View Cart</span>
+                                              </a>
+                                            <%}%>
                                         <% } else { %>
                                           <span class="out-of-stock-message text-danger " style="margin-left: 60px;">Out of Stock</span>
                                         <% } %>
@@ -261,31 +286,26 @@
 
 
 <!-- Your script that initializes the zoom functionality -->
-<script>
-    $(document).ready(function() {
-        // Initialize ElevateZoom on the product image
-        $('#product-zoom').elevateZoom({
-            // Configuration options
-            zoomType: 'inner',
-            cursor: 'crosshair',
-            zoomWindowFadeIn: 500,
-            zoomWindowFadeOut: 500
-            // ... other options
-        });
 
-        // Additional script for the product gallery button, if needed
-        $('#btn-product-gallery').on('click', function(e) {
-            e.preventDefault();
-            // Handle gallery functionality, if needed
-        });
-    });
-</script>
 
 
 <!-- Include SweetAlert library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+
+function validateQuantity(input) {
+        // Remove non-numeric characters from the input value
+        input.value = input.value.replace(/\D/g, '');
+
+        // Ensure the value is within the specified range
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 1000;
+        const value = parseInt(input.value) || min;
+
+        input.value = Math.min(Math.max(value, min), max);
+    }
+
         function addtoCart(proid, userid) {
             const quantity = document.getElementById('qty').value;
     
@@ -311,7 +331,11 @@
                         title: 'Product added to cart!',
                         showConfirmButton: false,
                         timer: 1500, // Display the notification for 1.5 seconds
-                    });
+
+                    }).then(()=>{
+                        // $("#reload").load("/singleproduct #reload");
+                        window.location.reload()
+                    })
                 })
                 .catch((error) => {
                     console.error('Error:', error);

@@ -16,7 +16,7 @@
 		                	<div class="row">
 		                		<div class="col-lg-9">
 									<form action="/addadress" method="POST" onsubmit="return validateForm()">
-										<select id="addressSelect" class="selectpicker" style="max-width: 200px;"  onchange="updateSelectedAddress()">
+										<select id="addressSelect" class="selectpicker" style="max-width: 200px; min-width: 200px;"   onchange="updateSelectedAddress()">
 											<% if (user && user.Addresses && user.Addresses.length > 0) { %>
 												<% user.Addresses.forEach(Address => { %>
 
@@ -28,9 +28,10 @@
 												</option>
 											  <% }); %>
 											<% } else { %>
-											  <option>No addresses found for this user.</option>
+											  
 											<% } %>
-										  </select>
+										  </select> <br>
+										   <p id="addr" class="text-danger"></p>
 									<div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
 									aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -227,6 +228,10 @@
 		const  paymentMethod= document.getElementById('payment').value
 		const  total=document.getElementById('discount').textContent
 		const  couponid  =  document.getElementById('couponcode').value
+		if(!selectedValue){
+			const message=document.getElementById('addr').innerHTML="Please Select the Address"
+			return
+		}
         // Example fetch API request
         fetch('/placeorder', {
             method: 'POST',
@@ -261,7 +266,7 @@
 						},2000)
 			}else if(data.Razorpay){
 
-				var options = {
+				const options = {
     "key": "rzp_test_QmkTPpR7YwgsmH", // Enter the Key ID generated from the Dashboard
     "amount": data.Razorpay.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
@@ -338,8 +343,6 @@ rzp1.open();
 	  })
 	}
 </script>
-
-
 
 
 <script>
@@ -469,7 +472,8 @@ document.getElementById('display2').style.display = 'none';
       document.getElementById('success').innerHTML=data.success
 	  document.getElementById('Namec').innerHTML="Coupon Name :"
 	  document.getElementById('msg').innerHTML=" Old Price:"
-	  document.getElementById('org').innerHTML= " ₹ "+ data.totalPriceTotal
+	  document.getElementById('org').innerHTML= `₹ ${data.totalPriceTotal}`
+	  document.getElementById('org').style.textDecoration = 'line-through';
 	  document.getElementById('offer').innerHTML="Offer Price"
 	  document.getElementById('discount').innerHTML=data.discount
     } else if (data.already) {

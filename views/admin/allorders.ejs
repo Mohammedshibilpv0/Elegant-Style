@@ -208,13 +208,13 @@
   <!-- ============================================================== -->
   <!-- Page wrapper  -->
   <!-- ============================================================== -->
-  <div class="page-wrapper bg-dark" style="min-height: 775px">
+  <div class="page-wrapper " style="min-height: 775px">
     <div class="container mt-5">
       <div class="row">
         <div class="col-lg-12">
           <div class="main-box clearfix">
             <div class="table-responsive">
-              <table class="table user-list" id="userTable" style="color: white;">
+              <table class="table user-list" id="userTable" >
                 <thead>
                     <tr>
                         <th><span class="ms-1">Order Id</span></th>
@@ -229,25 +229,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% allOrders.forEach(order => { %>
-                        <% order.Products.forEach((product, index) => { %>
-                            <tr class="mt-4">
-                                <% if (index === 0) { %>
-                                    <!-- Display order-related information only for the first product in the order -->
-                                    <td rowspan="<%= order.Products.length %>">
-                                        <p ><%= order._id %> </p>
-                                    </td>
-                                    <td rowspan="<%= order.Products.length %>">
+                  <% allOrders.forEach(order => { %>
+                    <% order.Products.forEach((product, index) => { %>
+                        <tr class="mt-4">
+                            <% if (index === 0) { %>
+                                <!-- Display order-related information only for the first product in the order -->
+                                <td rowspan="<%= order.Products.length %>">
+                                    <p><%= order._id %> </p>
+                                </td>
+                                <td rowspan="<%= order.Products.length %>">
+                                    <% if (order.user) { %>
                                         <p><%= order.user.Name %></p>
                                         <input type="text" value="<%= order.user._id %>" id="userid_<%= order._id %>" hidden>
-                                    </td>
-                                    <td rowspan="<%= order.Products.length %>">
-                                        <p><%= order.total %></p>
-                                    </td>
-                                    <td rowspan="<%= order.Products.length %>">
-                                        <p class="text-center"> <%= order.address %></p>
-                                    </td>
-                                <% } %>
+                                    <% } else { %>
+                                        <p>User not found</p>
+                                    <% } %>
+                                </td>
+                                <td rowspan="<%= order.Products.length %>">
+                                    <p><%= order.total %></p>
+                                </td>
+                                <td rowspan="<%= order.Products.length %>">
+                                    <p class="text-center"> <%= order.address %></p>
+                                </td>
+                            <% } %>
                                
                                 <td>
                                     <p><%= product.name %></p>
@@ -256,7 +260,7 @@
                                     <p class="text-center"><%= product.quantity %></p>
                                 </td>
                                 <td>
-                                    <img class="circular-image" src="/uploads/<%= product.image %>" alt="<%= product.Name %> Image" onclick="openPopup('/uploads/<%= product.image %>')" />
+                                    <img class="circular-image" src="/uploads/<%=product.products.Images[0]%>" alt="<%= product.Name %> Image" onclick="openPopup('/uploads/<%= product.image %>')" />
                                     <div id="imagePopup" class="image-popup">
                                         <div class="popup-content">
                                             <span class="close-popup" onclick="closePopup()">&times;</span>
@@ -315,7 +319,7 @@
                                                 </div>
                                                 <div class="modal-footer">
                                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                  <a href="#" class="btn btn-danger"  onclick="updateStatus('returned', '<%= order._id %>','<%=product._id%>')">Request Approved</a>
+                                                  <a href="#" class="btn btn-danger"  onclick="updateStatus('returned', '<%= order._id %>','<%=product._id%>','<%=product.products._id%>')">Request Approved</a>
     
                                                 </div>
                                               </div>
@@ -326,9 +330,9 @@
                                           Status
                                         </button>
                                         <ul class="dropdown-menu" >
-                                          <li ><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped', '<%= order._id %>','<%=product._id%>')">Shipped</a></li>
-                                          <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered', '<%= order._id %>','<%=product._id%>')">Delivered</a></li>
-                                          <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled', '<%= order._id %>','<%=product._id%>')">Cancelled</a></li>
+                                          <li ><a class="dropdown-item text-primary" href="#" onclick="updateStatus('shipped', '<%= order._id %>','<%=product._id%>','<%=product.products._id%>')">Shipped</a></li>
+                                          <li><a class="dropdown-item text-success" href="#" onclick="updateStatus('delivered', '<%= order._id %>','<%=product._id%>','<%=product.products._id%>')">Delivered</a></li>
+                                          <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('cancelled', '<%= order._id %>','<%=product._id%>','<%=product.products._id%>')">Cancelled</a></li>
                                          
                                             
                                         
@@ -342,7 +346,33 @@
                     <% }); %>
                 </tbody>
             </table>
-            
+            <nav aria-label="Page navigation">
+              <ul class="pagination">
+                  <% if (totalPages > 1) { %>
+                      <% if (currentPage > 1) { %>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                  <span aria-hidden="true">&laquo;</span>
+                              </a>
+                          </li>
+                      <% } %>
+          
+                      <% for (let i = 1; i <= totalPages; i++) { %>
+                          <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                          </li>
+                      <% } %>
+          
+                      <% if (currentPage < totalPages) { %>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                  <span aria-hidden="true">&raquo;</span>
+                              </a>
+                          </li>
+                      <% } %>
+                  <% } %>
+              </ul>
+          </nav>
             </div>
           </div>
         </div>
@@ -353,9 +383,23 @@
  
   
 </div>
+<script src="/admin/assets/libs/popper.js/dist/umd/popper.min.js "></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="/admin/css/allproducts.css">
+<script src="/admin/js/paging.js"> </script>
+
 <script>
+$('#userTable').paging({
+
+limit: 5,
+rowDisplayStyle: 'block',
+activePage: 0,
+rows: []
+
+});
+
       function openPopup(imageSrc) {
       // Set the source of the popup image
       document.getElementById("popupImage").src = imageSrc;
@@ -371,7 +415,7 @@
 
 
 //updating the status of product
-function updateStatus(status, orderId, productid) {
+function updateStatus(status, orderId, productid,orgproId) {
     // Show SweetAlert confirmation dialog
     Swal.fire({
         title: 'Are you sure?',
@@ -394,7 +438,7 @@ function updateStatus(status, orderId, productid) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ status, productid,userid }),
+                body: JSON.stringify({ status, productid,userid ,orgproId}),
             })
                 .then(response => {
                     if (!response.ok) {

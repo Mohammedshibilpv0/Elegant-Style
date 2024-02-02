@@ -32,7 +32,8 @@
 
        
 
-         
+ 
+  
 
         <main class="main">
             <div class="intro-section bg-lighter pt-3">
@@ -150,21 +151,44 @@
                             </div><!-- End .col-sm-6 col-md-4 col-lg-3 -->
                             <%}%>
                             <%})%>
-
-
-                            
                             </div><!-- End .row -->
                     </div><!-- .End .tab-pane -->
                 </div><!-- End .tab-content -->
-               
+
 
                 <div class="mb-3"></div><!-- End .mb-6 -->
             </div><!-- End .container -->
 
 
-
         </main><!-- End .main -->
-
+     
+        <nav aria-label="Page navigation" style="margin-left: 700px;">
+            <ul class="pagination">
+                <% if (totalPages > 1) { %>
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    <% } %>
+        
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+        
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+        </nav>
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 

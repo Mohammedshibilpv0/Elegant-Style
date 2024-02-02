@@ -4,64 +4,9 @@ const Coupon=require('../model/couponSchema')
 const Cart=require('../model/cartSchema');
 const { ConnectionStates } = require("mongoose");
 const User = require("../model/User");
+const easyinvoice = require('easyinvoice');
 
 
-// const cancelorder = async (req, res) => {
-//   const {orderId,productId}=req.params
-  
-
-//   try {
-   
-//     const user=await User.findOne({_id:req.session.user_id})
-//     const updatedOrder = await Orders.updateOne(
-//       {
-//         _id: orderId,
-//         'Products._id': productId,
-//     },
-//     {
-//         $set: { 'Products.$.Status': "cancelled" },
-//     }
-//   );
-//   const order= await Orders.findById(orderId)
-//   for (const Products of order.Products) {
-//     const productId = Products.products;
-//     const quantity = Products.quantity;
-
-//     // Update product stock by adding the cancelled quantity
-//     await Products.findByIdAndUpdate(productId, {
-//       $inc: { stock: quantity },
-//     });
-//   }
- 
-
-//   const checking= await Orders.findOne({_id:orderId,'Products._id': productId,})
-//   if(checking.paymentMode=="Razorpay"){
-//     const productTotal = checking.Products.reduce((acc, product) => {
-//       return acc + (product.quantity * product.price);
-//     }, 0);
-//    user.wallet=user.wallet+productTotal
-//    const transaction = {
-//     amount: productTotal, // Negative value for deduction
-//     description: "Product cancellation",
-//     date: new Date(),
-//     status: "in",
-//   };
-//   user.walletHistory.push(transaction);
-
-//    await user.save()
-//   }
-
-//     // Send a response indicating success
-//     res.json({
-//       success: true,
-//       message: "Product cancelled successfully",
-//       updatedOrder,
-//     });
-//   } catch (error) {
-//     console.error("Error cancelling product:", error.message);
-//     res.status(500).json({ success: false, message: "Internal server error" });
-//   }
-// };
 const cancelorder = async (req, res) => {
   const { orderId, productId,orgproId } = req.params;
 
@@ -119,79 +64,6 @@ const cancelorder = async (req, res) => {
 
 
 
-
-
-
-
-// const cancelorder = async (req, res) => {
-//   const { orderId, productId } = req.params;
-
-//   try {
-//     const user = await User.findOne({ _id: req.session.user_id });
-//     const updatedOrder = await Orders.updateOne(
-//       {
-//         _id: orderId,
-//         'Products._id': productId,
-//       },
-//       {
-//         $set: { 'Products.$.Status': 'cancelled' },
-//       }
-//     );
-
-//     const checking = await Orders.findOne({
-//       _id: orderId,
-//       'Products._id': productId,
-//     });
-
-//     if (checking.paymentMode === 'Razorpay') {
-//       const productTotal = checking.Products.reduce((acc, product) => {
-//         return acc + product.total;
-//       }, 0);
-
-//       // Increase the product quantity in the Products collection
-//       const canceledProduct = checking.Products.find(
-//         (product) => product._id.toString() === productId
-//       );
-//       console.log(canceledProduct);
-
-//       if (!canceledProduct || !canceledProduct.products || !canceledProduct.products._id) {
-//         console.error('Invalid canceled product structure:', canceledProduct);
-//         return res.status(500).json({ success: false, message: 'Invalid canceled product structure' });
-//       }
-
-//       const product = await Products.findById(canceledProduct.products._id);
-//       if (!product) {
-//         console.error('Product not found:', canceledProduct.products._id);
-//         return res.status(404).json({ success: false, message: 'Product not found' });
-//       }
-
-//       // Adjust the product quantity
-//       product.Quantity += canceledProduct.quantity;
-//       await product.save();
-
-//       // Update user's wallet
-//       user.wallet = user.wallet + productTotal;
-//       const transaction = {
-//         amount: productTotal,
-//         description: 'Product cancellation',
-//         date: new Date(),
-//         status: 'in',
-//       };
-//       user.walletHistory.push(transaction);
-//       await user.save();
-//     }
-
-//     // Send a response indicating success
-//     res.json({
-//       success: true,
-//       message: 'Product cancelled successfully',
-//       updatedOrder,
-//     });
-//   } catch (error) {
-//     console.error('Error cancelling product:', error.message);
-//     res.status(500).json({ success: false, message: 'Internal server error' });
-//   }
-// };
 
 
 
@@ -287,6 +159,8 @@ const vieworder= async (req,res)=>{
   try{
 
     const orderid=req.params.id
+    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const userName = await User.findOne({ _id: req.session.user_id });
     const orders = await Orders.find({ _id:orderid})
     .populate({
         path: 'Products.products',
@@ -294,7 +168,7 @@ const vieworder= async (req,res)=>{
     })
     .exec();
   
-    res.render("orderdetail",{orders})
+    res.render("orderdetail",{orders,userName,count,orderid})
 
   }catch(err){
     console.log(err);
@@ -302,10 +176,65 @@ const vieworder= async (req,res)=>{
 }
 
 
+const invoiceDownload= async (req,res)=>{
+  try {
+    const orderId = req.params.id;
+    const ordercheck = await Orders.findOne({ _id: orderId });
+
+    if (!Orders) {
+        return res.status(404).send('Order not found');
+    }
+
+    const products = ordercheck.Products.map(product => ({
+        quantity: product.quantity,
+        description: product.name,
+        price: product.total,
+        total: product.total
+    }));
+    const data = {
+        "currency": "USD",
+        "marginTop": 25,
+        "marginRight": 25,
+        "marginLeft": 25,
+        "marginBottom": 25,
+        "logo": "https://www.easyinvoice.cloud/img/logo.png",
+        "sender": {
+            "company": "ELEGANT-STYLE"
+
+        },
+        "client": {
+            "company":ordercheck.address
+        },
+        "invoiceNumber": `INV-${orderId}`, // You can customize the invoice number
+        "invoiceDate": new Date(Orders.date).toLocaleDateString('en-US'),
+        "products": products,
+        "bottomNotice": "Kindly pay your invoice within 15 days."
+    };
+
+    const result = await easyinvoice.createInvoice(data);
+
+    if (!result.pdf || !result.pdf.length) {
+        throw new Error('Failed to generate PDF document.');
+    }
+
+    const fileName = `invoice-${orderId}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+    res.setHeader('Content-Length', result.pdf.length);
+    res.send(Buffer.from(result.pdf, 'base64'));
+} catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+}
+}
+
+
 module.exports = {
   cancelorder,
   applycoupon,
   vieworder,
-  returnRequest
+  returnRequest,
+  invoiceDownload
 };
 

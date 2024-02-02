@@ -5,6 +5,7 @@ const middleware=require('../middleware/admin')
 const productsController=require('../controller/products')
 const multer=require('multer')
 const path=require('path')
+const Order=require('../model/orderSchema')
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -84,5 +85,9 @@ adminRoute.get('/coupon',adminController.coupon)
 adminRoute.get('/addcoupon',adminController.addcoupon)
 adminRoute.post('/addCouponsubmit',adminController.postaddcoupon)
 adminRoute.delete('/deleteCoupon/:id',adminController.deleteCoupon)
+adminRoute.get('/salesreport',adminController.saleReport)
+
+
+
 
 module.exports=adminRoute

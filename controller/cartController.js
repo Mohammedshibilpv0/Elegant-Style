@@ -37,40 +37,51 @@ const generateRazorpay=(orderid,adjustedAmount)=>{
 
 const cart = async (req, res) => {
   try {
+  
     const user = req.session.user_id;
     const cartData = await Cart.findOne({ userid: user }).populate({
       path: "products.productId",
       model: "Products", // Make sure it matches the model name for the Product
     });
-  
+    const errmsg = req.flash("err");
     if (cartData) {
       const totalPriceTotal = cartData.products.reduce((total, product) => {
         return total + product.totalPrice;
       }, 0);
 
-      res.render("cart", { cartData, totalPriceTotal });
+      res.render("cart", { cartData, totalPriceTotal,errmsg });
     }else{
 
-        res.render("cart", {cartData});
+        res.render("cart", {cartData,errmsg});
     }
   } catch (err) {
     console.log(err);
   }
 };
-
 const checkout = async (req, res) => {
   try {
-
     const userid = req.session.user_id;
     const user = await User.findOne({ _id: userid });
     const cartData = await Cart.findOne({ userid: userid }).populate({
       path: "products.productId",
-      model: "Products", // Make sure it matches the model name for the Product
+      model: "Products",
     });
-    const length= await Cart.findOne({userid:req.session.user_id}).count()
-   if(length<=0){
-    res.redirect('/usercart')
-   }
+
+    if (!cartData || !cartData.products || cartData.products.length === 0) {
+      return res.redirect('/usercart');
+    }
+
+    // Check if the product quantity is greater than or equal to the cart quantity
+    const quantityCheck = cartData.products.every((product) => {
+      return product.productId.Quantity >= product.quantity;
+    });
+
+    if (!quantityCheck) {
+      const errmsg = "Sorry maximum quantity over";
+      req.flash("err", errmsg);
+      return res.redirect('/usercart');
+    }
+
     const totalPriceTotal = cartData.products.reduce((total, product) => {
       return total + product.totalPrice;
     }, 0);
@@ -78,8 +89,10 @@ const checkout = async (req, res) => {
     res.render("checkout", { userid, user, cartData, totalPriceTotal });
   } catch (err) {
     console.log(err);
+    res.status(500).send('Internal Server Error');
   }
 };
+
 
 const addtocart = async (req, res) => {
   try {
@@ -100,7 +113,8 @@ const addtocart = async (req, res) => {
         if (existingProductIndex !== -1) {
           // Product already exists in the cart, update the quantity and total price
           const existingProduct = cart.products[existingProductIndex];
-          existingProduct.quantity += quantity;
+          existingProduct.quantity
+          // += quantity;
           existingProduct.totalPrice =
             existingProduct.quantity * existingProduct.productPrice;
         } else {

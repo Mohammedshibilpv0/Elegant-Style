@@ -23,7 +23,7 @@ const ProductSchema= new mongoose.Schema({
     },
     Category: {
         type: mongoose.Schema.ObjectId,
-        ref: 'Categories', // Make sure it matches the model name for the Category
+        ref: 'Categories',
     },
     Status:{
         type:String,

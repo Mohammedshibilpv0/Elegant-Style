@@ -5,15 +5,142 @@ const Orders= require('../model/orderSchema')
 const Products = require('../model/Products')
 const Coupon=require('../model/couponSchema')
 
+
+
+
+
 const home = async (req, res) => {
   try {
-    const admin=req.session.admin
-    const count= await Users.findOne().count()
-    res.render("home",{admin,count});
+    const admin = req.session.admin;
+    const count = await Users.findOne().count();
+    const totalorder = await Orders.findOne().count();
+    const totalproduct = await Products.findOne().count();
+
+    // chart for the payment
+    const orders = await Orders.find().lean();
+    const paymentModes = orders.reduce((acc, order) => {
+      if (order.paymentMode !== undefined) {
+        acc.push(order.paymentMode);
+      }
+      return acc;
+    }, []);
+    const paymentModeCounts = paymentModes.reduce((acc, mode) => {
+      acc[mode] = (acc[mode] || 0) + 1;
+      return acc;
+    }, {});
+
+  const payment = orders.reduce((acc, order) => {
+  if (order.paymentMode !== undefined) {
+    order.Products.forEach(product => {
+      const mode = order.paymentMode;
+      const total = product.total;
+      acc[mode] = (acc[mode] || 0) + total;
+    });
+  }
+  return acc;
+}, {});
+
+const totalPrices = Object.values(payment);
+const countsArray = Object.values(paymentModeCounts);
+
+    const totalDeliveredOrders = await Orders.aggregate([
+      {
+        $unwind: '$Products',
+      },
+      {
+        $match: {
+          'Products.Status': 'delivered',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          total: { $sum: '$Products.total' },
+        },
+      },
+    ]);
+
+    const totalDeliveredAmount = totalDeliveredOrders.reduce((acc, order) => acc + order.total, 0);
+    const ordersData = await Orders.find();
+
+    const monthlyData = transformDataForBarGraph(ordersData);
+    console.log(monthlyData);
+
+          const result = await Orders.aggregate([
+              {
+                  $match: {
+                      'Products.Status': 'delivered',
+                  },
+              },
+              {
+                  $group: {
+                      _id: {
+                          year: { $year: '$date' },
+                      },
+                      totalSale: { $sum: '$total' },
+                      totalOrders: { $sum: 1 },
+                  },
+              },
+              {
+                  $sort: {
+                      '_id.year': 1,
+                  },
+              },
+          ]);
+
+
+
+  console.log(result);
+
+    res.render("home", {
+      admin,
+      count,
+      totalDeliveredAmount,
+      totalorder,
+      totalproduct,
+      countsArray,
+      totalPrices,
+      monthlyData,
+      result
+    });
   } catch (err) {
     console.log(err);
   }
 };
+
+function transformDataForBarGraph(ordersData) {
+  const monthlyData = {};
+
+  // Initialize monthlyData with default values for all months
+  for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
+    monthlyData[monthIndex] = { month: getMonthName(monthIndex), sales: 0, orders: 0 };
+  }
+
+  ordersData.forEach(order => {
+    const month = order.date.getMonth(); // Assuming `date` is a Date field in your orders collection
+
+    // Check if the product status is 'delivered' before updating the values
+    const deliveredProducts = order.Products.filter(product => product.Status === 'delivered');
+
+    monthlyData[month].sales += deliveredProducts.reduce((total, product) => total + product.total, 0);
+    monthlyData[month].orders += deliveredProducts.length;
+  });
+
+  return Object.values(monthlyData);
+}
+
+
+
+// Helper function to get month name from month index
+function getMonthName(monthIndex) {
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  return months[monthIndex];
+}
+
+
 const login = (req, res) => {
   try {
     const errmsg = req.flash("err");
@@ -52,16 +179,28 @@ const logout = (req, res) => {
   }
 };
 
+
 const allUsers = async (req, res) => {
   try {
-    const admin=req.session.admin
-    const userData = await Users.find({Verified:true});
-    console.log(userData);
-    res.render("allusers", { userData,admin });
+      const admin = req.session.admin;
+      const perPage = 6; // Set the number of users to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+
+      const totalUsers = await Users.countDocuments({ Verified: true });
+      const totalPages = Math.ceil(totalUsers / perPage);
+
+      const userData = await Users.find({ Verified: true })
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
+
+      res.render('allusers', { userData, admin, totalPages, currentPage: page });
   } catch (err) {
-    console.log(err);
+      console.error(err);
+      res.status(500).send('Internal Server Error');
   }
 };
+
 
 const unblockUser = async (req, res) => {
   try {
@@ -224,29 +363,38 @@ const blockUser = async (req, res) => {
     }
    }
 
-   const allorders = async (req, res) => {
-    try {
-      const admin= req.session.admin
+
+const allorders = async (req, res) => {
+  try {
+      const admin = req.session.admin;
+      const perPage = 4; // Set the number of orders to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+
+      const totalOrders = await Orders.countDocuments();
+      const totalPages = Math.ceil(totalOrders / perPage);
+
       const allOrders = await Orders.find()
-      .populate({
-          path: 'Products.products',
-          model: 'Products'
-      }).populate('user', 'Name').exec();
-
-
-        res.render('allorders', { allOrders,admin});
-    } catch (err) {
-        console.error(err);
-        // Handle the error and send an appropriate response
-        res.status(500).send('Internal Server Error');
-    }
+          .populate({
+              path: 'Products.products',
+              model: 'Products',
+          })
+          .populate('user', 'Name')
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
+console.log(allOrders);
+      res.render('allorders', { allOrders, admin, totalPages, currentPage: page });
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+  }
 };
 
 
 const changestatus = async (req, res) => {
   const { orderId } = req.params;
-  const { status,productid,userid } = req.body;
-
+  const { status,productid,userid,orgproId } = req.body;
+console.log(userid);
 
   try {
     if(status=="returned"){
@@ -267,6 +415,18 @@ const changestatus = async (req, res) => {
     checkuser.walletHistory.push(transaction);
 
     await checkuser.save()
+      // Retrieve the order to get the list of cancelled products
+      const productInfo = await Orders.findOne(
+        { _id: orderId, 'Products._id': productid },
+        { 'Products.$': 1 }
+      );
+  
+      // Extract the quantity from the productInfo
+      const quantity = productInfo.Products[0].quantity;
+      const product= await Products.findById(orgproId)
+      console.log(orgproId);
+         product.Quantity=product.Quantity+quantity
+        await product.save()
 
   }
     // Update the order status in the database
@@ -367,7 +527,18 @@ const deleteCoupon = async (req,res)=>{
 }
 
 
+const saleReport= async (req,res)=>{
+  try{
+    const admin=req.session.admin
+    res.render('report',{admin})
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
 module.exports = {
+
   home,
   login,
   verifyAdmin,
@@ -387,5 +558,6 @@ module.exports = {
   coupon,
   addcoupon,
   postaddcoupon,
-  deleteCoupon
+  deleteCoupon,
+  saleReport
 };

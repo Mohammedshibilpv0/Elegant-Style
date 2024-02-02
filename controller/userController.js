@@ -12,17 +12,28 @@ const Coupon=require('../model/couponSchema')
 
 const home = async (req, res) => {
   try {
-    const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
-    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length||0
-    const userName = await User.findOne({_id:req.session.user_id})
-    
-    const userid= req.session.user_id
-    const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
-    res.render("home", { userName, Product,count,userid });
+      const perPage = 8; // Set the number of products to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+
+      const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
+          .populate('Category')
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
+
+      const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const userName = await User.findOne({ _id: req.session.user_id });
+
+      const userid = req.session.user_id;
+      const Product = productsdetail.filter(product => product.Category.Status !== "blocked");
+
+      const totalProducts = await Products.countDocuments({ Status: { $ne: "blocked" } });
+      const totalPages = Math.ceil(totalProducts / perPage);
+
+      res.render("home", { userName, Product, count, userid, totalPages, currentPage: page });
   } catch (err) {
-    console.log(err);
-    // Handle the error appropriately, perhaps by rendering an error page
-    res.status(500).send('Internal Server Error');
+      console.log(err);
+      res.status(500).send('Internal Server Error');
   }
 };
 
@@ -241,8 +252,13 @@ const submitlogin = async (req, res) => {
   try {
     const check = await User.findOne({ Email: req.body.logemail });
     
-
+    if(!check.Verified){
+      const errormsg = "You are blocked by admin";
+      req.flash("err", errormsg);
+      res.redirect("/login");
+    }else{
     if (check) {
+      
       const passwordMatch = await bcrypt.compare(
         req.body.logpassword,
         check.Password
@@ -269,24 +285,40 @@ const submitlogin = async (req, res) => {
       req.flash("err", errormsg);
       res.redirect("/login"); // Handle the case where the user with the specified email is not found
     }
+  }
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error"); // Handle other errors gracefully
   }
 };
 
-const allproducts= async (req,res)=>{
-  try{
+const allproducts = async (req, res) => {
+  try {
+      const perPage = 8; // Set the number of products to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+      const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const userName = await User.findOne({ _id: req.session.user_id });
+      const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
+          .populate('Category')
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
 
-    const productsdetail = await Products.find({Status: { $ne: "blocked" }}).populate('Category').exec();
-    const product = productsdetail.filter(product => product.Category.Status !== "blocked");
-    const user=req.session.user_id
-    res.render('allproducts',{product,user})
+      const product = productsdetail.filter(product => product.Category.Status !== "blocked");
+      const user = req.session.user_id;
 
-  }catch(err){
-    console.log(err);
+      const totalProducts = await Products.countDocuments({ Status: { $ne: "blocked" } });
+      const totalPages = Math.ceil(totalProducts / perPage);
+
+
+      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count });
+
+  } catch (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
   }
-}
+};
+
 
 
 
@@ -359,11 +391,12 @@ const submitprofile = async (req, res) => {
 const userprofile= async (req,res)=>{
   try{
     const userid=req.session.user_id
+    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const userdetails = await User.findOne({ _id: userid });
     const orders = await Orders.find({user:userid})
-
+    const userName = await User.findOne({ _id: req.session.user_id });
     const coupon= await Coupon.find()
-    res.render('userprofile',{userdetails,orders,coupon})
+    res.render('userprofile',{userdetails,orders,coupon,userName,count})
   }catch(err){
     console.log(err);
   }
@@ -420,7 +453,7 @@ console.log(specificaddress);
       try {
         // Use findOneAndUpdate to directly update the specific address
         await User.findOneAndUpdate(
-          { email: req.session.email, 'Addresses.address': req.body.address },
+          { _id: req.session.user_id, 'Addresses.address': req.body.address },
           {
             $set: {
               'Addresses.$.location': req.body.location,

@@ -18,7 +18,7 @@
 											<div class="card card-stepper " style="border-radius: 16px;">
 											  <div class="card-header p-4">
 												<div class="d-flex justify-content-between align-items-center">
-												  <div>
+												  <div>    
 													<p class="text-muted mb-2"> Order ID <span class="fw-bold text-body"><%= order._id %></span></p>
 													<p class="text-muted mb-0"> Place On <span class="fw-bold text-body"> <%= order.date.toLocaleDateString('en-US',
 														{
@@ -87,9 +87,9 @@
 											  </div>
 											</div>
 
-										</div>
+										</div>  
 									  <% }); %>
-
+                    <a href="/download-invoice/<%=orderid%>" class="btn btn-primary btn-round" download="invoice.pdf">Download Invoice</a>
 							</div><!-- End .tab-content -->
 						</div><!-- End .form-tab -->
             		</div><!-- End .form-box -->
