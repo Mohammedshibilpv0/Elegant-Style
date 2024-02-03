@@ -537,6 +537,78 @@ const saleReport= async (req,res)=>{
   }
 }
 
+const salesdata = async (req, res) => {
+  try {
+      const { startDate, endDate } = req.body;
+
+      // Convert dates to JavaScript Date objects with time included
+      const startDateTime = new Date(`${startDate}T00:00:00.000Z`);
+      const endDateTime = new Date(`${endDate}T23:59:59.999Z`);
+
+      // Use aggregation to fetch orders within the specified date range
+      const orders = await Orders.aggregate([
+          {
+              $match: {
+                  date: { $gte: startDateTime, $lte: endDateTime },
+                  'Products.Status': 'delivered' // Add this condition to filter by Status
+              },
+          },
+          {
+              $lookup: {
+                  from: 'users', // The name of the User model collection in MongoDB
+                  localField: 'user',
+                  foreignField: '_id',
+                  as: 'user',
+              },
+          },
+          {
+              $unwind: '$user',
+          },
+          {
+              $unwind: '$Products',
+          },
+          {
+              $lookup: {
+                  from: 'products', // The name of the products model collection in MongoDB
+                  localField: 'Products.products',
+                  foreignField: '_id',
+                  as: 'Products.productInfo',
+              },
+          },
+          {
+              $unwind: '$Products.productInfo',
+          },
+          {
+              $group: {
+                  _id: '$_id',
+                  user: { $first: '$user' },
+                  Products: { $push: '$Products' },
+                  total: { $sum: '$Products.productInfo.total' },
+                  date: { $first: '$date' },
+                  // Add other fields you need to include in the result
+              },
+          },
+      ]);
+
+      // Log orders count and dates
+      console.log("Orders Count:", orders.length);
+      console.log("Start Date:", startDateTime);
+      console.log("End Date:", endDateTime);
+
+      return res.status(200).json({
+          status: "success",
+          data: {
+              orders,
+              startDate: startDateTime,
+              endDate: endDateTime,
+          },
+      });
+  } catch (error) {
+      console.error("Error generating sales report:", error);
+      return res.status(500).json({ error: "Failed to generate sales report" });
+  }
+};
+
 module.exports = {
 
   home,
@@ -559,5 +631,6 @@ module.exports = {
   addcoupon,
   postaddcoupon,
   deleteCoupon,
-  saleReport
+  saleReport,
+  salesdata
 };

@@ -148,7 +148,7 @@ const addtocart = async (req, res) => {
         await newCart.save();
         console.log("New cart created:", newCart);
       }
-      const updatedCart = await Cart.findOne({ userid: user_id });
+      const updatedCart = await Cart.findOne({ userid: user_id })
       const newCartCount = updatedCart ? updatedCart.products.length : 0;
 
       res.status(200).json({ message: "Product added to cart successfully.",newCartCount });

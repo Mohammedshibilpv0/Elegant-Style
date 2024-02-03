@@ -67,7 +67,7 @@ const register = async (req, res) => {
 
   try {
     const emailCheck = await User.findOne({ Email: req.body.email });
-    if (emailCheck) {
+    if (emailCheck && emailCheck.Verified) {
     
       const errmsg = "Email already exist";
       req.flash("err", errmsg);

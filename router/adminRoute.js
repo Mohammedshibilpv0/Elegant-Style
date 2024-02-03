@@ -86,6 +86,7 @@ adminRoute.get('/addcoupon',adminController.addcoupon)
 adminRoute.post('/addCouponsubmit',adminController.postaddcoupon)
 adminRoute.delete('/deleteCoupon/:id',adminController.deleteCoupon)
 adminRoute.get('/salesreport',adminController.saleReport)
+adminRoute.post('/salesreportfetch',adminController.salesdata)
 
 
 
