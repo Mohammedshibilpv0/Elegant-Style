@@ -17,6 +17,7 @@ const home = async (req, res) => {
 
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
           .populate('Category')
+          .populate('offer')
           .skip((page - 1) * perPage)
           .limit(perPage)
           .exec();
@@ -250,15 +251,15 @@ const resendOtp = async (req, res) => {
 
 const submitlogin = async (req, res) => {
   try {
-    const check = await User.findOne({ Email: req.body.logemail });
-    
+    const check = await User.findOne({ Email: req.body.logemail})
+
     if(!check.Verified){
-      const errormsg = "You are blocked by admin";
+      const errormsg = "Please register first";
       req.flash("err", errormsg);
-      res.redirect("/login");
+      res.redirect("/signup");
     }else{
     if (check) {
-      
+
       const passwordMatch = await bcrypt.compare(
         req.body.logpassword,
         check.Password
@@ -286,7 +287,8 @@ const submitlogin = async (req, res) => {
       res.redirect("/login"); // Handle the case where the user with the specified email is not found
     }
   }
-  } catch (err) {
+
+}catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error"); // Handle other errors gracefully
   }
@@ -298,6 +300,7 @@ const allproducts = async (req, res) => {
       const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
       const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
+      const category= await Category.find({Status: { $ne: "blocked" }})
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
           .populate('Category')
           .skip((page - 1) * perPage)
@@ -311,7 +314,7 @@ const allproducts = async (req, res) => {
       const totalPages = Math.ceil(totalProducts / perPage);
 
 
-      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count });
+      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count,category });
 
   } catch (err) {
       console.log(err);
@@ -484,6 +487,24 @@ console.log(specificaddress);
   }
 };
 
+const categorybased= async(req,res)=>{
+  try{
+    const perPage = 8; // Set the number of products to display per page
+    const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const categoryid =req.params.id
+    const user=req.session.user_id
+    const totalProducts = await Products.countDocuments({Category:categoryid},{ Status: { $ne: "blocked" } });
+    const totalPages = Math.ceil(totalProducts / perPage);
+    const product= await Products.find({Category:categoryid})
+    const category= await Category.find({Status: { $ne: "blocked" }})
+    res.render('categorybased',{product,user,category,totalPages, currentPage: page,})
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
 
 const logout = (req, res) => {
   try {
@@ -511,5 +532,6 @@ module.exports = {
   userprofile,
   logout,
   removeAddress,
-  editaddress
+  editaddress,
+  categorybased
 };

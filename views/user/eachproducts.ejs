@@ -46,7 +46,12 @@
                                     </div><!-- End .rating-container -->
 
                                     <div class="product-price">
-                                        ₹ <%=products.OfferPrice%>      <s class="text-light" style="font-size: 16px; margin-left:11px;">  ₹<%=products.Price%></s> 
+                                        <% if (products.offer) { %>
+                                            ₹<%= Math.floor(products.Price - (products.Price * products.offer.percentage / 100)) %>
+                                            <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>
+                                        <% } else { %>
+                                            ₹<%= products.Price %>
+                                        <% } %>
                                     </div><!-- End .product-price -->
 
                                     <div class="product-content">

@@ -223,6 +223,7 @@
                     <th><span class="ms-5">Stock</span></th>
 
                     <th><span class="ms-1">Images</span></th>
+                    <th><span class="ms-1">Offer</span></th>
                     <th><span class="ms-1">Edit</span></th>
                     <th><span class="ms-1">Status</span></th>
                     <th><span class="ms-1">Delete</span></th>
@@ -257,6 +258,57 @@
                         onclick="openPopup('/uploads/<%= product.Images[i] %>')"
                       />
                       <% } %>
+                    </td>
+                    <td class="user-link">
+                      <button type="button" class="btn btn-primary  mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal=<%=product._id%>">
+                        Apply
+                      </button>
+                      <br>
+
+                        <% if(product.offer){%>
+                          <p id="ofr"><%=product.offer.name%></p>
+                          <a href="#" class="text-danger" id="remove" onclick="removeofffer('<%=product.offer._id%>','<%=product._id%>')">remove</a>
+                          <%}%>
+                      </div>
+                      <!-- Modal -->
+                          <div class="modal fade" id="exampleModal=<%=product._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Select Offer</h5>
+
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                <hr>
+                                <h3>Available Offers</h3>
+                                  <% offer.forEach((offer)=>{%>
+                                    <div class="row">
+                                      <div class="col-sm-6">
+                                        <div class="card">
+                                          <div class="card-body">
+                                            <h5 class="card-title">Name:<%=offer.name%></h5>
+                                            <p class="card-text">Offer percentage:<%=offer.percentage%>%</p>
+                                            <p class="card-text">StartingDate: <br> <%=offer.startingDate.toLocaleDateString('en-US')%></p>
+                                            <p class="card-text">ExpiryDate:  <br> <%=offer.expiryDate.toLocaleDateString('en-US')%></p>
+                                            <button id="offerapply_<%=offer._id%>" onclick="applyoffer('<%=offer._id%>', '<%=product._id%>', 'offerapply_<%=offer._id%>')" class="btn btn-primary">Apply Offer</button>
+                                            <br>
+                                            <a href="#" style="display: none;" class="text-success" id="mesgoffer">Offer added</a>
+                                          </div>
+                                        </div>
+                                      </div>
+
+                                    </div>
+                                    
+                                  <%})%>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="button" class="btn btn-primary">Save changes</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                     </td>
                     <!-- Popup HTML -->
                     <div id="imagePopup" class="image-popup">
@@ -392,6 +444,40 @@
     });
 }
 
+
+        function applyoffer(offerid,productid){
+          fetch('/admin/applyoffer',{
+            method:"POST",
+            headers:{
+              'Content-Type': 'application/json',
+            },
+            body:JSON.stringify({offerid,productid})
+          }).then(response => response.json())
+                .then(data => {
+                  if(data.success){
+
+                    window.location.reload()
+
+                  }
+                }).catch(error => console.error('Error:', error));
+        }
+
+
+          function removeofffer(offerid,productid){
+            fetch('/admin/removeoffer',{
+              method:"POST",
+              headers:{
+                'Content-Type':'application/json'
+              },
+              body:JSON.stringify({offerid,productid})
+            }).then(response=>response.json())
+              .then((data)=>{
+                if(data.success){
+
+                  window.location.reload()
+                }
+            })
+          }
 
   </script>
 

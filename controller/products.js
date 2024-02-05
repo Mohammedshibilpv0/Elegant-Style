@@ -6,7 +6,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const fs = require('fs');
-
+const offerSchema=require('../model/offerSchema')
 
 //multer setup
 const storage = multer.diskStorage({
@@ -52,10 +52,9 @@ const uploadProducts = async (req, res) => {
         return res.redirect("/admin/addproducts");
       }
 
-   
-  
 
- 
+
+
       const product = new Products({
         Name: req.body.name,
         Price: req.body.price,
@@ -63,9 +62,8 @@ const uploadProducts = async (req, res) => {
         Description: req.body.description,
         Category: req.body.category,
         Date: req.body.date,
-        OfferPrice: req.body.offerprice,
         Images: req.files.map((file) => file.filename),
-      
+
       });
 
       await product.save();
@@ -92,18 +90,19 @@ const uploadProducts = async (req, res) => {
 const allProducts = async (req, res) => {
   try {
       const admin = req.session.admin;
-      const perPage = 6; // Set the number of products to display per page
-      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
-
+      const perPage = 6;
+      const page = parseInt(req.query.page) || 1;
+      const offer = await offerSchema.find()
       const totalProducts = await Products.countDocuments();
       const totalPages = Math.ceil(totalProducts / perPage);
 
       const allProducts = await Products.find()
+          .populate('offer')
           .skip((page - 1) * perPage)
           .limit(perPage)
           .exec();
 
-      res.render('allproducts', { allProducts, admin, totalPages, currentPage: page });
+      res.render('allproducts', { allProducts, admin, totalPages, currentPage: page,offer });
   } catch (err) {
       console.error(err);
       res.status(500).send('Internal Server Error');
@@ -138,7 +137,6 @@ const submitedit = async (req, res) => {
       Description: req.body.description,
       Quantity: req.body.quantity,
       Price: req.body.price,
-      OfferPrice: req.body.offerprice,
       Category:req.body.category,
    
     };
@@ -162,10 +160,10 @@ const submitedit = async (req, res) => {
 
 const singleProduct = async (req, res) => {
   try{
-   
+
     const userid= req.session.user_id
     const product_id = req.params.id;
-    const products = await Products.findOne({ _id: product_id }).populate('Category').exec();
+    const products = await Products.findOne({ _id: product_id }).populate('Category').populate('offer').exec();
     const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
     const cartcheck= await Cart.findOne({userid:userid})
     if(cartcheck){
@@ -177,8 +175,7 @@ const singleProduct = async (req, res) => {
 
     }
       res.render("eachproducts", {products,recommend,userid,already:false});
-    
-   
+
   }catch(err){
     console.log(err);
   }

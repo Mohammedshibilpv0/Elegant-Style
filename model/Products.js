@@ -16,11 +16,6 @@ const ProductSchema= new mongoose.Schema({
         required:true,
 
     },
-    OfferPrice:{
-        type:Number,
-        min:0,
-        required:true
-    },
     Category: {
         type: mongoose.Schema.ObjectId,
         ref: 'Categories',
@@ -38,7 +33,11 @@ const ProductSchema= new mongoose.Schema({
     Images:{
         type:[String],
         required:true
-    }
+    },
+    offer:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"offer"
+      },
 
 
 })

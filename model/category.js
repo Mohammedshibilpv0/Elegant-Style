@@ -11,6 +11,10 @@ const category= new mongoose.Schema({
         type:String,
         required:true
     },
+    offer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "offer"
+      },
     Status:{
         type:String,
         enum:["active","blocked"],

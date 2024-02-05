@@ -4,7 +4,7 @@ const Category=require('../model/category')
 const Orders= require('../model/orderSchema')
 const Products = require('../model/Products')
 const Coupon=require('../model/couponSchema')
-
+const offerSchema=require('../model/offerSchema')
 
 
 
@@ -609,6 +609,115 @@ const salesdata = async (req, res) => {
   }
 };
 
+
+const offer= async (req,res)=>{
+  try{
+    const admin=req.session.admin
+    const offer= await offerSchema.find()
+    res.render('offer',{admin,offer})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const addoffer= async (req,res)=>{
+  try{
+    const admin=req.session.admin
+    const message=req.flash('msg')
+    res.render('addoffers',{admin,message})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const offerSubmit= async (req,res)=>{
+  try{
+    const {name,startingDate,endDate,percentage}=req.body
+    const already=await offerSchema.findOne({name:name})
+    if(already){
+      const message="Offer is already exsits"
+      req.flash('msg',message)
+      res.redirect('/admin/addoffer')
+    }
+    const offer=new offerSchema({
+      name:name,
+      startingDate:startingDate,
+      expiryDate:endDate,
+      percentage:percentage
+    })
+    await offer.save()
+    res.redirect('/admin/offer')
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
+ const editoffer= async (req,res)=>{
+  try{
+    const offerid=req.params.id
+    const offer= await offerSchema.findById(offerid)
+    const admin=req.session.admin
+    res.render('editoffer',{admin,offer})
+  }catch(err){
+    console.log(err);
+  }
+ }
+
+
+ const editofferSubmit= async (req,res)=>{
+  try{
+    const offerid=req.params.id
+    const {name,startingDate,endDate,percentage}=req.body
+    const update=await offerSchema.findByIdAndUpdate({_id:offerid},
+      {
+      name:name,
+      startingDate:startingDate,
+      expiryDate:endDate,
+      percentage:percentage,
+      }
+      )
+      res.redirect('/admin/offer')
+  }catch(err){
+    console.log(err);
+  }
+ }
+
+ const applyoffer = async (req, res) => {
+  try {
+    const { offerid, productid } = req.body;
+
+    // Assuming you have a Mongoose model for products
+    const product = await Products.findOneAndUpdate(
+      { _id: productid },
+      { offer: offerid },
+      { new: true }
+    ).populate('offer');
+
+    res.json({ success: true, product });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+};
+
+
+const removeOffer = async (req,res)=>{
+  try{
+    const {offerid,productid}=req.body
+    const product = await Products.findByIdAndUpdate(
+
+      {_id:productid},
+      {offer:null}  )
+      
+      await product.save()
+      res.json({success:"true"})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
 module.exports = {
 
   home,
@@ -632,5 +741,12 @@ module.exports = {
   postaddcoupon,
   deleteCoupon,
   saleReport,
-  salesdata
+  salesdata,
+  offer,
+  addoffer,
+  offerSubmit,
+  editoffer,
+  editofferSubmit,
+  applyoffer,
+  removeOffer
 };

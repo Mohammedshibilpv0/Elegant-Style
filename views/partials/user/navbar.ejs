@@ -11,7 +11,7 @@
                             <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
                             <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
                         </div><!-- End .header-search-wrapper -->
-                    </form>           -->
+                    </form>    -->
                 </div><!-- End .header-search -->
             </div>
             <div class="header-center">
@@ -65,45 +65,44 @@
                             <a href="/" class="ms-2">Contact</a>
 
                         </li>
-                       
+
                         <li>
-                        
+
                             <% if (locals.userName) { %>
                                 <div class="page-wrapper mt-2" style="margin-left: 640px;">
                             <div class="container">
                                     <div class="dropdown d-flex justify-content-end mb-3 ">
                                         <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            
+
                                                 <p style="color: white;"><%= userName.Name %></p>
                                                 <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
                                                     <a class="dropdown-item" href="/Profile"><h6>Profile</h6></a>
                                                     <a class="dropdown-item" href="/logout"><h6>Logout</h6></a>
-                            
+
                                         </a>
-                            
-                            
+
                                         </div>
                                       </div>
                                       <% }else{%>
                                         <div class="container">
                                             <div class="dropdown d-flex justify-content-end mb-3 mt-2" style="margin-left: 640px;">
                                                 <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    
+
                                                         <p style="color: white;">Profile</p>
                                                         <div class="dropdown-menu " aria-labelledby="dropdownMenuLink">
                                                             <a class="dropdown-item" href="/login"><h6>Login</h6></a>
-                            
+
                                                 </a>
-                            
+
                                                 </div>
                                               </div>
                                               <% } %>
                                     </div>
-                                   
 
-                    
+
+
                         </li>
-                       
+
                     </ul><!-- End .menu -->
                 </nav><!-- End .main-nav -->
 

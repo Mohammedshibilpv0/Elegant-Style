@@ -1,5 +1,10 @@
 
 <%- include("../partials/user/adminheader.ejs")%>
+<style>
+     input {
+      color: rgb(255, 255, 255); /* Change this to the desired color */
+    }
+</style>
 
     <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
         data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
@@ -135,11 +140,7 @@
                                 </span></a>
                         </li>
 
-                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/coupon"
-                            aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
-                                class="hide-menu">Coupon
-                            </span></a>
-                    </li>
+
 
                         <li class="list-divider"></li>
                         <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
@@ -159,138 +160,48 @@
         <!-- ============================================================== -->
         <!-- Page wrapper  -->
         <!-- ============================================================== -->
-        <div class="page-wrapper">
+        <div class="page-wrapper   shadow-2-strong " style="min-height: 775px;">
 
 
 
-<section class="intro  shadow-2-strong pt-5 pb-3 mb-3" >
-    <div class="mask d-flex align-items-center h-100" >
-      <div class="container">
-        <% if (locals.succ) { %>
-           <h4 style="background-color: rgb(223, 73, 73); text-align: center; color: white;"><%= succ%></h4>
-
-          <% }%>
-        <div class="row justify-content-center">
-          <div class="col-10">
-            <div class="card  shadow-2-strong">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-borderless mb-0">
-                    <thead>
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Category Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Offer</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Edit</th>
-                         <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <% category.forEach((category, index) => { %>
-                    <tbody>
-
-                      <tr>
-                        <th scope="row"><%= index +1 %> </th>
-                        <td><%=category.Name%></td>
-                        <td><%=category.Description%></td>
-                        <td id="status_<%= category._id %>"><%= category.Status %></td>
-                        <td> <a href="/admin/editcategory/<%=category._id%>" class="btn btn-danger">  edit</a>  </td>
-
-                        
-                          <td >
-                           
-                            <% if (category.Status === "active") { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','unlist')">Unlist</button>
-                            <% } else { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','list')">List</button>
-                            <% } %>
+            <div class="container mt-5pb-5 pt-5 mt-5" >
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="mb-3">
+                          
+                        </div>
+                        <form action="/admin/editofferpost/<%=offer._id%>" method="post" class="shadow p-4 " style="background-color: white;">
+                            <h3>Edit Offer</h3>
+                            <label for="username">Offer name</label>
+                            <input type="text" class="form-control" name="name" id="username" value="<%= offer.name %>">
                             
+                            <div class="mb-3">
+                                <label for="StartingDate">Starting Date</label>
+                                <input type="date" class="form-control" name="startingDate" id="StartingDate" value="<%= offer.startingDate.toISOString().split('T')[0] %>">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="EndDate">End Date</label>
+                                <input type="date" class="form-control" name="endDate" id="EndDate" value="<%= offer.expiryDate.toISOString().split('T')[0] %>">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="Description">Description</label>
+                                <input type="text" class="form-control" name="percentage" id="Description" value="<%= offer.percentage %>">
+                            </div>
 
-                        </td>
-                    
-                      </tr>
-                    
-                     
-                    </tbody>
-                    <% }); %>
-                  </table>
-              
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="container d-flex align-items-center justify-content-end mt-3">
-            <a href="/admin/addcategory" class="btn btn-success btn-rounded">Add new category</a>
-           </div>
-      </div>
-      
-    </div>
- 
-      
 
-</section>
 
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">submit</button>
+                            </div>
+                                        <hr>
+
+                           
+
+                        </form>
 
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-<script>
- function changeStatus(categoryId, Action) {
-    // Show a confirmation dialog
-    Swal.fire({
-        title: 'Confirmation',
-        text: `Are you sure you want to ${Action === 'list' ? 'list' : 'unlist'} this category?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Proceed with the API call
-            fetch(`/admin/${Action}category/${categoryId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryId }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Update the status in the table without reloading the page
-                    const statusElement = document.getElementById(`status_${categoryId}`);
-                    const buttonElement = document.getElementById(`button_${categoryId}`);
-
-                    if (statusElement && buttonElement) {
-                        statusElement.textContent = data.status;
-
-                        // Update button text based on the received status
-                        if (data.status === "active") {
-                            buttonElement.textContent = "Unlist";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'unlist')`);
-                        } else {
-                            buttonElement.textContent = "List";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'list')`);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-        // If the user clicked "No" or closed the dialog, do nothing
-    });
-}
-
-    
- </script>
- 
-
-
-
 
 <%- include("../partials/user/adminfooter.ejs")%>

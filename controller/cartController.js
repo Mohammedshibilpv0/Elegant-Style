@@ -37,7 +37,6 @@ const generateRazorpay=(orderid,adjustedAmount)=>{
 
 const cart = async (req, res) => {
   try {
-  
     const user = req.session.user_id;
     const cartData = await Cart.findOne({ userid: user }).populate({
       path: "products.productId",
@@ -98,9 +97,15 @@ const addtocart = async (req, res) => {
   try {
     const product_id = req.params.productid;
     const user_id = req.params.userid;
-    const quantity = parseInt(req.params.quantity); // Convert quantity to an integer
+    const quantity = parseInt(req.params.quantity);
 
-    const producttocart = await Product.findOne({ _id: product_id });
+    const producttocart = await Product.findOne({ _id: product_id }).populate('offer');
+    let productPrice
+    if(producttocart.offer){
+      productPrice= Math.floor(producttocart.Price - (producttocart.Price * producttocart.offer.percentage / 100))
+    }else{
+      productPrice=producttocart.Price
+    }
     const cart = await Cart.findOne({ userid: user_id });
 
     if (producttocart && user_id) {
@@ -122,14 +127,14 @@ const addtocart = async (req, res) => {
           cart.products.push({
             productId: product_id,
             quantity: quantity,
-            productPrice: producttocart.OfferPrice,
-            totalPrice: quantity * producttocart.OfferPrice,
+            productPrice: productPrice,
+            totalPrice: quantity * productPrice,
             image:producttocart.Images[0]
           });
         }
 
         await cart.save();
-        console.log("Cart updated:", cart);
+
       } else {
         // If cart doesn't exist, create a new cart
         const newCart = new Cart({
@@ -138,8 +143,8 @@ const addtocart = async (req, res) => {
             {
               productId: product_id,
               quantity: quantity,
-              productPrice: producttocart.OfferPrice,
-              totalPrice: quantity * producttocart.OfferPrice,
+              productPrice: productPrice,
+              totalPrice: quantity * productPrice,
               image:producttocart.Images[0]
             },
           ],

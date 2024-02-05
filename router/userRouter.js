@@ -54,6 +54,7 @@ router.post('/applyCoupon',orderController.applycoupon)
 router.get('/vieworder/:id',orderController.vieworder)
 router.get('/download-invoice/:id',orderController.invoiceDownload);
 
+router.get('/categorybased/:id',userController.categorybased)
 
 
 

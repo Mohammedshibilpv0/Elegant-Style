@@ -37,48 +37,45 @@
         					</div><!-- End .toolbox-sort -->
         				</div><!-- End .toolbox-right -->
         			</div><!-- End .toolbox -->
-                  
 
-                   
                     <div class="products">
                         <div class="row">
-                           
+
                                 <%product.forEach((product)=>{%>
-                                    <%if(product.Status=="active"){%>   
-    
-    
+                                    <%if(product.Status=="active"){%>
+
                                 <div class="col-6 col-md-4 col-lg-3 mt-4 mb-4" style="height: 450px;">
-    
+
                                     <div class="product product-4" style="height: 450px;">
                                         <figure class="product-media">
                                             <a href="/singleproduct/<%=product._id%>">
                                                 <div style="height: 280px;">
-    
+
                                                     <img src="/uploads/<%= product.Images[0] %>" alt="Product image" class="product-image">
                                                 </div>
-                                             
-    
+
+
                                             </a>
                                             <div class="product-action-vertical">
                                                 <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-    
+
                                             </div>
-    
-    
-    
+
+
+
                                             <div class="product-action">
                                                 <hr>
-                                                <%if(!product.Quantity<=0){%>    
+                                                <%if(!product.Quantity<=0){%>
                                                     <a href="#" onclick="addtoCart('<%=product._id%>','<%=user%>')" class="btn-product btn-cart"><span>add to cart</span></a>
                                                     <%}else{%>
                                                         <a  class="btn-product btn-cart"><span>Out of stock</span></a>
                                                         <%}%>
                                             </div><!-- End .product-action -->
                                         </figure><!-- End .product-media -->
-    
+
                                         <div class="product-body mt-2 ">
                                             <div class="product-cat">
-     
+
                                             </div><!-- End .product-cat -->
                                             <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="/singleproduct/<%=product._id%>" ><%=product.Name%></a></h3><!-- End .product-title -->
                                             <p style="margin-bottom:  8px; margin-left: 16px;"> <%= product.Category ? product.Category.Name : 'No Category' %></p>
@@ -102,7 +99,7 @@
                         <!-- <div class="load-more-container text-center">
                             <a href="#" class="btn btn-outline-darker btn-load-more">More Products <i class="icon-refresh"></i></a>
                         </div><!-- End .load-more-container -->
-                    </div>       
+                    </div>
 
                     <div class="sidebar-filter-overlay"></div><!-- End .sidebar-filter-overlay -->
                     <aside class="sidebar-shop sidebar-filter">
@@ -149,36 +146,33 @@
                 </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
-        <div class="d-flex justify-content-center">
-            <nav aria-label="Page navigation">
-                <ul class="pagination">
-                    <% if (totalPages > 1) { %>
-                        <% if (currentPage > 1) { %>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                                    <span aria-hidden="true">&laquo;</span>
-                                </a>
-                            </li>
-                        <% } %>
-            
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                            </li>
-                        <% } %>
-            
-                        <% if (currentPage < totalPages) { %>
-                            <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a>
-                            </li>
-                        <% } %>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <% if (totalPages > 1) { %>
+                    <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
                     <% } %>
-                </ul>
-            </nav>
-        </div>
         
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+        
+                    <% if (currentPage < totalPages) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+        </nav>
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 

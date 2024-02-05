@@ -6,12 +6,12 @@
       display: flex;
       flex-wrap: wrap;
     }
-  
+
     .col-6 {
       flex: 0 0 50%; /* Two columns in a row for larger screens */
       max-width: 25%;
     }
-  
+
     @media (max-width: 768px) {
       .col-6 {
         flex: 0 0 100%; /* One column in a row for smaller screens */
@@ -19,7 +19,7 @@
       }
     }
   </style>
-  
+
   <div class="product-container">
     <!-- Your product cards go here -->
     <div class="col-6 col-md-4 col-lg-3">
@@ -27,13 +27,13 @@
     </div>
     <!-- Repeat for other product cards -->
   </div>
-  
 
 
-       
 
- 
-  
+
+
+
+
 
         <main class="main">
             <div class="intro-section bg-lighter pt-3">
@@ -45,7 +45,7 @@
                                     <a href="#">
                                         <img src="/user/assets/images/demos/demo-7/banners/banner-1.jpg" alt="Banner">
                                     </a>
-    
+
                                     <div class="banner-content"> 
                                         <h4 class="banner-subtitle">Womens</h4><!-- End .banner-subtitle -->
                                         <h3 class="banner-title  text-dark">our Women's Collection—a curated selection designed <br>to empower and celebrate the modern woman.</h3><!-- End .banner-title -->
@@ -53,7 +53,7 @@
                                     </div><!-- End .banner-content -->
                                 </div><!-- End .banner -->
                             </div><!-- End .col-lg-8 -->
-    
+
                             <div class="col-lg-4">
                                 <div class="row">
                                     <div class="col-sm-6 col-lg-12">
@@ -61,7 +61,7 @@
                                             <a href="#">
                                                 <img src="/user/images/banner-2.jpg" alt="Banner">
                                             </a>
-                                           
+
                                             <div class="banner-content">
                                                 <h4 class="banner-subtitle">Mens</h4><!-- End .banner-subtitle -->
                                                 <h3 class="banner-title text-dark"> our curated Men's Collection, <br> where sophistication meets comfort.</h3><!-- End .banner-title -->
@@ -69,13 +69,13 @@
                                             </div><!-- End .banner-content -->
                                         </div><!-- End .banner -->
                                     </div><!-- End .col-sm-6 col-lg-12 -->
-    
+
                                     <div class="col-sm-6 col-lg-12" >
                                         <div class="banner" >
                                             <a href="#" >
                                                 <img src="/user/images/image-4.webp" alt="Banner" style="height:220px;">
                                             </a>
-    
+
                                             <div class="banner-content">
                                                 <h4 class="banner-subtitle text-light">Kids  </h4><!-- End .banner-subtitle -->
                                                 <h3 class="banner-title text-light">Delight in the magic of childhood  <br>with our enchanting Kids' Collection.</h3><!-- End .banner-title -->
@@ -93,15 +93,15 @@
             <div class="container">
                 <h2 class="title text-center">Currently Popular Items</h2><!-- End .title -->
 
-               
 
-              
+
+
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="tab-new" role="tabpanel" aria-labelledby="tab-new-link">
 
                         <div class="row ">
                             <%Product.slice(0,12).forEach((product)=>{%>
-                                <%if(product.Status=="active"){%>   
+                                <%if(product.Status=="active"){%>
 
 
                             <div class="col-6 col-md-4 col-lg-3 mt-5  " >
@@ -125,7 +125,7 @@
 
                                         <div class="product-action">
                                             <hr>
-                                            <%if(!product.Quantity<=0){%>    
+                                            <%if(!product.Quantity<=0){%>
                                             <a href="#" onclick="addtoCart('<%=product._id%>','<%=userid%>')" class="btn-product btn-cart"><span>add to cart</span></a>
                                             <%}else{%>
                                                 <a  class="btn-product btn-cart"><span>Out of stock</span></a>
@@ -135,16 +135,22 @@
 
                                     <div class="product-body mt-2 ">
                                         <div class="product-cat">
- 
+
                                         </div><!-- End .product-cat -->
                                         <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="/singleproduct/<%=product._id%>" ><%=product.Name%></a></h3><!-- End .product-title -->
                                         <p style="margin-bottom:  8px; margin-left: 16px;"> <%= product.Category ? product.Category.Name : 'No Category' %></p>
                                         <div class="product-price " style="margin-left: 16px; ;">
-                                            ₹<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">₹<%= product.Price %></s>  
+                                            <% if (product.offer) { %>
+                                                ₹<%= Math.floor(product.Price - (product.Price * product.offer.percentage / 100)) %>
+                                                <s class="text-light" style="font-size: 12px;">₹<%= product.Price %></s>  
+                                            <% } else { %>
+                                                ₹<%= product.Price %>
+                                            <% } %>
+                                            
                                           </div>
                                         <!-- End .product-price -->
                                         <p style="margin-left: 16px;">only <span class="text-danger" ><%=product.Quantity%></span> left</p>
-                                      
+
 
                                     </div><!-- End .product-body -->
                                 </div><!-- End .product -->
@@ -161,34 +167,37 @@
 
 
         </main><!-- End .main -->
-     
-        <nav aria-label="Page navigation" style="margin-left: 700px;">
-            <ul class="pagination">
-                <% if (totalPages > 1) { %>
-                    <% if (currentPage > 1) { %>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
+
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <% if (totalPages > 1) { %>
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        <% } %>
+
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        <% } %>
                     <% } %>
-        
-                    <% for (let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                    <% } %>
-        
-                    <% if (currentPage < totalPages) { %>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    <% } %>
-                <% } %>
-            </ul>
-        </nav>
+                </ul>
+            </nav>
+        </div>
+
     </div><!-- End .page-wrapper -->
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
@@ -198,7 +207,7 @@
     <script>
         function addtoCart(proid, userid) {
             const quantity = 1
-    
+
             // Make an AJAX request to the backend
             fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
                 method: 'POST',
@@ -214,7 +223,7 @@
                     // Handle the response from the backend
                     console.log('Response from backend:', data);
                     document.querySelector('.cart-count').innerText=data.newCartCount
-    
+
                     // Display SweetAlert notification
                     Swal.fire({
                         icon: 'success',
@@ -225,7 +234,7 @@
                 })
                 .catch((error) => {
                     console.error('Error:', error);
-    
+
                     // Display SweetAlert error notific0ation
                     Swal.fire({
                         icon: 'error',
@@ -239,11 +248,10 @@
                     });
 
                 });
-                
+
         }
     </script>
-   
-<%-include('../partials/user/mobilenav.ejs')%>
-  
-    <%-include("../partials/user/footer.ejs")%>
-    <%-include('../partials/user/footbar.ejs')%>
+
+     <%-include('../partials/user/mobilenav.ejs')%>
+     <%-include("../partials/user/footer.ejs")%>
+     <%-include('../partials/user/footbar.ejs')%>

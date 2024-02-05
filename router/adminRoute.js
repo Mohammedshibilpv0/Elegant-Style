@@ -87,8 +87,11 @@ adminRoute.post('/addCouponsubmit',adminController.postaddcoupon)
 adminRoute.delete('/deleteCoupon/:id',adminController.deleteCoupon)
 adminRoute.get('/salesreport',adminController.saleReport)
 adminRoute.post('/salesreportfetch',adminController.salesdata)
-
-
-
-
+adminRoute.get('/offer',adminController.offer)
+adminRoute.get('/addoffer',adminController.addoffer)
+adminRoute.post('/addOffersubmit',adminController.offerSubmit)
+adminRoute.get('/editoffer/:id',adminController.editoffer)
+adminRoute.post('/editofferpost/:id',adminController.editofferSubmit)
+adminRoute.post('/applyoffer',adminController.applyoffer)
+adminRoute.post('/removeoffer',adminController.removeOffer)
 module.exports=adminRoute
