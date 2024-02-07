@@ -117,7 +117,7 @@
 
                                         </a>
                                         <div class="product-action-vertical">
-                                            <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                            <a href="#" onclick="addtowishlist('<%=product._id%>')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
 
                                         </div>
 
@@ -143,10 +143,14 @@
                                             <% if (product.offer) { %>
                                                 ₹<%= Math.floor(product.Price - (product.Price * product.offer.percentage / 100)) %>
                                                 <s class="text-light" style="font-size: 12px;">₹<%= product.Price %></s>  
-                                            <% } else { %>
+
+                                            <% } else if(product.Category.offer) { %>
+
+                                             ₹<%= Math.floor(product.Price - (product.Price * product.Category.offer.percentage / 100)) %>  %>
+
+                                            <% }else{ %>
                                                 ₹<%= product.Price %>
-                                            <% } %>
-                                            
+                                            <%}%>
                                           </div>
                                         <!-- End .product-price -->
                                         <p style="margin-left: 16px;">only <span class="text-danger" ><%=product.Quantity%></span> left</p>
@@ -202,7 +206,8 @@
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <script>
         function addtoCart(proid, userid) {
@@ -250,6 +255,36 @@
                 });
 
         }
+
+  
+
+  function addtowishlist(productid) {
+    fetch('/addtowishlist', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productid })
+      })
+      .then((response) => response.json())
+      .then((data) => {
+
+        if (data.Success) {
+
+          swal("Success!", data.Success, "success");
+        } else if (data.already) {
+
+          swal("Oops!", data.already, "error");
+        } else {
+          // Handle unexpected response
+          console.log(data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
     </script>
 
      <%-include('../partials/user/mobilenav.ejs')%>

@@ -34,6 +34,10 @@ const userData= new mongoose.Schema({
       type:Number,
       default: 0
   },
+  Referid:{
+    type:Number,
+    required:true
+  },
   
   walletHistory:[{
       amount: {

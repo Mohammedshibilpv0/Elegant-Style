@@ -183,6 +183,11 @@
                 class="hide-menu">Coupon
             </span></a>
     </li>
+    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/Offer"
+      aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
+          class="hide-menu">Offer
+      </span></a>
+</li>
 
           <li class="list-divider"></li>
           <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
@@ -416,7 +421,7 @@ rows: []
 
 //updating the status of product
 function updateStatus(status, orderId, productid,orgproId) {
-    // Show SweetAlert confirmation dialog
+
     Swal.fire({
         title: 'Are you sure?',
         text: 'You are about to update the status. This action cannot be undone!',
@@ -427,9 +432,7 @@ function updateStatus(status, orderId, productid,orgproId) {
         confirmButtonText: 'Yes, update it!',
     }).then((result) => {
         if (result.isConfirmed) {
-            // If user clicks "Yes" on the confirmation dialog
 
-            // Make an AJAX request to update the status in the database
             const url = `/admin/updateStatus/${orderId}`; // Replace with your API endpoint
           const userid=document.getElementById(`userid_${orderId}`).value
             // Assuming you are using fetch API

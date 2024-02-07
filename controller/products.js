@@ -1,4 +1,5 @@
 const Products = require("../model/Products");
+const User=require('../model/User')
 const Category = require("../model/category");
 const Cart=require('../model/cartSchema')
 const multer = require("multer");
@@ -7,7 +8,7 @@ const express = require("express");
 const app = express();
 const fs = require('fs');
 const offerSchema=require('../model/offerSchema')
-
+const wishlistSchema=require('../model/wishlistSchema')
 //multer setup
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -159,27 +160,52 @@ const submitedit = async (req, res) => {
 }
 
 const singleProduct = async (req, res) => {
-  try{
-
-    const userid= req.session.user_id
+  try {
+    const userid = req.session.user_id;
     const product_id = req.params.id;
-    const products = await Products.findOne({ _id: product_id }).populate('Category').populate('offer').exec();
+    
+    // Fetch the product details
+    const products = await Products.findOne({ _id: product_id })
+      .populate({
+        path: 'Category',
+        populate: { path: 'offer' } // Populate the offer field in the Category document
+      })
+      .populate('offer')
+      .exec();
+
+    // Count the number of products in the cart
+    const count = (await Cart.findOne({ userid: userid }))?.products?.length || 0;
+    
+    // Fetch user details
+    const userName = await User.findOne({ _id: userid });
+
+    // Fetch recommended products based on the same category
     const recommend = await Products.find({ Category: products.Category }).limit(4).exec();
-    const cartcheck= await Cart.findOne({userid:userid})
-    if(cartcheck){
-      const existsProduct =  cartcheck.products.find((pro) => pro.productId.toString() === product_id);
-      if(existsProduct){
-        let already=true
-      return  res.render("eachproducts", {products,recommend,userid,already});
+
+    // Check if the product is already in the cart
+    const cartCheck = await Cart.findOne({ userid: userid });
+    let alreadyInCart = false;
+    if (cartCheck) {
+      const existsProduct = cartCheck.products.find((pro) => pro.productId.toString() === product_id);
+      if (existsProduct) {
+        alreadyInCart = true;
       }
-
     }
-      res.render("eachproducts", {products,recommend,userid,already:false});
 
-  }catch(err){
+    // Check if the product is already in the wishlist
+    const wishlistCheck = await wishlistSchema.findOne({ userid: userid });
+    let alreadyInWishlist = false;
+    if (wishlistCheck) {
+      const existsProduct = wishlistCheck.products.find((pro) => pro.productId.toString() === product_id);
+      if (existsProduct) {
+        alreadyInWishlist = true;
+      }
+    }
+
+    res.render("eachproducts", { products, recommend, userid, alreadyInCart, alreadyInWishlist, userName, count });
+  } catch (err) {
     console.log(err);
   }
-
 };
 
 const unlistProduct=async (req,res)=>{

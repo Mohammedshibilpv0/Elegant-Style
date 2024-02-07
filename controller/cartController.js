@@ -38,20 +38,23 @@ const generateRazorpay=(orderid,adjustedAmount)=>{
 const cart = async (req, res) => {
   try {
     const user = req.session.user_id;
+    const count = (await Cart.findOne({ userid: user }))?.products?.length || 0;
+    const userName = await User.findOne({ _id:user});
     const cartData = await Cart.findOne({ userid: user }).populate({
       path: "products.productId",
       model: "Products", // Make sure it matches the model name for the Product
     });
+
     const errmsg = req.flash("err");
     if (cartData) {
       const totalPriceTotal = cartData.products.reduce((total, product) => {
         return total + product.totalPrice;
       }, 0);
 
-      res.render("cart", { cartData, totalPriceTotal,errmsg });
+      res.render("cart", { cartData, totalPriceTotal,errmsg,userName,count});
     }else{
 
-        res.render("cart", {cartData,errmsg});
+        res.render("cart", {cartData,errmsg,userName,count});
     }
   } catch (err) {
     console.log(err);
@@ -61,6 +64,8 @@ const checkout = async (req, res) => {
   try {
     const userid = req.session.user_id;
     const user = await User.findOne({ _id: userid });
+    const count = (await Cart.findOne({ userid: user }))?.products?.length || 0;
+
     const cartData = await Cart.findOne({ userid: userid }).populate({
       path: "products.productId",
       model: "Products",
@@ -85,7 +90,7 @@ const checkout = async (req, res) => {
       return total + product.totalPrice;
     }, 0);
 
-    res.render("checkout", { userid, user, cartData, totalPriceTotal });
+    res.render("checkout", { userid, user, cartData, totalPriceTotal ,count});
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal Server Error');
@@ -99,11 +104,17 @@ const addtocart = async (req, res) => {
     const user_id = req.params.userid;
     const quantity = parseInt(req.params.quantity);
 
-    const producttocart = await Product.findOne({ _id: product_id }).populate('offer');
+    const producttocart = await Product.findOne({ _id: product_id }).populate({
+      path: 'Category',
+      populate: { path: 'offer' } // Populate the offer field in the Category document
+     }).populate('offer')
+
     let productPrice
     if(producttocart.offer){
       productPrice= Math.floor(producttocart.Price - (producttocart.Price * producttocart.offer.percentage / 100))
-    }else{
+    }else if(producttocart.Category.offer){
+       productPrice= Math.floor(producttocart.Price - (producttocart.Price * producttocart.Category.offer.percentage / 100))
+    }else {
       productPrice=producttocart.Price
     }
     const cart = await Cart.findOne({ userid: user_id });
@@ -179,7 +190,7 @@ const removecart = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
-    // Remove the product from the cart
+
     existingCart.products = existingCart.products.filter(
       (p) => !p.productId.equals(productId)
     );

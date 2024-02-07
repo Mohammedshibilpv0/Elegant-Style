@@ -48,6 +48,19 @@ const cancelorder = async (req, res) => {
       };
       user.walletHistory.push(transaction);
       await user.save();
+    }else if(checking.paymentMode === 'Wallet'){
+      const productTotal = checking.Products.reduce((acc, product) => {
+        return acc + product.total;
+      }, 0);
+      user.wallet = user.wallet + productTotal;
+      const transaction = {
+        amount: productTotal,
+        description: 'Product cancellation',
+        date: new Date(),
+        status: 'in',
+      };
+      user.walletHistory.push(transaction);
+      await user.save();
     }
 
     // Send a response indicating success

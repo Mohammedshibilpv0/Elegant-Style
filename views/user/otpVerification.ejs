@@ -30,6 +30,7 @@
                                     <input type="text" name="digit4" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
                                 </div>
                                 <input type="hidden" name="email" value="<%= email %>">
+                                <input type="text" name="refer" value="<%=refer%>">
                             </div>
                     
                             <!-- "Send OTP" button -->
@@ -43,7 +44,7 @@
                                     <span>Continue</span>
                                     <i class="icon-long-arrow-right"></i>
                                 </button>
-                                <a href="/resendOtp?email=<%= email %>"" class="btn btn-outline-primary-2">
+                                <a hidden href="/resendOtp?email=<%= email %>"" class="btn btn-outline-primary-2">
                                   <span>resend</span>
                                   <i class="icon-long-arrow-right"></i>
                                 </a>

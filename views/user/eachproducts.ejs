@@ -48,10 +48,15 @@
                                     <div class="product-price">
                                         <% if (products.offer) { %>
                                             ₹<%= Math.floor(products.Price - (products.Price * products.offer.percentage / 100)) %>
-                                            <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>
-                                        <% } else { %>
+                                            <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>  
+
+                                        <% } else if(products.Category.offer) { %>
+
+                                         ₹<%= Math.floor(products.Price - (products.Price * products.Category.offer.percentage / 100)) %>  %>
+
+                                        <% }else{ %>
                                             ₹<%= products.Price %>
-                                        <% } %>
+                                        <%}%>
                                     </div><!-- End .product-price -->
 
                                     <div class="product-content">
@@ -95,7 +100,7 @@
                                     <div class="product-details-action mt-5" >
                                       
                                         <% if (products.Quantity > 0) { %>
-                                            <% if(!already){%>
+                                            <% if(!alreadyInCart){%>
                                           <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=userid%>')">
                                             <span>Add to Cart</span>
                                           </a>
@@ -107,19 +112,32 @@
                                         <% } else { %>
                                           <span class="out-of-stock-message text-danger " style="margin-left: 60px;">Out of Stock</span>
                                         <% } %>
-                                      
+
                                         <div class="details-action-wrapper">
-                                          <a href="#" class="btn-product btn-wishlist" title="Wishlist">
-                                            <span>Add to Wishlist</span>
-                                          </a>
-                                        </div><!-- End .details-action-wrapper -->
+                                            <% if (alreadyInWishlist) { %>
+                                                <a href="#" onclick="removeFromWishlist('<%=products._id%>','<%=userid%>')" title="<%= alreadyInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>">
+                                                    <span>
+                                                      <i class=" ms-1 fas fa-heart<%= alreadyInWishlist ? '' : '-o' %>"></i>
+                                                    </span>
+                                                    <%= alreadyInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>
+                                                  </a>
+                                                  
+                                                  
+                                            <% } else { %>
+
+                                              <a href="#" onclick="addtowishlist('<%=products._id%>')" class="btn-product btn-wishlist" title="Add to Wishlist">
+                                                <span>Add to Wishlist</span>
+                                              </a>
+                                            <% } %>
+                                          </div><!-- End .details-action-wrapper -->
+
                                       </div>
-                                      
+
 
                                     <div class="product-details-footer">
                                         <!-- End .product-cat -->
 
-                                       
+
                                     </div><!-- End .product-details-footer -->
                                 </div><!-- End .product-details -->
                             </div><!-- End .col-md-6 -->
@@ -131,11 +149,11 @@
                             <li class="nav-item">
                                 <a class="nav-link active" id="product-desc-link" data-toggle="tab" href="#product-desc-tab" role="tab" aria-controls="product-desc-tab" aria-selected="true">Description</a>
                             </li>
-                           
+
                             <li class="nav-item">
                                 <a class="nav-link" id="product-shipping-link" data-toggle="tab" href="#product-shipping-tab" role="tab" aria-controls="product-shipping-tab" aria-selected="false">Shipping & Returns</a>
                             </li>
-                            
+
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="product-desc-tab" role="tabpanel" aria-labelledby="product-desc-link">
@@ -144,7 +162,7 @@
                                     <%=products.Description%>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
-                            
+
                             <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">
                                 <div class="product-desc-content">
                                     <h3>Delivery & returns</h3>
@@ -152,7 +170,7 @@
                                     We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our <a href="#">Returns information</a></p>
                                 </div><!-- End .product-desc-content -->
                             </div><!-- .End .tab-pane -->
-                       
+
                         </div><!-- End .tab-content -->
                     </div><!-- End .product-details-tab -->
 
@@ -297,6 +315,8 @@
 <!-- Include SweetAlert library -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script>
 
 function validateQuantity(input) {
@@ -338,8 +358,8 @@ function validateQuantity(input) {
                         timer: 1500, // Display the notification for 1.5 seconds
 
                     }).then(()=>{
-                        // $("#reload").load("/singleproduct #reload");
-                        window.location.reload()
+
+                         window.location.reload()
                     })
                 })
                 .catch((error) => {
@@ -377,14 +397,69 @@ function validateQuantity(input) {
                         showConfirmButton: false,
                         timer: 3500 // Automatically close after 3.5 seconds
                     });
-    
                     // Reset the value to the maximum allowed
                     inputElement.val(maxValue);
                 }
             });
         });
+
+        function addtowishlist(productid) {
+              fetch('/addtowishlist', {
+                method: "POST",
+                headers: {
+                   'Content-Type': 'application/json',
+                  },
+        body: JSON.stringify({ productid })
+      })
+      .then((response) => response.json())
+      .then((data) => {
+
+        if (data.Success) {
+
+          swal("Success!", data.Success, "success").then(()=>{
+            window.location.reload()
+          })
+
+        } else if (data.already) {
+
+          swal("Oops!", data.already, "error");
+        } else {
+          // Handle unexpected response
+          console.log(data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function removeFromWishlist(productid, userid) {
+    fetch('/removewishlist', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productid, userid })
+    }).then((response) => response.json())
+    .then((data) => {
+        // Display SweetAlert with success message
+        if (data.success) {
+            swal("Success!", data.success, "success").then(()=>{
+                window.location.reload()
+            })
+        } else {
+
+            swal("Error!", data.error || "An error occurred.", "error");
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        // Display SweetAlert with error message
+        swal("Error!", "An error occurred.", "error");
+    });
+}
+
     </script>
-    
+
 <%-include('../partials/user/mobilenav.ejs')%>
-  
 <%-include("../partials/user/footer.ejs")%>

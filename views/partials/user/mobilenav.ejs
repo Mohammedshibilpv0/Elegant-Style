@@ -24,11 +24,11 @@
                 </li>
 
                 <li>
-                    <a href="blog.html">Blog</a>
+                    <a href="/profile">Profile</a>
 
                 </li>
                 <li>
-                    <a href="elements-list.html">Elements</a>
+                    <a href="#" onclick="confirmLogout()">logout</a>
 
                 </li>
             </ul>
@@ -39,4 +39,26 @@
 </div><!-- End .mobile-menu-container -->
 
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script>
+    function confirmLogout() {
+    swal({
+      title: "Are you sure?",
+      text: "Are you sure you want to log out?",
+      icon: "warning",
+      buttons: {
+        cancel: "Cancel",
+        confirm: "Yes, log out"
+      },
+      dangerMode: true,
+    })
+    .then((willLogout) => {
+      if (willLogout) {
+        window.location.href = "/logout"; // Redirect to logout page
+      } else {
+        swal("Cancelled", "You are still logged in :)", "info");
+      }
+    });
+  }
+</script>

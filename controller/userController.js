@@ -16,11 +16,14 @@ const home = async (req, res) => {
       const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
 
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
-          .populate('Category')
-          .populate('offer')
-          .skip((page - 1) * perPage)
-          .limit(perPage)
-          .exec();
+      .populate({
+          path: 'Category',
+          populate: { path: 'offer' } // Populate the offer field in the Category document
+      }).populate('offer')
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .exec();
+
 
       const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
@@ -53,10 +56,10 @@ const login = (req, res) => {
 
 const signup = (req, res) => {
   try {
-
+    let Referal =req.query.referralCode
     const errmsg = req.flash("err");
     const succmsg = req.flash("succ");
-    res.render("register", { errmsg,succmsg });
+    res.render("register", { errmsg,succmsg,Referal });
 
   } catch (err) {
     console.log(err);
@@ -67,6 +70,7 @@ const signup = (req, res) => {
 const register = async (req, res) => {
 
   try {
+    let refer=req.body.Referal
     const emailCheck = await User.findOne({ Email: req.body.email });
     if (emailCheck && emailCheck.Verified) {
     
@@ -80,19 +84,20 @@ const register = async (req, res) => {
         Name: req.body.name,
         Email: req.body.email,
         Password: Password,
+        Referid:Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000,
         Verified:false
       });
       const check = await user.save();
       
   
-      sendOTPverificationEmail(user, res);
+      sendOTPverificationEmail(user, res,refer);
     }
   } catch (err) {
     console.log(err);
   }
 };
 
-const sendOTPverificationEmail = async ({Email} , res) => {
+const sendOTPverificationEmail = async ({Email} , res,refer) => {
 
   try {
     
@@ -131,7 +136,7 @@ const sendOTPverificationEmail = async ({Email} , res) => {
       console.log('Mail options:', mailOptions);
       await transporter.sendMail(mailOptions);
       
-      res.redirect(`/otp?email=${Email}`);
+      res.redirect(`/otp?email=${Email}&refer=${refer}`);
     
 
   } catch (err) {
@@ -142,11 +147,9 @@ const sendOTPverificationEmail = async ({Email} , res) => {
 const loadOtp = async (req, res) => {
   try {
       const email = req.query.email;
+      const refer=req.query.refer
 
-
-      console.log(email)
-
-      res.render('otpVerification', {email: email});
+      res.render('otpVerification', {email: email,refer});
 
   } catch (error) {
       console.log(error);
@@ -157,7 +160,7 @@ const loadOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
       const email = req.body.email;
-
+      const refer=req.body.refer
       console.log('email', req.body.email);
       const otp = req.body.digit1 + req.body.digit2 + req.body.digit3 + req.body.digit4;
 
@@ -194,7 +197,32 @@ const verifyOtp = async (req, res) => {
           await userOtpVerification.deleteOne({email: email});
           if (user.Verified==true) {
               if (user.Status!=="blocked") {
+                const checkingRefer=await User.findOne({Referid:refer})
+                console.log(checkingRefer);
 
+                if(refer&&checkingRefer){
+                  let user=await User.findOne({Email:email})
+                  user.wallet=user.wallet+100
+                  const transaction = {
+                    amount: 100,
+                    description: "Referal",
+                    date: new Date(),
+                    status: "in",
+                    }
+                    user.walletHistory.push(transaction)
+                    await user.save()
+
+                    checkingRefer.wallet=checkingRefer.wallet+200
+                    const transactionRef = {
+                      amount: 200,
+                      description: "Referal",
+                      date: new Date(),
+                      status: "in",
+                      }
+
+                    checkingRefer.walletHistory.push(transactionRef)
+                    await  checkingRefer.save()
+                }
                 req.flash('succ', 'successfully register please login');
                   res.redirect('/login');
               } else {
@@ -251,48 +279,44 @@ const resendOtp = async (req, res) => {
 
 const submitlogin = async (req, res) => {
   try {
-    const check = await User.findOne({ Email: req.body.logemail})
+    const check = await User.findOne({ Email: req.body.logemail });
 
-    if(!check.Verified){
-      const errormsg = "Please register first";
-      req.flash("err", errormsg);
-      res.redirect("/signup");
-    }else{
-    if (check) {
-
-      const passwordMatch = await bcrypt.compare(
-        req.body.logpassword,
-        check.Password
-      );
-
-      if (passwordMatch) {
-        if (check.Status == "active") {
-          req.session.user = check.Name;
-          req.session.user_id=check._id
-          req.session.email = check.Email;
-          res.redirect("/");
-        } else {
-          const errormsg = "You are blocked by admin";
-          req.flash("err", errormsg);
-          res.redirect("/login");
-        }
-      } else {
-        const errormsg = "User not found";
-        req.flash("err", errormsg);
-        res.redirect("/login");
-      }
-    } else {
+    if (check === null) { // Check if no user with the specified email is found
       const errormsg = "User not found";
       req.flash("err", errormsg);
-      res.redirect("/login"); // Handle the case where the user with the specified email is not found
+      return res.redirect("/login");
     }
-  }
 
-}catch (err) {
+    if (!check.Verified) {
+      const errormsg = "Please register first";
+      req.flash("err", errormsg);
+      return res.redirect("/signup");
+    }
+
+    const passwordMatch = await bcrypt.compare(req.body.logpassword, check.Password);
+
+    if (passwordMatch) {
+      if (check.Status === "active") {
+        req.session.user = check.Name;
+        req.session.user_id = check._id;
+        req.session.email = check.Email;
+        return res.redirect("/");
+      } else {
+        const errormsg = "You are blocked by admin";
+        req.flash("err", errormsg);
+        return res.redirect("/login");
+      }
+    } else {
+      const errormsg = "Incorrect password";
+      req.flash("err", errormsg);
+      return res.redirect("/login");
+    }
+  } catch (err) {
     console.log(err);
-    res.status(500).send("Internal Server Error"); // Handle other errors gracefully
+    return res.status(500).send("Internal Server Error");
   }
 };
+
 
 const allproducts = async (req, res) => {
   try {
@@ -303,6 +327,10 @@ const allproducts = async (req, res) => {
       const category= await Category.find({Status: { $ne: "blocked" }})
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
           .populate('Category')
+          .populate({
+            path: 'Category',
+            populate: { path: 'offer' } // Populate the offer field in the Category document
+        }).populate('offer')
           .skip((page - 1) * perPage)
           .limit(perPage)
           .exec();
@@ -396,6 +424,7 @@ const userprofile= async (req,res)=>{
     const userid=req.session.user_id
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const userdetails = await User.findOne({ _id: userid });
+    const deleteorder= await Orders.deleteMany({paymentStatus:"pending"})
     const orders = await Orders.find({user:userid})
     const userName = await User.findOne({ _id: req.session.user_id });
     const coupon= await Coupon.find()
@@ -496,7 +525,10 @@ const categorybased= async(req,res)=>{
     const user=req.session.user_id
     const totalProducts = await Products.countDocuments({Category:categoryid},{ Status: { $ne: "blocked" } });
     const totalPages = Math.ceil(totalProducts / perPage);
-    const product= await Products.find({Category:categoryid})
+    const product= await Products.find({Category:categoryid}).populate({
+      path: 'Category',
+      populate: { path: 'offer' } // Populate the offer field in the Category document
+  }).populate('offer')
     const category= await Category.find({Status: { $ne: "blocked" }})
     res.render('categorybased',{product,user,category,totalPages, currentPage: page,})
 
@@ -505,6 +537,8 @@ const categorybased= async(req,res)=>{
   }
 }
 
+
+  
 
 const logout = (req, res) => {
   try {
@@ -533,5 +567,6 @@ module.exports = {
   logout,
   removeAddress,
   editaddress,
-  categorybased
+  categorybased,
+
 };

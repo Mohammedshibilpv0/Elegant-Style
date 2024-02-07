@@ -88,10 +88,7 @@ const countsArray = Object.values(paymentModeCounts);
               },
           ]);
 
-
-
-  console.log(result);
-
+        const deleteorder= await Orders.deleteMany({paymentStatus:"pending"})
     res.render("home", {
       admin,
       count,
@@ -247,8 +244,9 @@ const blockUser = async (req, res) => {
   try{
     const admin=req.session.admin
     const succ = req.flash("succ");
-    const category= await Category.find()
-    res.render('category',{admin,succ,category})
+    const category= await Category.find().populate('offer')
+    const offer= await offerSchema.find()
+    res.render('category',{admin,succ,category,offer})
   }catch(err){
     console.log(err);
   }
@@ -460,7 +458,8 @@ const coupon= async (req,res)=>{
   try{
     const coupons= await Coupon.find()
     const admin= req.session.admin
-    res.render("coupon",{admin,coupons})
+    const message=req.flash('msg')
+    res.render("coupon",{admin,coupons,message})
   }catch(err){
     console.log(err);
   }
@@ -614,7 +613,8 @@ const offer= async (req,res)=>{
   try{
     const admin=req.session.admin
     const offer= await offerSchema.find()
-    res.render('offer',{admin,offer})
+    const message=req.flash('msg')
+    res.render('offer',{admin,offer,message})
   }catch(err){
     console.log(err);
   }
@@ -666,22 +666,35 @@ const offerSubmit= async (req,res)=>{
 
 
  const editofferSubmit= async (req,res)=>{
-  try{
-    const offerid=req.params.id
-    const {name,startingDate,endDate,percentage}=req.body
-    const update=await offerSchema.findByIdAndUpdate({_id:offerid},
+  try {
+    const offerId = req.params.id;
+    const { name, startingDate, endDate, percentage } = req.body;
+    const existingOffer = await offerSchema.findOne({
+      name: name,
+      _id: { $ne: offerId }
+    });
+    if (existingOffer) {
+      const message="An offer with the same name already exists."
+      req.flash('msg',message)
+      return res.redirect('/admin/offer')
+    }
+    // Update the offer
+    const update = await offerSchema.findByIdAndUpdate(
+      { _id: offerId },
       {
-      name:name,
-      startingDate:startingDate,
-      expiryDate:endDate,
-      percentage:percentage,
+        name: name,
+        startingDate: startingDate,
+        expiryDate: endDate,
+        percentage: percentage,
       }
-      )
-      res.redirect('/admin/offer')
-  }catch(err){
+    );
+
+    res.redirect('/admin/offer');
+  } catch (err) {
     console.log(err);
+    res.status(500).send("Internal Server Error");
   }
- }
+}
 
  const applyoffer = async (req, res) => {
   try {
@@ -709,13 +722,102 @@ const removeOffer = async (req,res)=>{
 
       {_id:productid},
       {offer:null}  )
-      
+
       await product.save()
       res.json({success:"true"})
   }catch(err){
     console.log(err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 }
+
+
+const categoryoffer = async (req,res)=>{
+  try{
+    const { offerid, categoryid } = req.body;
+
+    console.log("kjgh");
+
+    const product = await Category.findOneAndUpdate(
+      { _id: categoryid },
+      { offer: offerid },
+      { new: true }
+    ).populate('offer');
+
+    res.json({ success: true, product });
+  }catch(err){
+    console.log(err);
+  }
+}
+
+
+const offercategoryRemove = async (req,res)=>{
+  try{
+    const {offerid,categoryid}=req.body
+    const product = await Category.findByIdAndUpdate(
+
+      {_id:categoryid},
+      {offer:null}  )
+
+      await product.save()
+      res.json({success:"true"})
+  }catch(err){
+    console.log(err);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+}
+
+
+const loadeditcoupon = async (req,res)=>{
+  try{
+    const couponid=req.params.id
+    const admin=req.session.admin
+    const coupon= await Coupon.findOne({_id:couponid})
+    res.render('editcoupon',{couponid,admin,coupon})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const editcoupon = async (req, res) => {
+  try {
+    let { name, code, min, Discount, description, expiryDate } = req.body;
+    console.log(req.body);
+    const couponId = req.params.id;
+
+
+    const existingCoupon = await Coupon.findOne({
+      $or: [{ couponName: name }, { couponCode: code }],
+      _id: { $ne: couponId }
+    });
+
+    if (existingCoupon) {
+      const message="The coupon is already existing"
+      req.flash('msg',message)
+      return res.redirect('/admin/coupon')
+    }
+
+
+    const updatedCoupon = await Coupon.findByIdAndUpdate(
+      { _id: couponId },
+      {
+        couponName: name,
+        couponCode: code,
+        minAmount: min,
+        discountamount: Discount,
+        couponDescription: description,
+        expiryDate: expiryDate,
+      }
+    );
+      await updatedCoupon.save()
+
+    res.redirect('/admin/coupon');
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
 
 
 module.exports = {
@@ -748,5 +850,9 @@ module.exports = {
   editoffer,
   editofferSubmit,
   applyoffer,
-  removeOffer
+  removeOffer,
+  categoryoffer,
+  offercategoryRemove,
+  loadeditcoupon,
+  editcoupon
 };

@@ -94,4 +94,8 @@ adminRoute.get('/editoffer/:id',adminController.editoffer)
 adminRoute.post('/editofferpost/:id',adminController.editofferSubmit)
 adminRoute.post('/applyoffer',adminController.applyoffer)
 adminRoute.post('/removeoffer',adminController.removeOffer)
+adminRoute.post('/applyofferCategory',adminController.categoryoffer)
+adminRoute.post('/removeoffercategory',adminController.offercategoryRemove)
+adminRoute.get('/editcoupon/:id',adminController.loadeditcoupon)
+adminRoute.post('/editCouponsubmit/:id',adminController.editcoupon)
 module.exports=adminRoute

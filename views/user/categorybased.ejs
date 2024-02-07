@@ -80,7 +80,17 @@
                                             <h3 class="product-title " style="margin-left: 16px; font-size: 22px;"><a href="/singleproduct/<%=product._id%>" ><%=product.Name%></a></h3><!-- End .product-title -->
                                             <p style="margin-bottom:  8px; margin-left: 16px;"> <%= product.Category ? product.Category.Name : 'No Category' %></p>
                                             <div class="product-price " style="margin-left: 16px; ;">
-                                                ₹<%= product.OfferPrice %>     <s  class="text-light" style="font-size: 12px; ">₹<%= product.Price %></s>  
+                                                <% if (product.offer) { %>
+                                                    ₹<%= Math.floor(product.Price - (product.Price * product.offer.percentage / 100)) %>
+                                                    <s class="text-light" style="font-size: 12px;">₹<%= product.Price %></s>  
+    
+                                                <% } else if(product.Category.offer) { %>
+    
+                                                 ₹<%= Math.floor(product.Price - (product.Price * product.Category.offer.percentage / 100)) %>  %>
+    
+                                                <% }else{ %>
+                                                    ₹<%= product.Price %>
+                                                <%}%>
                                               </div>
                                             <!-- End .product-price -->
                                             <p style="margin-left: 16px;">only <span class="text-danger" ><%=product.Quantity%></span> left</p>

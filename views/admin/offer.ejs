@@ -140,6 +140,11 @@
                                 class="hide-menu">Coupon
                             </span></a>
                     </li>
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/Offer"
+                        aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
+                            class="hide-menu">Offer
+                        </span></a>
+                </li>
 
                         <li class="list-divider"></li>
                         <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
@@ -180,11 +185,12 @@
                       <tr>
                         <th scope="col">No</th>
                         <th scope="col">Offer Name</th>
+                        <th scope="col">Off Percentage</th>
                         <th scope="col">StartingDate</th>
                         <th scope="col">EndDate</th>
                         <th scope="col">Status</th>
                         <th scope="col">Edit</th>
-                        <th scope="col">Action</th>
+                        
                         
                       </tr>
                     </thead>
@@ -194,13 +200,14 @@
                       <tr>
                         <th scope="row"><%= index +1 %> </th>
                         <td><%=offer.name%></td>
+                        <td><%=offer.percentage%>%</td>
                         <td><%=offer.startingDate.toLocaleDateString('en-US')%></td>
                         <td><%=offer.expiryDate.toLocaleDateString('en-US')%></td>
                         <td id="status_<%= offer._id %>"><%= offer.status %></td>
                         <td> <a href="/admin/editoffer/<%=offer._id%>" class="btn btn-danger">  edit</a></td>
 
                        
-                          <td >
+                          <td hidden>
                            
                             <% if (offer.Status === "active") { %>
                                 <button id="button_<%= offer._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= offer._id %>','unlist')">Unlist</button>
@@ -216,6 +223,9 @@
                      
                     </tbody>
                     <% }); %>
+                    <% if(locals.message){%>
+                        <p class="text-danger"><%=message%></p>
+                      <%}%>
                   </table>
               
                 </div>

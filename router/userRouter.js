@@ -11,6 +11,7 @@ const Products=require('../model/Products')
 const noCache= require('nocache')
 const order= require('../model/orderSchema')
 const Users= require('../model/User')
+const wishlistController=require('../controller/wishlistController')
 route.use(noCache());
 //user login signup otp
 router.get('/',middleware.isBlock,userController.home)
@@ -53,10 +54,11 @@ router.post('/applyCoupon',orderController.applycoupon)
 
 router.get('/vieworder/:id',orderController.vieworder)
 router.get('/download-invoice/:id',orderController.invoiceDownload);
-
 router.get('/categorybased/:id',userController.categorybased)
 
 
-
+router.get('/wishlist',wishlistController. wishlist)
+router.post('/addtowishlist',wishlistController.addtowishlist)
+router.post('/removewishlist',wishlistController.removeWishlist)
 
 module.exports=router

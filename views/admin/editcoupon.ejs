@@ -163,219 +163,144 @@
         <!-- ============================================================== -->
         <!-- Page wrapper  -->
         <!-- ============================================================== -->
-        <div class="page-wrapper">
+
+        <div class="page-wrapper  shadow-2-strong " style="min-height: 775px;">
 
 
 
-<section class="intro  shadow-2-strong pt-5 pb-3 mb-3" >
-    <div class="mask d-flex align-items-center h-100" >
-      <div class="container">
-        <% if (locals.succ) { %>
-           <h4 style="background-color: rgb(223, 73, 73); text-align: center; color: white;"><%= succ%></h4>
+            <div class="container mt-5pb-5 pt-5 mt-5" >
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="mb-3">
+                      
+    <form class="forms-sample p-5" class="shadow p-4 " style="background-color: white;" method="POST" action="/admin/editCouponsubmit/<%=coupon._id%>" onsubmit="return validateForm()">
 
-          <% }%>
-        <div class="row justify-content-center">
-          <div class="col-10">
-            <div class="card  shadow-2-strong">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-borderless mb-0">
-                    <thead>
-                      <tr>
-                        <th scope="col">No</th>
-                        <th scope="col">Category Name</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Offer</th>
-                        <th scope="col">Action</th>
-                        <th scope="col">Edit</th>
-                         <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <% category.forEach((category, index) => { %>
-                    <tbody>
+        <!-- Your existing form fields... -->
 
-                      <tr>
-                        <th scope="row"><%= index +1 %> </th>
-                        <td><%=category.Name%></td>
-                        <td><%=category.Description%></td>
-                        <td class="user-link">
-                            <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal=<%=category._id%>">
-                              Apply
-                            </button>
-                            <br>
-      
-                              <% if(category.offer){%>
-                                <p id="ofr"><%=category.offer.name%></p>
-                                <a href="#" class="text-danger" id="remove" onclick="removeofffer('<%=category.offer._id%>','<%=category._id%>')">remove</a>
-                                <%}%>
-                            </div>
-                            <!-- Modal -->
-                                <div class="modal fade" id="exampleModal=<%=category._id%>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                  <div class="modal-dialog">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Select Offer</h5>
-      
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                      </div>
-                                      <div class="modal-body">
-                                      <hr>
-                                      <h3>Available Offers</h3>
-                                        <% offer.forEach((offer)=>{%>
-                                          <div class="row">
-                                            <div class="col-sm-6">
-                                              <div class="card">
-                                                <div class="card-body">
-                                                  <h5 class="card-title">Name:<%=offer.name%></h5>
-                                                  <p class="card-text">Offer percentage:<%=offer.percentage%>%</p>
-                                                  <p class="card-text">StartingDate: <br> <%=offer.startingDate.toLocaleDateString('en-US')%></p>
-                                                  <p class="card-text">ExpiryDate:  <br> <%=offer.expiryDate.toLocaleDateString('en-US')%></p>
-                                                  <button id="offerapply_<%=offer._id%>" onclick="applyoffer('<%=offer._id%>', '<%=category._id%>', 'offerapply_<%=offer._id%>')" class="btn btn-primary">Apply Offer</button>
-                                                  <br>
-                                                  <a href="#" style="display: none;" class="text-success" id="mesgoffer">Offer added</a>
-                                                </div>
-                                              </div>
-                                            </div>
-      
-                                          </div>
-                                          
-                                        <%})%>
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                          </td>
-                        <td id="status_<%= category._id %>"><%= category.Status %></td>
-                        <td> <a href="/admin/editcategory/<%=category._id%>" class="btn btn-danger">  edit</a>  </td>
-
-                          <td >
-                            <% if (category.Status === "active") { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','unlist')">Unlist</button>
-                            <% } else { %>
-                                <button id="button_<%= category._id %>" class="btn btn-primary mb-2" style="width: 100%;" onclick="changeStatus('<%= category._id %>','list')">List</button>
-                            <% } %>
-                            
-
-                        </td>
-                    
-                      </tr>
-                    
-                     
-                    </tbody>
-                    <% }); %>
-                  </table>
-              
-                </div>
-              </div>
+        <div class="form-group row">
+            <label for="Couponname" class="col-sm-3 col-form-label">Coupon Name</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="Couponname" name="name" placeholder="Coupon Name" value="<%=coupon.couponName%>" required>
+                <small id="nameError" class="text-danger"></small>
             </div>
-          </div>
         </div>
-        <div class="container d-flex align-items-center justify-content-end mt-3">
-            <a href="/admin/addcategory" class="btn btn-success btn-rounded">Add new category</a>
-           </div>
-      </div>
-      
-    </div>
- 
-      
 
-</section>
+        <div class="form-group row">
+            <label for="Couponcode" class="col-sm-3 col-form-label">Coupon Code</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="Couponcode" name="code" placeholder="Coupon Code" required value="<%=coupon.couponCode%>" >
+                <small id="codeError" class="text-danger"></small>
+            </div>
+        </div>
 
+        <div class="form-group row">
+            <label for="MinAmount" class="col-sm-3 col-form-label">Min Amount</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" id="MinAmount" name="min" placeholder="Minimum Amount" required value="<%=coupon.minAmount%>" >
+                <small id="minError" class="text-danger"></small>
+            </div>
+        </div>
 
+        <div class="form-group row">
+            <label for="DiscountPercent" class="col-sm-3 col-form-label">Discount Amount</label>
+            <div class="col-sm-9">
+                <input type="number" class="form-control" id="DiscountPercent" name="Discount" min="1" placeholder="Discount Percent" required value="<%=coupon.discountamount%>" >
+                <small id="discountError" class="text-danger"></small>
+            </div>
+        </div>
 
-</div>
+        <div class="form-group row">
+            <label for="CouponDescription" class="col-sm-3 col-form-label">Coupon Description</label>
+            <div class="col-sm-9">
+                <textarea class="form-control" id="CouponDescription" name="description" placeholder="Coupon Description" required><%=coupon.couponDescription%></textarea>
+
+                <small id="descriptionError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="expiryDate" class="col-sm-3 col-form-label">Expiry Date</label>
+            <div class="col-sm-9">
+                <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" required>
+
+                <small id="expiryDateError" class="text-danger"></small>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+
+    </form>
+
+    <script>
+        function validateForm() {
+            // Reset error messages
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("codeError").textContent = "";
+            document.getElementById("minError").textContent = "";
+            document.getElementById("discountError").textContent = "";
+            document.getElementById("descriptionError").textContent = "";
+            document.getElementById("expiryDateError").textContent = "";
+            
+            // Get form values
+            var couponName = document.getElementById("Couponname").value;
+            var couponCode = document.getElementById("Couponcode").value;
+            var minAmount = document.getElementById("MinAmount").value;
+            var discountAmount = document.getElementById("DiscountPercent").value;
+            var couponDescription = document.getElementById("CouponDescription").value;
+            var expiryDate = document.getElementById("expiryDate").value;
+
+            // Validate Coupon Name
+            if (couponName.trim() === "") {
+                document.getElementById("nameError").textContent = "Coupon Name is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Coupon Code
+            if (couponCode.trim() === "") {
+                document.getElementById("codeError").textContent = "Coupon Code is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Min Amount
+            if (minAmount.trim() === "") {
+                document.getElementById("minError").textContent = "Min Amount is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Discount Amount
+            if (isNaN(discountAmount) || discountAmount < 1) {
+                document.getElementById("discountError").textContent = "Enter a valid Discount Amount";
+                return false; // Prevent form submission
+            }
+
+            // Validate Coupon Description
+            if (couponDescription.trim() === "") {
+                document.getElementById("descriptionError").textContent = "Coupon Description is required";
+                return false; // Prevent form submission
+            }
+
+            // Validate Expiry Date
+            if (expiryDate.trim() === "") {
+                document.getElementById("expiryDateError").textContent = "Expiry Date is required";
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
+                        
+                              <%if(locals.message){%>
+                                <p class="text-danger"> <%=locals.message%> </p>
+                             <%}%>
+                              
+
+                        </div>
+                    </div>
+                </div>
+                </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
-<script>
- function changeStatus(categoryId, Action) {
-    // Show a confirmation dialog
-    Swal.fire({
-        title: 'Confirmation',
-        text: `Are you sure you want to ${Action === 'list' ? 'list' : 'unlist'} this category?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Proceed with the API call
-            fetch(`/admin/${Action}category/${categoryId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryId }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Update the status in the table without reloading the page
-                    const statusElement = document.getElementById(`status_${categoryId}`);
-                    const buttonElement = document.getElementById(`button_${categoryId}`);
-
-                    if (statusElement && buttonElement) {
-                        statusElement.textContent = data.status;
-
-                        // Update button text based on the received status
-                        if (data.status === "active") {
-                            buttonElement.textContent = "Unlist";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'unlist')`);
-                        } else {
-                            buttonElement.textContent = "List";
-                            buttonElement.setAttribute("onclick", `changeStatus('${categoryId}', 'list')`);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
-        // If the user clicked "No" or closed the dialog, do nothing
-    });
-}
-
-function applyoffer(offerid,categoryid){
-          fetch('/admin/applyofferCategory',{
-            method:"POST",
-            headers:{
-              'Content-Type': 'application/json',
-            },
-            body:JSON.stringify({offerid,categoryid})
-          }).then(response => response.json())
-                .then(data => {
-                  if(data.success){
-
-                    window.location.reload()
-
-                  }
-                }).catch(error => console.error('Error:', error));
-        }
-
-
-        function removeofffer(offerid,categoryid){
-            fetch('/admin/removeoffercategory',{
-              method:"POST",
-              headers:{
-                'Content-Type':'application/json'
-              },
-              body:JSON.stringify({offerid,categoryid})
-            }).then(response=>response.json())
-              .then((data)=>{
-                if(data.success){
-
-                  window.location.reload()
-                }
-            })
-          }
- </script>
-
-
-
-
-
 <%- include("../partials/user/adminfooter.ejs")%>

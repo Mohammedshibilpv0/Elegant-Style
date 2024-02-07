@@ -140,7 +140,11 @@
                                 class="hide-menu">Coupon
                             </span></a>
                     </li>
-
+                    <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/Offer"
+                      aria-expanded="false"><i class="fa-solid fa-cart-shopping"></i><span
+                          class="hide-menu">Offer
+                      </span></a>
+              </li>
                         <li class="list-divider"></li>
                         <li class="nav-small-cap"><span class="hide-menu">Extra</span></li>
 
@@ -185,6 +189,7 @@
                         <th scope="col">Min Amount</th>
                          <th scope="col">Coupon Description</th>
                          <th scope="col">Expr Date</th>
+                         <th>Edit</th>
                          <th>Delete</th>
                       </tr>
                     </thead>
@@ -213,7 +218,7 @@
                                     %></td>
                                
         
-                               
+                                  <td><a href="/admin/editcoupon/<%=coupon._id%>" class="btn btn-primary">Edit</a></td>
                                   <td >
         
                                     <button class="btn btn-primary mb-2" style="width: 100%;" onclick="deletecoupon('<%=coupon._id%>')">Delete</button>
@@ -226,6 +231,11 @@
 
 
                         <%})%>
+                        
+                        <% if(locals.message){%>
+                          <p class="text-danger"><%=message%></p>
+                        <%}%>
+
                         <% }else{%>
 
                             <p>no Coupons  </p>

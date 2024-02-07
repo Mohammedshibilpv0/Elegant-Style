@@ -148,9 +148,34 @@ z-index: 0
                                                            Email:  <%=userdetails.Email%><br>
 														<br>
 														Status:  <%=userdetails.Status%><br>
-														1-234-987-6543<br>
-														yourmail@mail.com<br>
 														<a href="#" data-toggle="modal" data-target="#editModal">Edit <i class="icon-edit"></i></a>
+
+														<h6>Referal Link</h6>
+														<input type="text" class="form-control"
+														value="http://localhost:3000/signup?referralCode=<%= userdetails.Referid%>" id="referralLink"
+														readonly />
+												 <div class="input-group-append">
+													 <button class="btn btn-primary " style="height: 40px;" onclick="copyReferralLink()">Copy</button>
+												 </div>
+												 
+												 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- Include SweetAlert script -->
+												 
+												 <script>
+													 function copyReferralLink() {
+														 var referralLink = document.getElementById("referralLink");
+														 referralLink.select();
+														 document.execCommand("copy");
+														 
+														 // Display SweetAlert instead of standard alert
+														 Swal.fire({
+															 icon: 'success',
+															 title: 'Referral link copied!',
+															 text: 'The referral link has been copied to the clipboard.'
+														 });
+													 }
+												 </script>
+												 
+		  
 								    				</div><!-- End .card-body -->
 								    			</div><!-- End .card-dashboard -->
 								    		</div><!-- End .col-lg-6 -->
@@ -191,41 +216,36 @@ z-index: 0
 												<div class="modal-body">
 													
 													<table class="table table-striped">
-													<div class="container">
-											  <thead>
-												<tr>
-												  <th>Date</th>
-												  <th>Amount</th>
-												  <th>Description</th>
-												  <th>Status</th>
-												</tr>
-											  </thead>
-											  <tbody>
-												<%userdetails.walletHistory.forEach(wallet =>{%>
-
-												
-												<tr>
-												  <td><%=wallet.date.toLocaleDateString()%></td>
-													
-
-												  <td><%=wallet.amount%></td>
-												  <td><%=wallet.description%></td>
-												  
-												 
-												  <td>
-													<%if(wallet.status=="in"){%>
-														<i class="fa-solid fa-arrow-left" style="color: #087f06;"></i>
-													<%}else if(wallet.status=="out") {%>
-														<i class="fa-solid fa-arrow-left fa-rotate-180" style="color: #a21606;"></i>
-												
-													<%}%>
-													</td>
-												
-												</tr>
-												<%})%>
-											  </tbody>
-											</div>
-											</table>
+														<div class="container">
+														  <thead>
+															<tr>
+															  <th>Date</th>
+															  <th>Amount</th>
+															  <th>Description</th>
+															  <th>Status</th>
+															</tr>
+														  </thead>
+														  <tbody>
+															<% 
+															  // Sort the wallet history by date in descending order (latest transactions first)
+															  userdetails.walletHistory.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(wallet => {
+															%>
+															<tr>
+															  <td><%= wallet.date.toLocaleDateString() %></td>
+															  <td><%= wallet.amount %></td>
+															  <td><%= wallet.description %></td>
+															  <td>
+																<% if (wallet.status === "in") { %>
+																  <i class="fa-solid fa-arrow-left" style="color: #087f06;"></i>
+																<% } else if (wallet.status === "out") { %>
+																  <i class="fa-solid fa-arrow-left fa-rotate-180" style="color: #a21606;"></i>
+																<% } %>
+															  </td>
+															</tr>
+															<% }) %>
+														  </tbody>
+														</div>
+													  </table>
 											</div>
 										  
 												<!-- Modal footer -->
