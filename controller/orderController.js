@@ -5,56 +5,39 @@ const Cart=require('../model/cartSchema');
 const { ConnectionStates } = require("mongoose");
 const User = require("../model/User");
 const easyinvoice = require('easyinvoice');
-
+const wishlistSchema=require('../model/wishlistSchema')
 
 const cancelorder = async (req, res) => {
-  const { orderId, productId,orgproId } = req.params;
+  const { orderId, productId, orgproId } = req.params;
 
   try {
     const user = await User.findOne({ _id: req.session.user_id });
     
-    
-    // Update the order status to "cancelled"
+    // Find the order
+    const order = await Orders.findOne({ _id: orderId });
+
+    // Find the canceled product within the order
+    const canceledProduct = order.Products.find(product => product._id.toString() === productId);
+
+    // Update the order status for the canceled product to "cancelled"
     const updatedOrder = await Orders.updateOne(
       { _id: orderId, 'Products._id': productId },
       { $set: { 'Products.$.Status': 'cancelled' } }
     );
 
-    // Retrieve the order to get the list of cancelled products
-    const productInfo = await Orders.findOne(
-      { _id: orderId, 'Products._id': productId },
-      { 'Products.$': 1 }
-    );
+    // Update the quantity of the canceled product back to the inventory
+    const product = await Products.findById(orgproId);
+    product.Quantity += canceledProduct.quantity;
+    await product.save();
 
-    // Extract the quantity from the productInfo
-    const quantity = productInfo.Products[0].quantity;
-    const product= await Products.findById(orgproId)
-       product.Quantity=product.Quantity+quantity
-      await product.save()
+    // Calculate the refund amount for the canceled product
+    const refundAmount = canceledProduct.total;
 
-
-    // Update user's wallet if payment mode is Razorpay
-    const checking = await Orders.findOne({ _id: orderId, 'Products._id': productId });
-    if (checking.paymentMode === 'Razorpay') {
-      const productTotal = checking.Products.reduce((acc, product) => {
-        return acc + product.total;
-      }, 0);
-      user.wallet = user.wallet + productTotal;
+    // Update user's wallet with the refund amount
+    if (order.paymentMode === 'Razorpay' || order.paymentMode === 'wallet') {
+      user.wallet += refundAmount;
       const transaction = {
-        amount: productTotal,
-        description: 'Product cancellation',
-        date: new Date(),
-        status: 'in',
-      };
-      user.walletHistory.push(transaction);
-      await user.save();
-    }else if(checking.paymentMode === 'Wallet'){
-      const productTotal = checking.Products.reduce((acc, product) => {
-        return acc + product.total;
-      }, 0);
-      user.wallet = user.wallet + productTotal;
-      const transaction = {
-        amount: productTotal,
+        amount: refundAmount,
         description: 'Product cancellation',
         date: new Date(),
         status: 'in',
@@ -70,17 +53,10 @@ const cancelorder = async (req, res) => {
       updatedOrder,
     });
   } catch (error) {
-    console.error('Error cancelling product:', error.message);
+    console.error('Error cancelling product:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
-
-
-
-
-
-
-
 
 
 const returnRequest = async (req, res) => {
@@ -173,6 +149,7 @@ const vieworder= async (req,res)=>{
 
     const orderid=req.params.id
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
     const orders = await Orders.find({ _id:orderid})
     .populate({
@@ -181,7 +158,7 @@ const vieworder= async (req,res)=>{
     })
     .exec();
   
-    res.render("orderdetail",{orders,userName,count,orderid})
+    res.render("orderdetail",{orders,userName,count,orderid,wishlistcount})
 
   }catch(err){
     console.log(err);

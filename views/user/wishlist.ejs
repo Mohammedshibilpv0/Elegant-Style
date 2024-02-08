@@ -24,22 +24,51 @@
 								<td class="product-col">
 									<div class="product">
 										<figure class="product-media">
-											<a href="#">
-												<img src="/user/assets/images/products/table/product-2.jpg" alt="Product image">
+											<a href="/singleproduct/<%=product.productId._id%>">
+												<img src="/uploads/<%=product.productId.Images[0]%>" alt="Product image">
 											</a>
 										</figure>
 
 										<h3 class="product-title">
-											<a href="#"><%=product.Name%></a>
+											<a href="/singleproduct/<%=product.productId._id%>"><%=product.productId.Name%></a>
 										</h3><!-- End .product-title -->
 									</div><!-- End .product -->
 								</td>
-								<td class="price-col">$76.00</td>
-								<td class="stock-col"><span class="in-stock">In stock</span></td>
-								<td class="action-col">
-									<button class="btn btn-block btn-outline-primary-2"><i class="icon-cart-plus"></i>Add to Cart</button>
+								<td class="price-col">
+                                    
+                                    <%=product.productId.Price%>
+                                
+                                
+                                
+                                    <% if (product.productId.offer) { %>
+                                        ₹<%= Math.floor(product.productId.Price - (product.productId.Price * product.productId.offer.percentage / 100)) %>
+
+
+                                    <% } else if(product.productId.Category.offer) { %>
+
+                                     ₹<%= Math.floor(product.Price - (product.Price * product.Category.offer.percentage / 100)) %>  %>
+
+                                    <% }else{ %>
+                                        ₹<%= product.Price %>
+                                    <%}%>
+                                
+                                
+                                </td>
+								<% if(product.productId.Quantity>0){%>
+
+									<td class="stock-col"><span class="in-stock">In stock</span></td>
+									<td class="action-col">
+										<button class="btn btn-block btn-outline-primary-2" onclick="addtoCart('<%=product.productId._id%>','<%=userName._id%>')"><i class="icon-cart-plus"></i>Add to Cart</button>
+									</td>
+									<td class="remove-col"><button class="btn-remove" onclick="removeFromWishlist('<%=product.productId._id%>')"><i class="icon-close"></i></button></td>
+
+									<%}else{%>
+										<td class="stock-col"><span class="out-of-stock">Out of stock</span></td>
+							        	<td class="action-col">
+									   <button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
 								</td>
-								<td class="remove-col"><button class="btn-remove"><i class="icon-close"></i></button></td>
+								<td class="remove-col"><button class="btn-remove" onclick="removeFromWishlist('<%=product.productId._id%>')"><i class="icon-close"></i></button></td>
+									<%}%>
 							</tr>
 							<%})%>
 						</tbody>
@@ -49,7 +78,128 @@
         </main><!-- End .main -->
 
 <%-include('../partials/user/footer.ejs')%>
-<td class="stock-col"><span class="out-of-stock">Out of stock</span></td>
-								<td class="action-col">
-									<button class="btn btn-block btn-outline-primary-2 disabled">Out of Stock</button>
-								</td>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<script>
+	   function addtoCart(proid, userid) {
+            const quantity = 1
+
+            // Make an AJAX request to the backend
+            fetch(`/addingcart/${proid}/${userid}/${quantity}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    quantity: quantity,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    // Handle the response from the backend
+                    console.log('Response from backend:', data);
+                    document.querySelector('.cart-count').innerText=data.newCartCount
+
+                    // Display SweetAlert notification
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Product added to cart!',
+                        showConfirmButton: false,
+                        timer: 1500, // Display the notification for 1.5 seconds
+                    }).then(()=>{
+						deleteFromWishlist(proid)
+					})
+
+				
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+
+                    // Display SweetAlert error notific0ation
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error adding to cart',
+                        text: 'An error occurred while adding the product to the cart.',
+                        }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to the login page
+                            window.location.href = '/login'; // Replace '/login' with the actual URL of your login page
+                        }
+                    })
+                });
+
+        }
+
+		function removeFromWishlist(productid) {
+    // Display confirmation SweetAlert
+       swal({
+        title: "Are you sure?",
+        text: "Once removed, you will not be able to recover this item from your wishlist!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    })
+      .then((willDelete) => {
+        if (willDelete) {
+            // Proceed with removal
+            fetch('/removewishlist', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productid })
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                // Display SweetAlert with success message
+                if (data.success) {
+                    swal("Success!", data.success, "success").then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    swal("Error!", data.error || "An error occurred.", "error");
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                // Display SweetAlert with error message
+                swal("Error!", "An error occurred.", "error");
+            });
+        } else {
+            // User clicked cancel, do nothing
+            swal("Cancelled", "Your item is safe :)", "info");
+        }
+    });
+}
+
+
+function deleteFromWishlist(productid){
+	fetch('/removewishlist', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productid })
+       }).then((response) => response.json())
+        .then((data) => {
+        // Display SweetAlert with success message
+        if (data.success) {
+            swal("Success!", data.success, "success").then(()=>{
+                window.location.reload()
+            })
+        } else {
+
+            swal("Error!", data.error || "An error occurred.", "error");
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        // Display SweetAlert with error message
+        swal("Error!", "An error occurred.", "error");
+    });
+}
+
+</script>

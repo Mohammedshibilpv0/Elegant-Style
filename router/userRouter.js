@@ -57,8 +57,8 @@ router.get('/download-invoice/:id',orderController.invoiceDownload);
 router.get('/categorybased/:id',userController.categorybased)
 
 
-router.get('/wishlist',wishlistController. wishlist)
-router.post('/addtowishlist',wishlistController.addtowishlist)
+router.get('/wishlist',middleware.notlogged,wishlistController. wishlist)
+router.post('/addtowishlist',middleware.notlogged,wishlistController.addtowishlist)
 router.post('/removewishlist',wishlistController.removeWishlist)
 
 module.exports=router

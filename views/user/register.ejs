@@ -9,61 +9,68 @@
             		<div class="form-box">
             			<div class="form-tab">
 	            			<ul class="nav nav-pills nav-fill" role="tablist">
-							    
+
 							    <li class="nav-item">
 							        <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">signup</a>
 							    </li>
 							</ul>
 							<div class="tab-content">
 							    <div class="tab-pane fade" id="signin-2" role="tabpanel" aria-labelledby="signin-tab-2">
-							    
+
 							    </div><!-- .End .tab-pane -->
 							    <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
-									
 
-                                    <form action="/register" method="post">
 
-                                        <% if (locals.errmsg) { %>
-                                            <p style="color: red;"><%= errmsg%></p>
-                                          <% }%>
-                                          <% if (locals.succmsg) { %>
-                                            <p class="text-success" ><%= succmsg%></p>
-                                          <% }%>
+                    <form action="/register" method="post">
 
-                                        <div class="form-group">
-                                            <label for="register-name-2">Name</label>
-                                            <input type="text" class="form-control" id="register-name-2" name="name" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="register-email-2">Your email address *</label>
-                                            <input type="email" class="form-control" id="register-email-2" name="email" required>
-                                        </div><!-- End .form-group -->
+                      <% if (locals.errmsg) { %>
+                      <p style="color: red;"><%= errmsg %></p>
+                      <% } %>
+                      <% if (locals.succmsg) { %>
+                      <p class="text-success"><%= succmsg %></p>
+                      <% } %>
 
-                                        <input type="text" value="<%=Referal%>" name="Referal">
+                      <div class="form-group">
+                          <label for="register-name-2">Name</label>
+                          <input type="text" class="form-control" id="register-name-2" name="name" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="register-email-2">Your email address *</label>
+                          <input type="email" class="form-control" id="register-email-2" name="email" required>
+                      </div><!-- End .form-group -->
 
-                                        <div class="form-group">
-                                            <label for="register-password-2">Password *</label>
-                                            <input type="password" class="form-control" id="register-password-2" name="password" required>
-                                            <span id="show" style="color: red;"></span>
-                                        </div><!-- End .form-group -->
+                      <input type="text" value="<%= Referal %>" name="Referal" hidden>
 
-                                        <div class="form-check mb-4">
-											<input class="form-check-input" type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()" style="margin-top: 7px;">
-											<label class="form-check-label" for="showPasswordCheckbox" style="margin-left: 5px;">Show Password</label>
-										  </div><!-- End .form-group -->
+                      <div class="form-group">
+                          <label for="register-password-2">Password *</label>
+                          <input type="password" class="form-control" id="register-password-2" name="password" required>
 
-                                        <div class="form-footer">
-                                            <button type="submit" class="btn btn-outline-primary-2">
-                                                <span>SIGN UP</span>
-                                                <i class="icon-long-arrow-right"></i>
-                                            </button>
+                      </div><!-- End .form-group -->
 
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
-                                                <label class="custom-control-label" for="register-policy-2">I agree to the <a >privacy policy</a> *</label>
-                                            </div><!-- End .custom-checkbox -->
-                                        </div><!-- End .form-footer -->
-                                    </form>
+                      <div class="form-group">
+                          <label for="confirm-password">Confirm Password *</label>
+                          <input type="password" class="form-control" id="confirm-password" required>
+                          <span id="show" style="color: red;"></span>
+                      </div><!-- End .form-group -->
+
+                      <div class="form-check mb-4">
+                          <input class="form-check-input" type="checkbox" id="showPasswordCheckbox" onclick="togglePasswordVisibility()" style="margin-top: 7px;">
+                          <label class="form-check-label" for="showPasswordCheckbox" style="margin-left: 5px;">Show Password</label>
+                      </div><!-- End .form-group -->
+
+                      <div class="form-footer">
+                          <button type="submit" class="btn btn-outline-primary-2">
+                              <span>SIGN UP</span>
+                              <i class="icon-long-arrow-right"></i>
+                          </button>
+
+                          <div class="custom-control custom-checkbox">
+                              <input type="checkbox" class="custom-control-input" id="register-policy-2" required>
+                              <label class="custom-control-label" for="register-policy-2">I agree to the <a>privacy policy</a> *</label>
+                          </div><!-- End .custom-checkbox -->
+                      </div><!-- End .form-footer -->
+                  </form>
+
 
 							    </div><!-- .End .tab-pane -->
 							</div><!-- End .tab-content -->
@@ -72,69 +79,90 @@
             	</div><!-- End .container -->
             </div><!-- End .login-page section-bg -->
         </main><!-- End .main -->
-     
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-              var form = document.querySelector("form");
-          
-              form.addEventListener("submit", function(event) {
-                var nameInput = document.getElementById("register-name-2");
-                var emailInput = document.getElementById("register-email-2");
-                var passwordInput = document.getElementById("register-password-2");
-                let  display=document.getElementById('show')
-          
-                // Reset previous error styles
-                resetValidationStyles();
-          
-                // Validate name
-                if (nameInput.value.trim() === "") {
-                  event.preventDefault();
-                  displayError(nameInput);
-                }
-          
-                // Validate email
-                if (emailInput.value.trim() === "" || !isValidEmail(emailInput.value.trim())) {
-                  event.preventDefault();
-                  displayError(emailInput);
-                }
-          
-                // Validate password
-                if (passwordInput.value.trim() === "" || passwordInput.value.trim().length < 6) {
-                  event.preventDefault();
-                  displayError(passwordInput);
-                  displayError(display.innerHTML="Password must be at least 6 characters long.");
-                }
-              });
-          
-              function displayError(input) {
-                input.classList.add("is-invalid");
-              }
-          
-              function resetValidationStyles() {
-                document.querySelectorAll(".is-invalid").forEach(function(element) {
-                  element.classList.remove("is-invalid");
-                });
-              }
-          
-              function isValidEmail(email) {
-                // You can use a more sophisticated email validation regex here
-                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-              }
-            });
-          
-            function togglePasswordVisibility() {
-              const passwordInput = document.getElementById('register-password-2');
-              const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
-          
-              if (showPasswordCheckbox.checked) {
-                passwordInput.type = 'text';
-              } else {
-                passwordInput.type = 'password';
-              }
-            }
-          </script>
+
+     <script>
+      document.addEventListener("DOMContentLoaded", function () {
+    let form = document.querySelector("form");
+
+    form.addEventListener("submit", function (event) {
+        let nameInput = document.getElementById("register-name-2");
+        let emailInput = document.getElementById("register-email-2");
+        let passwordInput = document.getElementById("register-password-2");
+        let confirmPasswordInput = document.getElementById("confirm-password");
+        let display = document.getElementById('show');
+
+        // Reset previous error styles
+        resetValidationStyles();
+
+        // Validate name
+        if (nameInput.value.trim() === "") {
+            event.preventDefault();
+            displayError(nameInput);
+        }
+
+        // Validate email
+        if (emailInput.value.trim() === "" || !isValidEmail(emailInput.value.trim())) {
+            event.preventDefault();
+            displayError(emailInput);
+        }
+
+        // Validate password
+        if (passwordInput.value.trim() === "" || passwordInput.value.trim().length < 6) {
+            event.preventDefault();
+            displayError(passwordInput);
+            display.innerHTML = "Password must be at least 6 characters long.";
+        } else if (!isStrongPassword(passwordInput.value.trim())) {
+            event.preventDefault();
+            displayError(passwordInput);
+            display.innerHTML = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        }
+
+        // Validate confirm password
+        if (confirmPasswordInput.value !== passwordInput.value) {
+            event.preventDefault();
+            displayError(confirmPasswordInput);
+            display.innerHTML = "Passwords do not match.";
+        }
+    });
+
+    function displayError(input) {
+        input.classList.add("is-invalid");
+    }
+
+    function resetValidationStyles() {
+        document.querySelectorAll(".is-invalid").forEach(function (element) {
+            element.classList.remove("is-invalid");
+        });
+    }
+
+    function isValidEmail(email) {
+        let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function isStrongPassword(password) {
+        // Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character
+        let passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        return passwordRegex.test(password);
+    }
+});
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('register-password-2');
+    const confirmPasswordInput = document.getElementById('confirm-password');
+    const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+
+    if (showPasswordCheckbox.checked) {
+        passwordInput.type = 'text';
+        confirmPasswordInput.type = 'text';
+    } else {
+        passwordInput.type = 'password';
+        confirmPasswordInput.type = 'password';
+    }
+}
+
+     </script>
           
 
 <%-include("../partials/user/footer.ejs")%>

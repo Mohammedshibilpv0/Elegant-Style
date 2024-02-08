@@ -10,9 +10,11 @@ const wishlist= async (req,res)=>{
       const wishlist= await wishlistSchema.findOne({userid:req.session.user_id}).populate({
         path: "products.productId",
         model: "Products",
-      });
-
-      res.render('wishlist',{userName,count,wishlist})
+        populate: { path: 'offer' }
+      })
+      .exec()
+      const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      res.render('wishlist',{userName,count,wishlist,wishlistcount})
     }catch(err){
       console.log(err);
     }
@@ -20,41 +22,43 @@ const wishlist= async (req,res)=>{
 
   const addtowishlist = async (req, res) => {
     try {
-      const { productid } = req.body;
-      const userid = req.session.user_id;
-      let wishlist = await wishlistSchema.findOne({ userid: userid });
+        const { productid } = req.body;
+        const userid = req.session.user_id;
+        let wishlist = await wishlistSchema.findOne({ userid: userid });
 
-      if (!wishlist) {
-        wishlist = new wishlistSchema({
-          userid: userid,
-          products: [{ productId: productid }]
-        });
-        await wishlist.save();
-        return res.json({ Success: "New wishlist is created with the product." });
-      }
+        if (!wishlist) {
+            wishlist = new wishlistSchema({
+                userid: userid,
+                products: [{ productId: productid }]
+            });
+            await wishlist.save();
+            const wishlistCount = wishlist.products.length;
+            return res.json({ Success: "New wishlist is created with the product.", wishlistCount });
+        }
 
+        const productExists = wishlist.products.some(product => product.productId.equals(productid));
 
-      const productExists = wishlist.products.some(product => product.productId.equals(productid));
-
-      if (!productExists) {
-
-        wishlist.products.push({ productId: productid });
-        await wishlist.save();
-        return res.json({ Success: "Product added to wishlist." });
-      } else {
-
-        return res.json({ already: "Product already exists in the wishlist." });
-      }
+        if (!productExists) {
+            wishlist.products.push({ productId: productid });
+            await wishlist.save();
+            const wishlistCount = wishlist.products.length;
+            return res.json({ Success: "Product added to wishlist.", wishlistCount });
+        } else {
+            const wishlistCount = wishlist.products.length;
+            return res.json({ already: "Product already exists in the wishlist.", wishlistCount });
+        }
     } catch (err) {
-      console.log(err);
-      return res.status(500).json({ error: "Internal server error" });
+        console.log(err);
+        return res.status(500).json({ error: "Internal server error" });
     }
-  };
+};
+
 
 
   const removeWishlist = async (req, res) => {
     try {
-      const { productid, userid } = req.body;
+      const { productid } = req.body;
+      const userid=req.session.user_id
       const wishlist = await wishlistSchema.findOne({ userid: userid });
 
 

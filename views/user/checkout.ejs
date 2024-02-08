@@ -104,9 +104,10 @@
 
 								  <div class="checkout-discount" >
 									<form id="couponForm">
-										<input type="text" class="form-control"  required id="checkout-discount-input">
-										<label for="checkout-discount-input" class="text-truncate">Have a coupon? <span>Click here to enter your code</span></label>
-										<button class="btn btn-primary mt-4" type="submit">Submit</button>
+										<input type="text" class="form-control"  required id="checkout-discount-input" placeholder="Have a coupon? Click here to enter your code">
+										<label for="checkout-discount-input" class="text-truncate"></span></label>
+										<button class="btn btn-primary mt-4" type="submit">Apply</button>
+										<a class="btn btn-primary mt-4" onclick="cancelcoupon()">Clear</a>
 									</form>
 									<p id="already" class="text-danger"></p>
 								</div><!-- End .checkout-discount -->
@@ -493,6 +494,12 @@ document.getElementById('display2').style.display = 'none';
     // Handle fetch errors
   }
 });
+
+
+function cancelcoupon (){
+	document.getElementById('checkout-discount-input').value=null
+	location.reload()
+}
 
 
 </script>

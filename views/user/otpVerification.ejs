@@ -1,45 +1,32 @@
 <%-include("../partials/user/header.ejs")%>
 <%-include("../partials/user/navbar.ejs")%>
 
-<div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('/user/assets/images/backgrounds/login-bg.jpg')">
-  <div class="container">
-    <div class="form-box">
-      <div class="form-tab">
-        <ul class="nav nav-pills nav-fill" role="tablist">
-                    
-      <li class="nav-item">
-          <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
-      </li>
-  </ul>
-  <div class="tab-content">
-      
+                  <div class="login-page bg-image pt-8 pb-8 pt-md-12 pb-md-12 pt-lg-17 pb-lg-17" style="background-image: url('/user/assets/images/backgrounds/login-bg.jpg')">
+                    <div class="container">
+                      <div class="form-box">
+                        <div class="form-tab">
+                          <ul class="nav nav-pills nav-fill" role="tablist">
 
-
+                        <li class="nav-item">
+                            <a class="nav-link active" id="register-tab-2" data-toggle="tab" href="#register-2" role="tab" aria-controls="register-2" aria-selected="true">Register</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
                     <div class="tab-pane fade show active" id="register-2" role="tabpanel" aria-labelledby="register-tab-2">
 
                         <form action="/otp" method="post">
-                            <!-- Existing form fields -->
-                    
-                            <!-- New section for OTP input -->
                             <div class="form-group">
-                                <label for="otp-input">Enter 4-Digit OTP *</label>
-                                <div class="otp-input-container">
-                                    <input type="text" name="digit1" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                    <input type="text" name="digit2" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                    <input type="text" name="digit3" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                    <input type="text" name="digit4" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                </div>
-                                <input type="hidden" name="email" value="<%= email %>">
-                                <input type="text" name="refer" value="<%=refer%>">
-                            </div>
-                    
-                            <!-- "Send OTP" button -->
-                            
-                    
-                            <!-- ... (Other existing form fields) ... -->
-                    
+                              <label for="otp-input">Enter 4-Digit OTP *</label>
+                              <div class="otp-input-container">
+                                  <input type="text" name="digit1" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                  <input type="text" name="digit2" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                  <input type="text" name="digit3" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                  <input type="text" name="digit4" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                              </div>
+                              <input type="hidden" name="email" value="<%= email %>">
+                              <input type="text" name="refer" value="<%=refer%>" hidden>
+                          </div>
                             <div class="form-footer">
-                                <!-- Existing submit button -->
                                 <button type="submit" class="btn btn-outline-primary-2">
                                     <span>Continue</span>
                                     <i class="icon-long-arrow-right"></i>
@@ -63,20 +50,13 @@
                                     <% } %>
                                 </div>
                                 <!-- <input type="hidden" name="email" value="<%= email %>"> -->
-                    
+
                                 <!-- Existing privacy policy checkbox -->
-                    
+
                             </div><!-- End .form-footer -->
                         </form>
                         <!-- ... (Existing social login buttons) ... -->
                     </div><!-- .End .tab-pane -->
-                    
-                    
-                    
-
-
-
-
   </div><!-- End .tab-content -->
 </div><!-- End .form-tab -->
     </div><!-- End .form-box -->
@@ -109,6 +89,29 @@
     // Set up the timer interval
     const timerInterval = setInterval(updateTimer, 1000);
   });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    // Get all OTP input fields
+    const otpInputs = document.querySelectorAll('.otp-input-container input');
+
+    // Add event listeners to each OTP input field
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            // Move focus to the next input field if the current input is filled
+            if (this.value.length === this.maxLength && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+
+        // Move focus to the previous input field if the current input is empty and backspace is pressed
+        input.addEventListener('keydown', function(event) {
+            if (event.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+    });
+});
+
 </script>
 <%-include('../partials/user/footer.ejs')%>
 

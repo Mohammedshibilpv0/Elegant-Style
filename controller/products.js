@@ -175,6 +175,7 @@ const singleProduct = async (req, res) => {
 
     // Count the number of products in the cart
     const count = (await Cart.findOne({ userid: userid }))?.products?.length || 0;
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     
     // Fetch user details
     const userName = await User.findOne({ _id: userid });
@@ -202,7 +203,7 @@ const singleProduct = async (req, res) => {
       }
     }
 
-    res.render("eachproducts", { products, recommend, userid, alreadyInCart, alreadyInWishlist, userName, count });
+    res.render("eachproducts", { products, recommend, userid, alreadyInCart, alreadyInWishlist, userName, count,wishlistcount });
   } catch (err) {
     console.log(err);
   }

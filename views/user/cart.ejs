@@ -33,21 +33,21 @@
 										  <tr data-product-id="<%= product.productId._id %>">
 											<td class="product-col">
 											  <div class="product">
-												<figure class="product-media">
+												<figure class="product-media" style="margin-right: 40px;">
 												  <a href="/singleproduct/<%= product.productId._id %>">
-													<img src="/uploads/<%= product.productId.Images[0] %>" alt="">
+													<img  src="/uploads/<%= product.productId.Images[0] %>" alt="">
 												  </a>
 												</figure>
 
 												<h3 class="product-title">
-												  <a href="/singleproduct/<%= product.productId._id %>">  <%= product.productId.Name %> </a> 
+												  <a href="/singleproduct/<%= product.productId._id %>" style="margin-right: 55px;" >  <%= product.productId.Name %> </a> 
 												</h3><!-- End .product-title -->
 											  </div><!-- End .product -->
 											  <p id="proid" hidden><%= product.productId._id %></p>
 											</td>
 											<td class="price-col" id="each">₹ <%= product.productPrice %></td>
 											<td class="quantity-col d-flex" style="width: 320px;">
-												<div class="d-flex" style="margin-top: 53px;">
+												<div class="d-flex" style="margin-top: 53px; margin-left: 70px;">
 													<div class="down" style="margin-bottom: 36px; width: 30px; height: 40px;">
 														<p style="margin-top: 8px; margin-left: 12px; cursor: pointer;">-</p>
 													</div>
@@ -100,8 +100,8 @@
 							   <form action="/paymentmethod" method="GET">
 	                				<h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
 
-	                				<table class="table table-summary">
-	                					<tbody>
+	                				<table class="table table-summary" >
+	                					<tbody id="helo">
 	                						<tr class="summary-subtotal">
 	                							<td>Subtotal:</td>
 	                							<td><%=totalPriceTotal%></td>
@@ -274,6 +274,7 @@
                 const tableRow = document.querySelector(`tr[data-product-id="${productId}"]`);
                 if (tableRow) {
                   tableRow.remove();
+				  location.reload()
                 }
               }
             })

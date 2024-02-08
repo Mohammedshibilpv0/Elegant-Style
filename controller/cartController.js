@@ -6,7 +6,7 @@ const Order= require('../model/orderSchema')
 const Razorpay = require('razorpay');
 const Coupondb =require('../model/couponSchema')
 const { response } = require("express");
-
+const wishlistSchema=require('../model/wishlistSchema')
 
 const instance = new Razorpay({
   key_id: "rzp_test_QmkTPpR7YwgsmH",
@@ -39,6 +39,7 @@ const cart = async (req, res) => {
   try {
     const user = req.session.user_id;
     const count = (await Cart.findOne({ userid: user }))?.products?.length || 0;
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const userName = await User.findOne({ _id:user});
     const cartData = await Cart.findOne({ userid: user }).populate({
       path: "products.productId",
@@ -51,10 +52,10 @@ const cart = async (req, res) => {
         return total + product.totalPrice;
       }, 0);
 
-      res.render("cart", { cartData, totalPriceTotal,errmsg,userName,count});
+      res.render("cart", { cartData, totalPriceTotal,errmsg,userName,count,wishlistcount});
     }else{
 
-        res.render("cart", {cartData,errmsg,userName,count});
+        res.render("cart", {cartData,errmsg,userName,count,wishlistcount});
     }
   } catch (err) {
     console.log(err);
@@ -65,7 +66,7 @@ const checkout = async (req, res) => {
     const userid = req.session.user_id;
     const user = await User.findOne({ _id: userid });
     const count = (await Cart.findOne({ userid: user }))?.products?.length || 0;
-
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const cartData = await Cart.findOne({ userid: userid }).populate({
       path: "products.productId",
       model: "Products",
@@ -90,7 +91,7 @@ const checkout = async (req, res) => {
       return total + product.totalPrice;
     }, 0);
 
-    res.render("checkout", { userid, user, cartData, totalPriceTotal ,count});
+    res.render("checkout", { userid, user, cartData, totalPriceTotal ,count,wishlistcount});
   } catch (err) {
     console.log(err);
     res.status(500).send('Internal Server Error');
@@ -303,7 +304,7 @@ const  placecorder=async (req,res)=>{
 
 
     // Fetch product details for each product in the cart
-    
+
     const products = await Promise.all(cart.products.map(async (cartProduct) => {
         const productDetails = await Product.findById(cartProduct.productId);
         productDetails.Quantity -= cartProduct.quantity;
@@ -361,7 +362,7 @@ const  placecorder=async (req,res)=>{
       })
        res.json({ success: true, products: products,orderId: orderInstance._id });
       }else if(paymentmethod==="Razorpay"){
-        const totalpriceInPaise = Math.round(orderData.total * 100); // Convert rupees to paise
+        const totalpriceInPaise = Math.round(orderData.total * 100);
         const minimumAmount = 100;
         const adjustedAmount = Math.max(totalpriceInPaise, minimumAmount);
 
@@ -372,7 +373,7 @@ const  placecorder=async (req,res)=>{
        })
 
       }
-} catch (error) {
+}   catch (error) {
     console.error('Error:', error);
     // Respond with an error message
     res.status(500).json({ success: false, message: 'An error occurred while processing the order or updating product stock.' });

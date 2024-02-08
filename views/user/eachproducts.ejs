@@ -5,8 +5,6 @@
 
 
         <main class="main">
-        
-
             <div class="page-content mt-4">
                 <div class="container">
                     <div class="product-details-top">
@@ -15,7 +13,7 @@
                                 <div class="product-gallery product-gallery-vertical">
                                     <div class="row">
                                         <figure class="product-main-image">
-                                            <img id="product-zoom" src="/uploads/<%= products.Images[0] %>" data-zoom-image="/uploads/<%= products.Images[0] %>" alt="product image" style="height: 600px;">
+                                            <img id="product-zoom" src="/uploads/<%= products.Images[0] %>" data-zoom-image="/uploads/<%= products.Images[0] %>" alt="product image" style="height: 500px;">
 
                                             <a href="#" id="btn-product-gallery" class="btn-product-gallery">
                                                 <i class="icon-arrows"></i>
@@ -24,11 +22,10 @@
 
                                         <div id="product-zoom-gallery" class="product-image-gallery">
                                             <%for(let i=0;i< products.Images.length;i++){%>
-                                            <a class="product-gallery-item active" href="#" style="height: 120px;" data-image="/uploads/<%= products.Images[i] %>" data-zoom-image="/uploads/<%= products.Images[i] %>">
-                                                <img src="/uploads/<%= products.Images[i] %>" alt="product side" style="height: 120px;"  >
+                                            <a class="product-gallery-item active" href="#" style="height: 100px;" data-image="/uploads/<%= products.Images[i] %>" data-zoom-image="/uploads/<%= products.Images[i] %>">
+                                                <img src="/uploads/<%= products.Images[i] %>" alt="product side" style="height: 100px;"  >
                                             </a>
                                             <%}%>
-                                            
                                         </div><!-- End .product-image-gallery -->
                                     </div><!-- End .row -->
                                 </div><!-- End .product-gallery -->
@@ -48,7 +45,7 @@
                                     <div class="product-price">
                                         <% if (products.offer) { %>
                                             ₹<%= Math.floor(products.Price - (products.Price * products.offer.percentage / 100)) %>
-                                            <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>  
+                                            <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>
 
                                         <% } else if(products.Category.offer) { %>
 
@@ -65,40 +62,36 @@
 
                                     <!-- End .details-filter-row -->
 
-                            
+
                                     <div class="product-cat">
                                         <span>Category:</span>
                                         <a href="#"><%=products.Category.Name%></a>,
                                         <p><a href="#"><%=products.Category.Description%></a>,</p>
                                     </div>
-                                    
+
                                     <div class="details-filter-row details-row-size mt-5">
                                         <label for="qty">Qty:</label>
                                         <div class="product-details-quantity">
                                             <input type="number" id="qty" class="form-control" value="1" min="1" max="<%=products.Quantity%>" step="1" data-decimals="0" oninput="validateQuantity(this)" required>
                                         </div><!-- End .product-details-quantity -->
                                     </div>
-                                    
+
                                     <script>
                                         function validateQuantity(input) {
                                             // Remove non-numeric characters from the input value
                                             input.value = input.value.replace(/\D/g, '');
-                                    
+
                                             // Ensure the value is within the specified range
                                             const min = parseInt(input.min) || 1;
                                             const max = parseInt(input.max) || 1000;
                                             const value = parseInt(input.value) || min;
-                                    
+
                                             input.value = Math.min(Math.max(value, min), max);
                                         }
                                     </script>
-                                    
 
-                                   
-                                    
 
-                                    <div class="product-details-action mt-5" >
-                                      
+                                    <div class="product-details-action mt-5 " style="margin-left: 20px;" >
                                         <% if (products.Quantity > 0) { %>
                                             <% if(!alreadyInCart){%>
                                           <a href="#" class="btn-product btn-cart" onclick="addtoCart('<%=products._id%>','<%=userid%>')">
@@ -121,8 +114,7 @@
                                                     </span>
                                                     <%= alreadyInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>
                                                   </a>
-                                                  
-                                                  
+
                                             <% } else { %>
 
                                               <a href="#" onclick="addtowishlist('<%=products._id%>')" class="btn-product btn-wishlist" title="Add to Wishlist">
@@ -176,7 +168,7 @@
 
                     <h2 class="title text-center mb-4">You May Also Like</h2><!-- End .title text-center -->
 
-                    <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl" 
+                    <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow" data-toggle="owl"
                         data-owl-options='{
                             "nav": false,
                             "dots": true,
@@ -206,14 +198,14 @@
 
                         <div class="product product-7 text-center" style="height: 450px;">
                             <figure class="product-media" style="height: 290px;">
-                                
+
                                 <a href="/singleproduct/<%=product._id%>">
                                     <img src="/uploads/<%= product.Images[0] %>" alt="Product image" class="product-image" >
                                 </a>
 
                                 <div class="product-action-vertical">
                                     <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
-                                    
+
                                 </div><!-- End .product-action-vertical -->
 
                                 <div class="product-action">
@@ -227,7 +219,17 @@
                                 </div><!-- End .product-cat -->
                                 <h3 class="product-title"><a href="/singleproduct/<%=product._id%>"><%=product.Name%></h3><!-- End .product-title -->
                                 <div class="product-price">
-                                    ₹<%=product.OfferPrice%>
+                                    <% if (products.offer) { %>
+                                        ₹<%= Math.floor(products.Price - (products.Price * products.offer.percentage / 100)) %>
+                                        <s class="text-light" style="font-size: 12px;">₹<%= products.Price %></s>
+
+                                    <% } else if(products.Category.offer) { %>
+
+                                     ₹<%= Math.floor(products.Price - (products.Price * products.Category.offer.percentage / 100)) %>  %>
+
+                                    <% }else{ %>
+                                        ₹<%= products.Price %>
+                                    <%}%>
                                 </div><!-- End .product-price -->
                                 <p id="proid" hidden><%= product._id %></p>
                                 <div class="ratings-container">
@@ -239,9 +241,9 @@
 
                                 <div class="">
                                     <a href="#" class="">
-                                        
+
                                     </a>
-                                    
+
                                 </div><!-- End .product-nav -->
                             </div><!-- End .product-body -->
                         </div><!-- End .product -->
@@ -250,59 +252,14 @@
                 </div><!-- End .container -->
             </div><!-- End .page-content -->
         </main><!-- End .main -->
-
-  <%-include('../partials/user/footbar.ejs')%>
     </div><!-- End .page-wrapper -->
-    <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
-
+  <%-include('../partials/user/footbar.ejs')%>
     <!-- Sticky Bar -->
-    
+
 
     <!-- Mobile Menu -->
-    <div class="mobile-menu-overlay"></div><!-- End .mobil-menu-overlay -->
-
-    <div class="mobile-menu-container">
-        <div class="mobile-menu-wrapper">
-            <span class="mobile-menu-close"><i class="icon-close"></i></span>
-
-            <form action="#" method="get" class="mobile-search">
-                <label for="mobile-search" class="sr-only">Search</label>
-                <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
-                <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-            </form>
-
-            <nav class="mobile-nav">
-                <ul class="mobile-menu">
-                    <li class="active">
-                        <a href="/">Home</a>
-
-                    </li>
-                    <li>
-                        <a href="category.html">Shop</a>
-
-                    </li>
-                    <li>
-                        <a href="/" class="sf-with-ul">Product</a>
-
-                    </li>
-                    <li>
-                        <a href="#">Pages</a>
-
-                            </li>
-                            <li>
-                                <a href="contact.html">Contact</a>
 
 
-                            </li>
-
-
-                    </li>
-
-                </ul>
-            </nav><!-- End .mobile-nav -->
-
-        </div>
-    </div>
 
 
 

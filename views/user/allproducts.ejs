@@ -52,7 +52,7 @@
                                     <div class="product product-4" style="height: 450px;">
                                         <figure class="product-media">
                                             <a href="/singleproduct/<%=product._id%>">
-                                                <div style="height: 280px;">
+                                                <div style="height: 240px;">
     
                                                     <img src="/uploads/<%= product.Images[0] %>" alt="Product image" class="product-image">
                                                 </div>
@@ -60,7 +60,7 @@
     
                                             </a>
                                             <div class="product-action-vertical">
-                                                <a href="#" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
+                                                <a href="#" onclick="addtowishlist('<%=product._id%>')" class="btn-product-icon btn-wishlist btn-expandable"><span>add to wishlist</span></a>
     
                                             </div>
     
@@ -248,6 +248,35 @@
                     });
                 });
         }
+
+
+        function addtowishlist(productid) {
+    fetch('/addtowishlist', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productid })
+      })
+      .then((response) => response.json())
+      .then((data) => {
+
+        if (data.Success) {
+            const wishlistCountElement = document.querySelector('.wishlist-count');
+            wishlistCountElement.textContent = data.wishlistCount;
+          swal("Success!", data.Success, "success");
+        } else if (data.already) {
+
+          swal("Oops!", data.already, "error");
+        } else {
+          // Handle unexpected response
+          console.log(data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
     </script>
 
     <%-include('../partials/user/mobilenav.ejs')%>

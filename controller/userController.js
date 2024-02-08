@@ -6,7 +6,9 @@ const userOtpVerification=require('../model/otpVerify')
 const nodemailer=require('nodemailer')
 const Cart=require('../model/cartSchema')
 const Orders= require('../model/orderSchema')
-const Coupon=require('../model/couponSchema')
+const Coupon=require('../model/couponSchema');
+const wishlistSchema=require('../model/wishlistSchema')
+const { wishlist } = require("./wishlistController");
 
 
 
@@ -18,14 +20,14 @@ const home = async (req, res) => {
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
       .populate({
           path: 'Category',
-          populate: { path: 'offer' } // Populate the offer field in the Category document
+          populate: { path: 'offer' }
       }).populate('offer')
       .skip((page - 1) * perPage)
       .limit(perPage)
       .exec();
 
-
       const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
 
       const userid = req.session.user_id;
@@ -34,7 +36,7 @@ const home = async (req, res) => {
       const totalProducts = await Products.countDocuments({ Status: { $ne: "blocked" } });
       const totalPages = Math.ceil(totalProducts / perPage);
 
-      res.render("home", { userName, Product, count, userid, totalPages, currentPage: page });
+      res.render("home", { userName, Product, count, userid, totalPages, currentPage: page,wishlistcount });
   } catch (err) {
       console.log(err);
       res.status(500).send('Internal Server Error');
@@ -323,6 +325,7 @@ const allproducts = async (req, res) => {
       const perPage = 8; // Set the number of products to display per page
       const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
       const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
       const category= await Category.find({Status: { $ne: "blocked" }})
       const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
@@ -342,7 +345,7 @@ const allproducts = async (req, res) => {
       const totalPages = Math.ceil(totalProducts / perPage);
 
 
-      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count,category });
+      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count,category,wishlistcount });
 
   } catch (err) {
       console.log(err);
@@ -423,12 +426,13 @@ const userprofile= async (req,res)=>{
   try{
     const userid=req.session.user_id
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const userdetails = await User.findOne({ _id: userid });
     const deleteorder= await Orders.deleteMany({paymentStatus:"pending"})
     const orders = await Orders.find({user:userid})
     const userName = await User.findOne({ _id: req.session.user_id });
     const coupon= await Coupon.find()
-    res.render('userprofile',{userdetails,orders,coupon,userName,count})
+    res.render('userprofile',{userdetails,orders,coupon,userName,count,wishlistcount})
   }catch(err){
     console.log(err);
   }
@@ -521,6 +525,7 @@ const categorybased= async(req,res)=>{
     const perPage = 8; // Set the number of products to display per page
     const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
     const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
     const categoryid =req.params.id
     const user=req.session.user_id
     const totalProducts = await Products.countDocuments({Category:categoryid},{ Status: { $ne: "blocked" } });
@@ -530,7 +535,7 @@ const categorybased= async(req,res)=>{
       populate: { path: 'offer' } // Populate the offer field in the Category document
   }).populate('offer')
     const category= await Category.find({Status: { $ne: "blocked" }})
-    res.render('categorybased',{product,user,category,totalPages, currentPage: page,})
+    res.render('categorybased',{product,user,category,totalPages, currentPage: page,wishlistcount})
 
   }catch(err){
     console.log(err);

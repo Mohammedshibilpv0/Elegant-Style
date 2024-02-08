@@ -270,7 +270,8 @@
       .then((data) => {
 
         if (data.Success) {
-
+            const wishlistCountElement = document.querySelector('.wishlist-count');
+            wishlistCountElement.textContent = data.wishlistCount;
           swal("Success!", data.Success, "success");
         } else if (data.already) {
 
