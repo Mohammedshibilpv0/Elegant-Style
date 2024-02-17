@@ -18,11 +18,11 @@
                             <div class="form-group">
                               <label for="otp-input">Enter 4-Digit OTP *</label>
                               <div class="otp-input-container">
-                                  <input type="text" name="digit1" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                  <input type="text" name="digit2" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                  <input type="text" name="digit3" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                                  <input type="text" name="digit4" maxlength="1" pattern="\d" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
-                              </div>
+                                <input type="text" name="digit1" maxlength="1" pattern="[0-9]" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                <input type="text" name="digit2" maxlength="1" pattern="[0-9]" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                <input type="text" name="digit3" maxlength="1" pattern="[0-9]" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                                <input type="text" name="digit4" maxlength="1" pattern="[0-9]" inputmode="numeric" required style="padding: 10px; font-size: 16px; text-align: center; width: 50px; margin: 10px;">
+                            </div>
                               <input type="hidden" name="email" value="<%= email %>">
                               <input type="text" name="refer" value="<%=refer%>" hidden>
                           </div>
@@ -57,10 +57,10 @@
                         </form>
                         <!-- ... (Existing social login buttons) ... -->
                     </div><!-- .End .tab-pane -->
-  </div><!-- End .tab-content -->
-</div><!-- End .form-tab -->
-    </div><!-- End .form-box -->
-  </div><!-- End .container -->
+         </div><!-- End .tab-content -->
+       </div><!-- End .form-tab -->
+     </div><!-- End .form-box -->
+   </div><!-- End .container -->
 </div><!-- End .login-page section-bg -->
 </main>
 
@@ -112,7 +112,24 @@
     });
 });
 
+
+  // Function to validate input fields and allow only numeric characters
+  function validateInput(event) {
+      const input = event.target;
+      const inputValue = input.value;
+      // Replace any non-numeric characters with an empty string
+      input.value = inputValue.replace(/\D/g, '');
+  }
+
+  // Attach the validation function to each input field
+  const inputs = document.querySelectorAll('.otp-input-container input');
+  inputs.forEach(function(input) {
+      input.addEventListener('input', validateInput);
+  });
 </script>
+
+
+
 <%-include('../partials/user/footer.ejs')%>
 
 

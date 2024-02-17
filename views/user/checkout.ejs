@@ -102,14 +102,15 @@
 								</a>
 								  </div>
 
-								  <div class="checkout-discount" >
+								  <div class="checkout-discount"  >
 									<form id="couponForm">
 										<input type="text" class="form-control"  required id="checkout-discount-input" placeholder="Have a coupon? Click here to enter your code">
 										<label for="checkout-discount-input" class="text-truncate"></span></label>
 										<button class="btn btn-primary mt-4" type="submit">Apply</button>
-										<a class="btn btn-primary mt-4" onclick="cancelcoupon()">Clear</a>
+										<a class="btn btn-primary mt-4" id="cancelcoupon" onclick="cancelcoupon()" style="display: none;">Clear</a>
 									</form>
 									<p id="already" class="text-danger"></p>
+									<p id="applied" class="text-success"></p>
 								</div><!-- End .checkout-discount -->
 
 		                		</div><!-- End .col-lg-9 -->
@@ -467,6 +468,9 @@ document.getElementById('display2').style.display = 'none';
 
     // Handle the 'data' here, for example:
     if (data.success) {
+		document.getElementById('cancelcoupon').style.maxWidth = "150px"; 
+		document.getElementById('applied').innerHTML="Coupon Added"
+		document.getElementById('cancelcoupon').style.display="block"
 		document.getElementById('display1').style.display = 'table-row';
       document.getElementById('display2').style.display = 'table-row';
 	  document.getElementById('couponcode').value=data.couponid

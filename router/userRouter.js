@@ -22,7 +22,12 @@ router.post('/loginsubmit',middleware.islogin,userController.submitlogin)
 router.get('/otp',userController.loadOtp);
 router.post('/otp',userController.verifyOtp);
 router.get('/logout',userController.logout)
+router.get('/forgetpassword',userController.forgetpassword)
 router.get('/resendotp',userController.resendOtp)
+router.post('/forgetpassword',userController.forgetpasswordPost)
+router.get('/resetingPass/:id',userController.resetpassword)
+router.post('/changepasswordinreset/:id',userController.changePasswordInReset)
+
 
 //products setting
 router.get('/singleproduct/:id',productsController.singleProduct)

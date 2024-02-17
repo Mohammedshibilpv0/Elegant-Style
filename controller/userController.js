@@ -9,8 +9,9 @@ const Orders= require('../model/orderSchema')
 const Coupon=require('../model/couponSchema');
 const wishlistSchema=require('../model/wishlistSchema')
 const { wishlist } = require("./wishlistController");
-
-
+require('dotenv').config()
+const crypto=require('crypto')
+const resetpasswordSchema=require('../model/resetpassword')
 
 const home = async (req, res) => {
   try {
@@ -90,8 +91,7 @@ const register = async (req, res) => {
         Verified:false
       });
       const check = await user.save();
-      
-  
+
       sendOTPverificationEmail(user, res,refer);
     }
   } catch (err) {
@@ -137,9 +137,8 @@ const sendOTPverificationEmail = async ({Email} , res,refer) => {
       console.log('Recipient email:', Email);
       console.log('Mail options:', mailOptions);
       await transporter.sendMail(mailOptions);
-      
+
       res.redirect(`/otp?email=${Email}&refer=${refer}`);
-    
 
   } catch (err) {
       console.log(err.message);
@@ -150,7 +149,6 @@ const loadOtp = async (req, res) => {
   try {
       const email = req.query.email;
       const refer=req.query.refer
-
       res.render('otpVerification', {email: email,refer});
 
   } catch (error) {
@@ -238,10 +236,10 @@ const verifyOtp = async (req, res) => {
               }
 
           }else{
-            
+
           }
          } else {
-          
+
           await User.deleteOne({Email:email})
           req.flash('err', 'otp is incorrect you have to verifey again login to get otp');
           res.redirect('/login')
@@ -277,6 +275,114 @@ const resendOtp = async (req, res) => {
 
   }
 } 
+
+
+const forgetpassword= async (req,res)=>{
+  try{
+    const message=req.flash('error')
+    const success=req.flash('success')
+    res.render('forgetpassword',{message,success})
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const forgetpasswordPost = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ Email: email });
+
+    if (!user) {
+      const message = "User not found";
+      req.flash('error', message);
+      return res.redirect('/forgetpassword');
+    }
+    const already= await resetpasswordSchema.deleteOne({userId:user._id})
+
+    const token = Math.floor(1000000000000000 + Math.random() * 9000000000000000);
+    const reset= new resetpasswordSchema({
+      userId:user._id,
+      token:token,
+    })
+    await reset.save()
+   const resetUrl = `http://localhost:3000/resetingPass/${token}`
+    let transporter = nodemailer.createTransport({
+          service: 'gmail',
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+              user: 'mazziotechlounger@gmail.com',
+              pass: 'imbv sshe dpux ttba'
+          }
+  });
+
+      await transporter.sendMail({
+      to: user.Email,
+      subject: 'Reset your password',
+      html: `You are receiving this because you (or someone else) have requested the reset of the password for your account.<br><br>
+            Please click on the following link, or paste this into your browser to complete the process:<br><br>
+            <a href="${resetUrl}">${resetUrl}</a><br><br>
+            If you did not request this, please ignore this email and your password will remain unchanged.<br>`
+    });
+    const success="Please Check Your Email"
+    req.flash('success',success)
+    res.redirect('/forgetpassword'); // Redirect to the forget password page
+  } catch (err) {
+    console.log(err);
+    // Handle errors appropriately
+  }
+}
+
+const resetpassword= async (req,res)=>{
+  try{
+      const token=req.params.id
+      const checking=await resetpasswordSchema.findOne({token:token})
+      if(!checking){
+        return res.redirect('/notfound')
+      }else{
+        const message=req.flash('message')
+        const errmsg=req.flash('err')
+        const userId=checking.userId
+        res.render('resetpassword',{userId,token,message,errmsg})
+      }
+
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const changePasswordInReset = async (req, res) => {
+  try {
+    const { newpassword, confirmpassword, userid,token } = req.body;
+
+    if (newpassword !== confirmpassword) {
+      const message="Passwords do not match"
+      req.flash('err',message)
+      return res.redirect(`/resetingPass/${token}`)
+    }
+
+
+  
+    const user = await User.findById(userid);
+
+    if (!user) {
+      const message='User not found'
+      req.flash('err',message)
+      return res.redirect(`/resetingPass/${token}`)
+
+    }
+    const Password = await bcrypt.hash(newpassword, 10);
+    // Update the user's password
+    user.Password = Password;
+    await user.save();
+    const message='Password changed successfully'
+    req.flash('message',message)
+    return res.redirect(`/resetingPass/${token}`)
+  } catch (error) {
+    console.error('Error changing password:', error);
+  }
+};
 
 
 const submitlogin = async (req, res) => {
@@ -543,8 +649,6 @@ const categorybased= async(req,res)=>{
 }
 
 
-  
-
 const logout = (req, res) => {
   try {
     req.session.user = null;
@@ -561,6 +665,10 @@ module.exports = {
   login,
   register,
   resendOtp,
+  forgetpassword,
+  forgetpasswordPost,
+  resetpassword,
+  changePasswordInReset,
   verifyOtp,
   loadOtp,
   submitlogin,

@@ -115,15 +115,15 @@ const applycoupon = async (req, res) => {
             path: "products.productId",
             model: "Products", // Make sure it matches the model name for the Product
           });
-  
-  
+
+
             const  totalPriceTotal = cartData.products.reduce((total, product) => {
               return total + product.totalPrice;
             }, 0);
-  
+
            const discount =totalPriceTotal-coupon.discountamount
-  
-  
+
+
           res.json({ success: `${couponName} `,totalPriceTotal,discount,couponid });
           }else{
             res.json({ already: 'Coupen date expired' });
@@ -131,7 +131,7 @@ const applycoupon = async (req, res) => {
         }else{
           res.json({minimum:`Coupon not added Minimum purchase ₹ ${coupon.minAmount}`})
         }
-   
+
       } else {
         res.json({ already: 'Coupon already used by this user' });
       }
@@ -157,7 +157,7 @@ const vieworder= async (req,res)=>{
         model: 'Products'
     })
     .exec();
-  
+
     res.render("orderdetail",{orders,userName,count,orderid,wishlistcount})
 
   }catch(err){
@@ -181,6 +181,7 @@ const invoiceDownload= async (req,res)=>{
         price: product.total,
         total: product.total
     }));
+    console.log(products);
     const data = {
         "currency": "USD",
         "marginTop": 25,

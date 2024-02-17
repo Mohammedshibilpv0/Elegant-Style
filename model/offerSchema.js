@@ -17,11 +17,7 @@ const offerSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    status: {
-        type:String,
-        enum: ["active", "blocked"],
-        default: "active",
-    }
+
 })
 
 const offer = mongoose.model("offer", offerSchema)
