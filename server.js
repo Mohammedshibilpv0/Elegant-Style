@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express=require('express')
 const app=express()
-const port=process.env.port||3000
+const port=1000
 const path=require('path')
 const userRoute=require("./router/userRouter")
 const adminRoute=require('./router/adminRoute')
