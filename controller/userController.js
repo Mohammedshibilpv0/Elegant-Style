@@ -378,12 +378,20 @@ const changePasswordInReset = async (req, res) => {
     await user.save();
     const message='Password changed successfully'
     req.flash('message',message)
-    return res.redirect(`/resetingPass/${token}`)
+    const deletingToken= await resetpasswordSchema.deleteOne({token:token})
+    return res.redirect(`/successpassword`)
   } catch (error) {
     console.error('Error changing password:', error);
   }
 };
 
+const successpassword=(req,res)=>{
+  try{
+      res.send('success')
+  }catch(err){
+    console.log(err);
+  }
+}
 
 const submitlogin = async (req, res) => {
   try {
@@ -428,34 +436,113 @@ const submitlogin = async (req, res) => {
 
 const allproducts = async (req, res) => {
   try {
+
       const perPage = 8; // Set the number of products to display per page
       const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
       const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
       const userName = await User.findOne({ _id: req.session.user_id });
       const category= await Category.find({Status: { $ne: "blocked" }})
-      const productsdetail = await Products.find({ Status: { $ne: "blocked" } })
+      let query = { Status: { $ne: "blocked" } }; // Initial query to get all products
+
+      // Check if search query parameter exists
+      if (req.query.q) {
+          // If search query parameter exists, update the query to filter products by name or category
+          const searchRegex = new RegExp(req.query.q, 'i');
+          query.$or = [
+              { Name: { $regex: searchRegex } }, // Search product name
+              { Category: { $in: await Category.find({ Name: { $regex: searchRegex } }).distinct('_id') } }
+          ];
+      }
+
+      const productsdetail = await Products.find(query)
           .populate('Category')
           .populate({
-            path: 'Category',
-            populate: { path: 'offer' } // Populate the offer field in the Category document
-        }).populate('offer')
+              path: 'Category',
+              populate: { path: 'offer' }
+          }).populate('offer')
           .skip((page - 1) * perPage)
           .limit(perPage)
           .exec();
 
       const product = productsdetail.filter(product => product.Category.Status !== "blocked");
       const user = req.session.user_id;
-
-      const totalProducts = await Products.countDocuments({ Status: { $ne: "blocked" } });
+      const totalProducts = await Products.countDocuments(query);
       const totalPages = Math.ceil(totalProducts / perPage);
-
-
-      res.render('allproducts', { product, user, totalPages, currentPage: page,userName,count,category,wishlistcount });
+      res.render('allproducts',{ product, user, totalPages, currentPage: page, userName, count, category, wishlistcount });
 
   } catch (err) {
       console.log(err);
       res.status(500).send('Internal Server Error');
+  }
+};
+
+const fetchingProduct = async (req, res) => {
+  try {
+  
+      const perPage = 8; // Set the number of products to display per page
+      const page = parseInt(req.query.page) || 1; // Get the requested page or default to 1
+      const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const wishlistcount=(await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+      const userName = await User.findOne({ _id: req.session.user_id });
+      const category= await Category.find({Status: { $ne: "blocked" }})
+      let query = { Status: { $ne: "blocked" } }; // Initial query to get all products
+
+      // Check if search query parameter exists
+      if (req.query.q) {
+          // If search query parameter exists, update the query to filter products by name or category
+          const searchRegex = new RegExp(req.query.q, 'i');
+          query.$or = [
+              { Name: { $regex: searchRegex } }, // Search product name
+              { Category: { $in: await Category.find({ Name: { $regex: searchRegex } }).distinct('_id') } } 
+          ];
+      }
+
+      const productsdetail = await Products.find(query)
+          .populate('Category')
+          .populate({
+              path: 'Category',
+              populate: { path: 'offer' }
+          }).populate('offer')
+          .skip((page - 1) * perPage)
+          .limit(perPage)
+          .exec();
+
+      const product = productsdetail.filter(product => product.Category.Status !== "blocked");
+      const user = req.session.user_id;
+      const totalProducts = await Products.countDocuments(query)
+      const totalPages = Math.ceil(totalProducts / perPage);
+      res.json({ product, user, totalPages, currentPage: page, userName, count, category, wishlistcount });
+
+  } catch (err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+  }
+};
+
+const searchProduct = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const checkingProduct = await Products.findOne({ _id: id });
+    const checkingCategory = await Category.findOne({ _id: id });
+    const wishlistcount = (await wishlistSchema.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const category = await Category.find({ Status: { $ne: "blocked" } });
+    const count = (await Cart.findOne({ userid: req.session.user_id }))?.products?.length || 0;
+    const user = req.session.user_id;
+    const userName = await User.findOne({ _id: req.session.user_id });
+
+    let product = [];
+
+    if (checkingProduct && checkingProduct.Status === "active") {
+      product.push(checkingProduct);
+    } else if (checkingCategory && checkingCategory.Status === "active") {
+      product.push(checkingCategory);
+    }
+
+    res.render('searchproducts', { product, user, userName, count, category, wishlistcount });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Internal Server Error');
   }
 };
 
@@ -669,11 +756,14 @@ module.exports = {
   forgetpasswordPost,
   resetpassword,
   changePasswordInReset,
+  successpassword,
   verifyOtp,
   loadOtp,
   submitlogin,
   signup,
   allproducts,
+  searchProduct,
+  fetchingProduct,
   changepassword,
   submitprofile,
   userprofile,

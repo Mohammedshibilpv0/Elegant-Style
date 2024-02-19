@@ -13,6 +13,7 @@ const crypto=require('crypto')
 const noCache= require('nocache')
 const bcrypt = require('bcrypt');
 
+
 app.use(noCache());
 app.use(session({
     secret:crypto.randomBytes(64).toString('hex'),
@@ -31,11 +32,13 @@ app.set('views','./views/user')
 
 
 
-mongoose.connect('mongodb+srv://ElegantStyle:aPlR1vz31bYk1rq0@cluster0.n10nb0v.mongodb.net/').then(()=>{
-    console.log("Mongodb connected");
-}).catch(()=>{
-    console.log("Failed to connect");
+mongoose.connect('mongodb+srv://ElegantStyle:aPlR1vz31bYk1rq0@cluster0.n10nb0v.mongodb.net/')
+.then(() => {
+    console.log("MongoDB connected");
 })
+.catch((error) => {
+    console.log("Failed to connect to MongoDB:", error);
+});
 
 
 app.use(express.static(path.join(__dirname,'public')))

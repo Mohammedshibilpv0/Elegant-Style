@@ -27,12 +27,13 @@ router.get('/resendotp',userController.resendOtp)
 router.post('/forgetpassword',userController.forgetpasswordPost)
 router.get('/resetingPass/:id',userController.resetpassword)
 router.post('/changepasswordinreset/:id',userController.changePasswordInReset)
-
+router.get('/successpassword',userController.successpassword)
 
 //products setting
 router.get('/singleproduct/:id',productsController.singleProduct)
 router.get('/allproducts',userController.allproducts)
-
+router.get('/searchproducts',userController.fetchingProduct)
+router.get('/search/:id',userController.searchProduct)
 
 ///cart  handlng
 router.get('/usercart',middleware.notlogged,cartController.cart)

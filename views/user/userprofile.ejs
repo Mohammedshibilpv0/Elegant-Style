@@ -197,26 +197,24 @@ z-index: 0
 													</div><!-- End .card-body -->
 												</div><!-- End .card-dashboard -->
 											</div><!-- End .col-lg-6 -->
-				
-				
 										</div><!-- End .row -->
 										<div class="modal" id="myModal">
-												
+
 											<div class="modal-dialog">
 											  <div class="modal-content">
-												
+
 												<!-- Modal Header -->
 												<div class="modal-header">
 												  <h4 class="modal-title">Wallet Transactions</h4>
 												  <button type="button" class="close" data-dismiss="modal">&times;</button>
 												</div>
-										  
+
 												<!-- Modal body -->
-											
-												<div class="modal-body">
-													
-													<table class="table table-striped">
-														<div class="container">
+
+												<div class="modal-body p-3">
+
+													<table class="table table-striped ">
+														<div class="container ">
 														  <thead>
 															<tr>
 															  <th>Date</th>
@@ -226,7 +224,7 @@ z-index: 0
 															</tr>
 														  </thead>
 														  <tbody>
-															<% 
+															<%
 															  // Sort the wallet history by date in descending order (latest transactions first)
 															  userdetails.walletHistory.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(wallet => {
 															%>
@@ -561,19 +559,88 @@ z-index: 0
 
 											<label>Current password (leave blank to leave unchanged)</label>
 											<input type="password" class="form-control" name="password">
-									
+										
 											<label>New password (leave blank to leave unchanged)</label>
 											<input type="password" class="form-control" name="newpassword">
-									
+										
 											<label>Confirm new password</label>
 											<input type="password" class="form-control mb-2" name="confirmpassword">
-									
+										
+											<div id="passwordValidationMessage" style="color: red;"></div> <!-- This div will display password validation messages -->
+											<div id="successMessage" style="color: green;"></div> <!-- This div will display success messages -->
+											<div id="errorMessage" style="color: red;"></div> <!-- This div will display error messages -->
+										
 											<button type="button" class="btn btn-outline-primary-2" onclick="changePassword()">
 												<span>SAVE CHANGES</span>
 												<i class="icon-long-arrow-right"></i>
 											</button>
-								
+										
 										</form>
+										
+										<script>
+										function isPasswordStrong(password) {
+											// Regular expression for strong password: at least 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
+											var strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+											return strongPasswordRegex.test(password);
+										}
+										
+										function changePassword() {
+    var newPassword = document.getElementsByName("newpassword")[0].value;
+    var confirmPassword = document.getElementsByName("confirmpassword")[0].value;
+    var passwordValidationMessage = document.getElementById("passwordValidationMessage");
+
+    if (!isPasswordStrong(newPassword)) {
+        passwordValidationMessage.textContent = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+        return false;
+    } else {
+        passwordValidationMessage.textContent = ""; // Clear the error message if the password is strong
+    }
+
+    if (newPassword !== confirmPassword) {
+        passwordValidationMessage.textContent = "Passwords do not match.";
+        return false;
+    }
+
+    const formData = new FormData(document.getElementById('changePasswordForm'));
+
+    const formObject = {};
+    formData.forEach((value, key) => {
+        formObject[key] = value;
+    });
+
+    fetch('/changepassword/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formObject),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const successMessageDiv = document.getElementById('successMessage');
+        const errorMessageDiv = document.getElementById('errorMessage');
+
+        if (data.success) {
+            successMessageDiv.textContent = data.message;
+            errorMessageDiv.textContent = ''; // Clear any previous error messages
+            document.getElementById('changePasswordForm').reset();
+        } else {
+            errorMessageDiv.textContent = data.message;
+            successMessageDiv.textContent = ''; // Clear any previous success messages
+        }
+    })
+    .catch(error => {
+        console.error('There was a problem changing the password:', error.message);
+    });
+}
+
+										</script>
+										
 										<div id="successMessage"></div>
 										<div id="errorMessage"></div>
 								    </div><!-- .End .tab-pane -->
@@ -588,49 +655,7 @@ z-index: 0
     <button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
 
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
-	function changePassword() {
-  const formData = new FormData(document.getElementById('changePasswordForm'));
-
-  const formObject = {};
-  formData.forEach((value, key) => {
-    formObject[key] = value;
-  });
-
-  fetch('/changepassword/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(formObject),
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.json();
-  })
-  .then(data => {
-                // Update the success and error message divs
-                const successMessageDiv = document.getElementById('successMessage');
-                const errorMessageDiv = document.getElementById('errorMessage');
-
-                if (data.success) {
-                    successMessageDiv.textContent = data.message;
-                    errorMessageDiv.textContent = ''; // Clear any previous error messages
-					document.getElementById('changePasswordForm').reset();
-                } else {
-                    errorMessageDiv.textContent = data.message;
-                    successMessageDiv.textContent = ''; // Clear any previous success messages
-                }
-            })
-  .catch(error => {
-    // Handle errors
-    console.error('There was a problem changing the password:', error.message);
-  });
-}
-
- </script>
+ 
 <script>
     function submitForm() {
     // Get form values

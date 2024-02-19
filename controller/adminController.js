@@ -568,7 +568,7 @@ const salesdata = async (req, res) => {
           },
           {
               $lookup: {
-                  from: 'products', // The name of the products model collection in MongoDB
+                  from: 'products',
                   localField: 'Products.products',
                   foreignField: '_id',
                   as: 'Products.productInfo',
