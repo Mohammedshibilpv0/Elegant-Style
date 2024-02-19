@@ -32,7 +32,7 @@ app.set('views','./views/user')
 
 
 
-mongoose.connect('mongodb+srv://shibilmohammed175:Y1CEBDOiwoV0dzWl@elegantstyle.svxccyn.mongodb.net/')
+mongoose.connect('mongodb+srv://ElegantStyle:S123h343i@elegantstyle.svxccyn.mongodb.net/')
 .then(() => {
     console.log("MongoDB connected");
 })
