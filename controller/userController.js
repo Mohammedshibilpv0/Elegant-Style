@@ -305,7 +305,7 @@ const forgetpasswordPost = async (req, res) => {
       token:token,
     })
     await reset.save()
-   const resetUrl = `http://localhost:3000/resetingPass/${token}`
+   const resetUrl = `https://elegantstyle.cloud/resetingPass/${token}`
     let transporter = nodemailer.createTransport({
           service: 'gmail',
           host: 'smtp.gmail.com',
