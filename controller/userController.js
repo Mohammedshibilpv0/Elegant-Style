@@ -109,8 +109,8 @@ const sendOTPverificationEmail = async ({Email} , res,refer) => {
           port: 465,
           secure: true,
           auth: {
-              user: 'mazziotechlounger@gmail.com',
-              pass: 'imbv sshe dpux ttba'
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASSWORD,
           }
       });
 
